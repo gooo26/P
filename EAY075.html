@@ -1,1 +1,544 @@
-l
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Rajasthan Bhojnalay | Authentic Thali & Punjabi Fix Menu | Premium Veg Restaurant</title>
+    <!-- Google Fonts + Enhanced Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome 6 (Pro-like icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- AOS Library for scroll animations -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #FFF9F0;
+            color: #2D1B0E;
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+        }
+
+        /* Premium custom container */
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 32px;
+        }
+
+        /* custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F2E3D0;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #B87C4E;
+            border-radius: 10px;
+        }
+
+        /* HERO section - premium */
+        .hero {
+            background: linear-gradient(107deg, #1F0F05 0%, #4A2511 100%);
+            color: #FFEEDD;
+            position: relative;
+            overflow: hidden;
+            border-bottom-left-radius: 3rem;
+            border-bottom-right-radius: 3rem;
+            box-shadow: 0 25px 45px -12px rgba(0,0,0,0.4);
+        }
+        .hero::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://www.transparenttextures.com/patterns/indian-pattern.png');
+            opacity: 0.07;
+            pointer-events: none;
+        }
+        .hero-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 2rem;
+            padding: 3rem 0 3.5rem 0;
+            position: relative;
+            z-index: 2;
+        }
+        .hotel-info h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.6rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #FFE6B0, #FFBC7A);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: none;
+        }
+        .tagline {
+            font-size: 1.15rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 12px;
+            opacity: 0.9;
+        }
+        .location-badge {
+            background: rgba(255,215,150,0.18);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,215,150,0.4);
+            padding: 10px 28px;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 1.2rem;
+            transition: all 0.3s;
+        }
+        .btn-map-premium {
+            background: #E68A2E;
+            border: none;
+            padding: 6px 18px;
+            border-radius: 40px;
+            font-weight: 600;
+            color: #2D1B0E;
+            margin-left: 10px;
+            cursor: pointer;
+            transition: 0.25s;
+            font-size: 0.8rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        .btn-map-premium:hover {
+            background: #FFB45A;
+            transform: scale(1.02);
+        }
+        .owner-photo {
+            border-radius: 50%;
+            width: 170px;
+            height: 170px;
+            background: linear-gradient(145deg, #D99E58, #B55B2A);
+            padding: 5px;
+            box-shadow: 0 25px 35px -12px black;
+        }
+        .owner-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 3px solid #FFDA99;
+        }
+
+        /* Gallery Premium */
+        .gallery {
+            margin: 5rem 0 3rem;
+        }
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.3rem;
+            font-weight: 800;
+            color: #6B2E00;
+            border-left: 8px solid #E67E22;
+            padding-left: 1.2rem;
+            margin-bottom: 2.5rem;
+        }
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+            gap: 2rem;
+        }
+        .photo-card {
+            border-radius: 1.8rem;
+            overflow: hidden;
+            background: white;
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.2);
+            transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+        .photo-card:hover {
+            transform: translateY(-12px) scale(1.01);
+            box-shadow: 0 30px 40px -12px rgba(0,0,0,0.3);
+        }
+        .photo-card img {
+            width: 100%;
+            height: 260px;
+            object-fit: cover;
+            transition: 0.5s;
+        }
+        .photo-card:hover img {
+            transform: scale(1.05);
+        }
+        .photo-card .caption {
+            padding: 1rem;
+            text-align: center;
+            font-weight: 600;
+            background: #fff;
+            font-size: 1rem;
+            letter-spacing: 0.3px;
+        }
+
+        /* Menu sections - Elevated premium style */
+        .menu-section {
+            background: #FFFFFF;
+            border-radius: 2.5rem;
+            padding: 2.5rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s;
+            border: 1px solid #FFE3C4;
+        }
+        .menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            border-bottom: 3px solid #F7BC6C;
+            margin-bottom: 2rem;
+            padding-bottom: 0.75rem;
+        }
+        .menu-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(120deg, #9B4A1A, #C86A2C);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .price-note {
+            background: #FCEED8;
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #AA5E2B;
+        }
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+            gap: 0.8rem;
+        }
+        .menu-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            border-bottom: 1px solid #F0DECA;
+            padding: 12px 8px;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+        .menu-item:hover {
+            background: #FFF6EB;
+            border-radius: 16px;
+            padding-left: 12px;
+        }
+        .item-name {
+            font-weight: 600;
+            font-size: 1rem;
+            color: #3E2A1B;
+        }
+        .item-price {
+            font-weight: 800;
+            color: #C2632C;
+            font-size: 1.1rem;
+        }
+        .thali-highlight {
+            background: linear-gradient(98deg, #FFF7ED, #FFF0E1);
+            border-radius: 1.2rem;
+            padding: 0.9rem 1.2rem;
+            margin-bottom: 1rem;
+            border-left: 6px solid #E67E22;
+            transition: 0.2s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.02);
+        }
+        .two-columns {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+            gap: 2rem;
+        }
+        .special-badge {
+            background: #DC873A20;
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #B45117;
+        }
+
+        /* location map premium card */
+        .location-card {
+            background: linear-gradient(112deg, #FEF4E8, #FEEAD8);
+            border-radius: 2rem;
+            padding: 2rem;
+            margin-bottom: 2.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 12px 24px -8px rgba(0,0,0,0.1);
+            border: 1px solid #FFDDB0;
+        }
+        .btn-gold {
+            background: #B45F2B;
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 44px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.25s;
+            box-shadow: 0 5px 12px rgba(0,0,0,0.1);
+        }
+        .btn-gold:hover {
+            background: #DD7E3A;
+            transform: translateY(-2px);
+        }
+        .footer {
+            background: #24190E;
+            color: #FCE7C1;
+            text-align: center;
+            padding: 2.5rem;
+            border-top-left-radius: 2.5rem;
+            border-top-right-radius: 2.5rem;
+            margin-top: 3rem;
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 0 20px; }
+            .hotel-info h1 { font-size: 2.3rem; }
+            .hero-content { text-align: center; justify-content: center; }
+            .section-title { font-size: 1.8rem; }
+            .menu-header h2 { font-size: 1.6rem; }
+        }
+        .floating-wa {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #25D366;
+            color: white;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: 0 8px 18px rgba(0,0,0,0.2);
+            transition: 0.2s;
+            z-index: 99;
+            cursor: pointer;
+        }
+        .floating-wa:hover {
+            transform: scale(1.08);
+            background: #20b358;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Floating WhatsApp Order CTA -->
+<a href="https://wa.me/919876543210?text=Hi%20Rajasthan%20Bhojnalay%2C%20I%20want%20to%20order%20Thali%20or%20menu%20items." target="_blank" class="floating-wa">
+    <i class="fab fa-whatsapp"></i>
+</a>
+
+<!-- Hero Section Premium -->
+<div class="hero">
+    <div class="container hero-content" data-aos="fade-up">
+        <div class="hotel-info">
+            <h1>RAJASTHAN BHOJNALAY</h1>
+            <div class="tagline">
+                <i class="fas fa-fire"></i> Since 2002 · Legacy of Royal Rajasthani & Punjabi Cuisine
+            </div>
+            <div class="location-badge">
+                <i class="fas fa-map-marker-alt"></i> Memco Cross Road, Ahmedabad
+                <button class="btn-map-premium" id="copyLocationBtnPremium" onclick="copyAddressPremium()">
+                    <i class="far fa-copy"></i> Copy Address
+                </button>
+            </div>
+        </div>
+        <div class="owner-photo" data-aos="zoom-in">
+            <img src="https://ui-avatars.com/api/?background=BB7842&color=fff&rounded=true&size=170&name=Joinu+Raj&bold=true&length=6&fontsize=0.70" 
+                 alt="Joinu - Owner & Founder">
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Gallery Premium Section -->
+    <div class="gallery" data-aos="fade-up">
+        <div class="section-title"><i class="fas fa-images"></i> Royal Ambience & Moments</div>
+        <div class="photo-grid">
+            <div class="photo-card"><img src="https://images.unsplash.com/photo-1601050690597-df0568f70950?w=600&auto=format" alt="Traditional interior"><div class="caption">🌟 Elegant Rajasthani Decor</div></div>
+            <div class="photo-card"><img src="https://images.unsplash.com/photo-1590846406792-0adc7f938f1d?w=600&auto=format" alt="Grand Thali"><div class="caption">🥘 Signature Thali Platter</div></div>
+            <div class="photo-card"><img src="https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=600&auto=format" alt="Roti and sabzi"><div class="caption">🔥 Fresh Tandoori Roti</div></div>
+            <div class="photo-card"><img src="https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=600&auto=format" alt="Family dining"><div class="caption">👨‍👩‍👧‍👦 Family-Friendly Vibe</div></div>
+        </div>
+    </div>
+
+    <!-- Premium Thali Section with Fix / Punjabi Specials -->
+    <div class="menu-section" data-aos="fade-up" data-aos-delay="50">
+        <div class="menu-header">
+            <h2><i class="fas fa-crown"></i> Grand Thalis · Complete Experience</h2>
+            <span class="price-note"><i class="fas fa-infinity"></i> Unlimited Taste & Hygiene</span>
+        </div>
+        <div class="two-columns">
+            <div>
+                <div class="thali-highlight"><strong>👑 RAJASTHAN ROYAL THALI</strong><br>6 Rotis, 2 Seasonal Sabzi, Dal Chawal, Chaas, Papad, Salad — <strong class="item-price">₹100/-</strong></div>
+                <div class="thali-highlight"><strong>🍛 DAL-BAATI SPECIAL (4 Baati)</strong><br>4 Crispy Baati, Dal Fry, Garlic Chutney — <strong class="item-price">₹110/-</strong></div>
+                <div class="thali-highlight"><strong>🧈 PUNJABI FIX THALI (Premium)</strong><br>1 Punjabi Sabzi + 1 Plain Sabzi, 5 Butter Roti, Dal Fry, Rice, Papad — <strong class="item-price">₹110/-</strong></div>
+            </div>
+            <div>
+                <div class="thali-highlight"><strong>🥘 FIX THALI (Best Seller)</strong><br>6 Rotli, 2 Sabzi, Dal Chawal — <strong class="item-price">₹80/-</strong></div>
+                <div class="thali-highlight"><strong>🔥 PUNJABI DELUXE THALI</strong><br>Shahi Paneer / Matar Paneer, 3 Butter Naan, Rice, Dal Makhani — <strong class="item-price">₹120/-</strong></div>
+                <div class="thali-highlight"><strong>🌾 DAL CHAWAL COMBO</strong><br>Dal Tadka + Steamed Rice + Papad — <strong class="item-price">₹50/-</strong></div>
+            </div>
+        </div>
+        <div style="margin-top: 18px; text-align: center;"><span class="special-badge"><i class="fas fa-egg"></i> Pure Veg · Ghee Roasted Flavours</span></div>
+    </div>
+
+    <!-- Sabzi + Breads & Rice Premium -->
+    <div class="menu-section" data-aos="fade-up">
+        <div class="menu-header">
+            <h2><i class="fas fa-pepper-hot"></i> Authentic Curries · शाकाहारी सब्जियाँ</h2>
+        </div>
+        <div class="menu-grid">
+            <div class="menu-item"><span class="item-name">Matar Paneer (मटर पनीर)</span><span class="item-price">₹140</span></div>
+            <div class="menu-item"><span class="item-name">Shahi Paneer (शाही पनीर)</span><span class="item-price">₹140</span></div>
+            <div class="menu-item"><span class="item-name">Palak Paneer (पालक पनीर)</span><span class="item-price">₹120</span></div>
+            <div class="menu-item"><span class="item-name">Paneer Tikka Masala</span><span class="item-price">₹130</span></div>
+            <div class="menu-item"><span class="item-name">Paneer Bhurji (पनीर भुर्जी)</span><span class="item-price">₹140</span></div>
+            <div class="menu-item"><span class="item-name">Chana Masala (चना मसाला)</span><span class="item-price">₹100</span></div>
+            <div class="menu-item"><span class="item-name">Sev Tamatar (सेव टमाटर)</span><span class="item-price">₹80</span></div>
+            <div class="menu-item"><span class="item-name">Dal Tadka (दाल तड़का)</span><span class="item-price">₹80</span></div>
+            <div class="menu-item"><span class="item-name">Dal Fry (दाल फ्राई)</span><span class="item-price">₹70</span></div>
+        </div>
+        
+        <div class="menu-header" style="margin-top: 2rem;">
+            <h2><i class="fas fa-bread-slice"></i> Artisanal Breads & Rice</h2>
+        </div>
+        <div class="menu-grid">
+            <div class="menu-item"><span class="item-name">Tawa Roti (गोटी)</span><span class="item-price">₹8</span></div>
+            <div class="menu-item"><span class="item-name">Butter Roti</span><span class="item-price">₹10</span></div>
+            <div class="menu-item"><span class="item-name">Paratha (पराठा)</span><span class="item-price">₹20</span></div>
+            <div class="menu-item"><span class="item-name">Plain Rice (सादा चावल)</span><span class="item-price">₹20</span></div>
+            <div class="menu-item"><span class="item-name">Jeera Rice (जीरा राइस)</span><span class="item-price">₹70</span></div>
+            <div class="menu-item"><span class="item-name">Steamed Rice Bowl</span><span class="item-price">₹40</span></div>
+        </div>
+        
+        <div class="menu-header" style="margin-top: 2rem;">
+            <h2><i class="fas fa-mug-hot"></i> Extras & Sides</h2>
+        </div>
+        <div class="menu-grid">
+            <div class="menu-item"><span class="item-name">Papad (पापड़)</span><span class="item-price">₹10</span></div>
+            <div class="menu-item"><span class="item-name">Extra Sabzi Bowl</span><span class="item-price">₹25</span></div>
+            <div class="menu-item"><span class="item-name">Masala Chaas (छाछ)</span><span class="item-price">₹15</span></div>
+            <div class="menu-item"><span class="item-name">Baati (1 Nanga)</span><span class="item-price">₹12</span></div>
+            <div class="menu-item"><span class="item-name">Baati with Dal</span><span class="item-price">₹20</span></div>
+        </div>
+    </div>
+    
+    <!-- Specials & Rajasthani signature -->
+    <div class="menu-section" style="background: #FFFBF5;" data-aos="fade-up">
+        <div class="menu-header">
+            <h2><i class="fas fa-gem"></i> Rajasthani Specials · दाल बाटी & More</h2>
+        </div>
+        <div class="two-columns">
+            <div>
+                <div class="thali-highlight"><strong>🏆 Signature Dal-Baati (4 Baati)</strong><br>4 Baati, Dal Fry, Chutney, Choorma — <strong>₹110</strong></div>
+                <div class="thali-highlight"><strong>✨ Special Dal-Baati Thali (Grand)</strong><br>Baati + Dal Fry + Chutney + Papad + Rice — <strong>₹110</strong></div>
+            </div>
+            <div>
+                <div class="thali-highlight"><strong>🥇 Punjabi Fix Thali (Special)</strong><br>Roti, Punjabi Sabzi, Rice, Dal — <strong>₹110</strong></div>
+                <div class="thali-highlight"><strong>🌿 Purna Thali (पूर्ण थाली)</strong><br>6 Roti, 2 sabzi, Dal Chawal, Chaas, Papad — <strong>₹100</strong></div>
+            </div>
+        </div>
+        <div style="background: #EADBBC; border-radius: 1rem; padding: 12px; text-align: center; margin-top: 1rem; font-weight: 600;">
+            <i class="fas fa-award"></i> Every thali includes authentic taste of Rajasthan — Pure Desi Ghee touch available on request.
+        </div>
+    </div>
+
+    <!-- Premium Location & Contact Card -->
+    <div class="location-card" data-aos="fade-up">
+        <div>
+            <i class="fas fa-store" style="font-size: 2.2rem; color: #B45F2B;"></i>
+            <h3 style="margin-top: 8px; font-family: 'Playfair Display';">📍 Memco Cross Road, Ahmedabad</h3>
+            <p style="margin: 6px 0;">Near Memco Bus Stand, Opposite Fire Station.<br><strong>Open:</strong> 11:00 AM – 10:30 PM (Daily)<br><i class="fas fa-motorcycle"></i> Home Delivery via Swiggy/Zomato (Coming Soon)</p>
+            <button onclick="window.open('https://maps.google.com/?q=Memco+Cross+Road+Ahmedabad+Gujarat', '_blank')" class="btn-gold"><i class="fas fa-location-dot"></i> Get Directions</button>
+        </div>
+        <div style="min-width: 170px; background: #FFFFFFC9; border-radius: 28px; padding: 14px 24px; text-align: center; box-shadow: 0 6px 14px rgba(0,0,0,0.05);">
+            <i class="fas fa-phone-alt fa-lg" style="color:#B45F2B;"></i>
+            <h4 style="margin: 8px 0;">Order & Enquiry</h4>
+            <p style="font-weight: 800; font-size: 1.4rem;">+91 98765 43210</p>
+            <small><i class="fab fa-whatsapp"></i> Also available on WhatsApp</small>
+        </div>
+    </div>
+</div>
+
+<footer class="footer">
+    <p><i class="fas fa-utensils"></i> RAJASTHAN BHOJNALAY · Authentic Taste Since 2002</p>
+    <p style="margin-top: 10px;">Memco Cross Road, Ahmedabad — <i class="fas fa-heart" style="color:#FFB347;"></i> Pure Veg · Family Restaurant</p>
+    <p style="margin-top: 14px; font-size: 0.85rem;">© 2026 Rajasthan Bhojnalay — Where Every Meal Feels Like Royalty</p>
+</footer>
+
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    // Initialize AOS animations
+    AOS.init({
+        duration: 800,
+        once: true,
+        offset: 100
+    });
+
+    // Premium copy address function with modern feedback
+    function copyAddressPremium() {
+        const fullAddress = "RAJASTHAN BHOJNALAY, Memco Cross Road, Ahmedabad, Gujarat - 380009";
+        navigator.clipboard.writeText(fullAddress).then(() => {
+            showToast("📍 Address copied: " + fullAddress);
+        }).catch(() => {
+            alert("Copy manually: Memco Cross Road, Ahmedabad");
+        });
+    }
+
+    // simple elegant toast simulation
+    function showToast(msg) {
+        let toast = document.createElement('div');
+        toast.innerText = msg;
+        toast.style.position = 'fixed';
+        toast.style.bottom = '90px';
+        toast.style.left = '50%';
+        toast.style.transform = 'translateX(-50%)';
+        toast.style.backgroundColor = '#2B1A0C';
+        toast.style.color = '#FFE5C2';
+        toast.style.padding = '12px 24px';
+        toast.style.borderRadius = '60px';
+        toast.style.fontWeight = '600';
+        toast.style.zIndex = '9999';
+        toast.style.boxShadow = '0 8px 20px rgba(0,0,0,0.2)';
+        toast.style.backdropFilter = 'blur(8px)';
+        toast.style.fontSize = '0.9rem';
+        document.body.appendChild(toast);
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            setTimeout(() => toast.remove(), 400);
+        }, 2000);
+    }
+
+    // Optional console signature
+    console.log("✨ Rajasthan Bhojnalay Premium Website | Owner: Joinu | Memco Cross Road | Premium Menu Integration");
+</script>
+</body>
+</html>
