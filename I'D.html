@@ -1,1 +1,607 @@
-k
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart ID Card System | One Nation One Smart ID | Amit Vishwakarma</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0e1a;
+            font-family: 'Segoe UI', 'Poppins', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 40px 20px;
+            color: #eef2ff;
+        }
+
+        .report-container {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: #0f1322;
+            border-radius: 32px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 153, 51, 0.2);
+            overflow: hidden;
+            padding: 30px 40px;
+            transition: all 0.3s;
+            backdrop-filter: blur(2px);
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #ff9933;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .gov-badge {
+            background: linear-gradient(135deg, #ff9933, #ff7700);
+            color: #0a0e1a;
+            display: inline-block;
+            padding: 8px 24px;
+            border-radius: 40px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 12px rgba(255, 153, 51, 0.3);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #ffffff;
+            text-shadow: 0 2px 10px rgba(255, 153, 51, 0.3);
+        }
+
+        .tagline {
+            font-size: 1.2rem;
+            color: #ffaa55;
+            font-weight: bold;
+            margin-top: 8px;
+        }
+
+        /* Card Image Section */
+        .card-image-section {
+            background: linear-gradient(145deg, #101624, #080c18);
+            border-radius: 28px;
+            padding: 30px;
+            margin: 30px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 30px;
+            border: 1px solid rgba(255,153,51,0.3);
+        }
+
+        .card-image {
+            flex: 1;
+            min-width: 280px;
+            text-align: center;
+        }
+
+        .card-image img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 20px;
+            box-shadow: 0 20px 30px rgba(0,0,0,0.5);
+            transition: transform 0.3s;
+            border: 1px solid #ff9933;
+        }
+
+        .card-image img:hover {
+            transform: scale(1.02);
+        }
+
+        .card-caption {
+            margin-top: 15px;
+            color: #ffaa66;
+            font-weight: bold;
+        }
+
+        .card-features-mini {
+            flex: 1;
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            color: white;
+            border: 1px solid rgba(255,153,51,0.3);
+        }
+
+        .card-features-mini h3 {
+            color: #ff9933;
+            margin-bottom: 15px;
+        }
+
+        .card-features-mini ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .card-features-mini li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            margin: 40px 0 20px 0;
+            padding-left: 12px;
+            border-left: 6px solid #ff9933;
+            color: #ffffff;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin: 20px 0;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin: 20px 0;
+        }
+
+        .info-box {
+            background: #111725;
+            padding: 20px;
+            border-radius: 24px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            transition: transform 0.2s;
+            border: 1px solid #1f2a44;
+        }
+
+        .info-box:hover {
+            transform: translateY(-3px);
+            border-color: #ff9933;
+            box-shadow: 0 8px 20px rgba(255,153,51,0.15);
+        }
+
+        .step-number {
+            background: #ff9933;
+            width: 32px;
+            height: 32px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 30px;
+            color: #0a0e1a;
+            font-weight: bold;
+            margin-right: 12px;
+        }
+
+        .security-badge {
+            background: #0a0f1c;
+            color: white;
+            padding: 15px;
+            border-radius: 16px;
+            text-align: center;
+            border-left: 4px solid #ff9933;
+        }
+
+        .flow-diagram {
+            background: #0a0f1a;
+            padding: 20px;
+            border-radius: 24px;
+            text-align: center;
+            font-family: monospace;
+            font-size: 14px;
+            border: 1px solid #ff9933;
+            color: #ccd6f0;
+        }
+
+        .hindi-text {
+            font-size: 0.9rem;
+            color: #aab4d4;
+            background: #0f1422;
+            padding: 8px 15px;
+            border-radius: 12px;
+            margin-top: 10px;
+            border-left: 3px solid #ff9933;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #1f2a44;
+            color: #8892b0;
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #ff9933, #ff7700);
+            border: none;
+            padding: 12px 28px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 40px;
+            cursor: pointer;
+            color: #0a0e1a;
+            transition: 0.2s;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 4px 12px rgba(255, 153, 51, 0.3);
+        }
+
+        .btn:hover {
+            transform: scale(1.02);
+            background: linear-gradient(135deg, #ffaa55, #ff9933);
+            box-shadow: 0 6px 16px rgba(255, 153, 51, 0.5);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #1f2a44, #0f1422);
+            color: #ffaa55;
+            border: 1px solid #ff9933;
+        }
+
+        @media (max-width: 800px) {
+            .report-container {
+                padding: 20px;
+            }
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .tech-tag {
+            background: #1f2a44;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            display: inline-block;
+            margin: 3px;
+            color: #ffaa66;
+        }
+
+        /* Creator Section */
+        .creator-section {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 25px;
+            background: linear-gradient(135deg, #0f1424, #0a0e1a);
+            border-radius: 28px;
+            padding: 25px 30px;
+            margin: 40px 0 20px;
+            border: 1px solid rgba(255,153,51,0.4);
+        }
+
+        .creator-info {
+            flex: 2;
+        }
+
+        .creator-name {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #ffaa55;
+        }
+
+        .creator-title {
+            color: #aab4d4;
+            margin: 8px 0;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .social-link {
+            background: #111725;
+            padding: 10px 20px;
+            border-radius: 40px;
+            text-decoration: none;
+            color: #ffffff;
+            font-weight: bold;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid #2a3655;
+        }
+
+        .social-link:hover {
+            background: #ff9933;
+            color: #0a0e1a;
+            border-color: #ff9933;
+        }
+
+        .creator-photo {
+            flex: 1;
+            text-align: center;
+        }
+
+        .creator-photo img {
+            width: 140px;
+            height: 140px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 3px solid #ff9933;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            background: #1f2a44;
+        }
+
+        .photo-placeholder {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #2a3655, #0f1424);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            border: 3px solid #ff9933;
+            font-size: 48px;
+            color: #ffaa66;
+        }
+
+        @media (max-width: 700px) {
+            .creator-section {
+                flex-direction: column-reverse;
+                text-align: center;
+            }
+            .social-links {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="report-container" id="reportContent">
+    <!-- Header -->
+    <div class="header">
+        <div class="gov-badge">🇮🇳 भारत सरकार | GOVERNMENT OF INDIA 🇮🇳</div>
+        <h1>ONE NATION - ONE SMART ID</h1>
+        <div class="tagline">स्मार्ट आईडी कार्ड प्रणाली | Smart ID Card System</div>
+        <div class="hindi-text">एक कार्ड – सभी दस्तावेज़ | एक पहचान – सभी सेवाएं</div>
+    </div>
+
+    <!-- Card Image Display -->
+    <div class="card-image-section">
+        <div class="card-image">
+            <img src="https://gooo26.github.io/Ai/6647-removebg-preview.png" alt="Smart ID Card - Official" onerror="this.src='https://via.placeholder.com/400x250?text=Smart+ID+Card'">
+            <div class="card-caption">🔖 Official Smart ID Card | NFC Enabled Chip</div>
+        </div>
+        <div class="card-features-mini">
+            <h3>📇 Card Specifications</h3>
+            <ul>
+                <li>✅ <strong>Name:</strong> RAHUL SHARMA</li>
+                <li>✅ <strong>T-Code:</strong> AKLPD1234C</li>
+                <li>✅ <strong>ID Number:</strong> 5001 2345 6789</li>
+                <li>✅ <strong>Aadhaar Linked</strong> | PAN Verified</li>
+                <li>✅ <strong>Voter ID Linked</strong> | Passport Data</li>
+                <li>✅ <strong>NFC Chip</strong> + Secure Token Storage</li>
+                <li>✅ <strong>QR Code</strong> for Quick Verification</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Introduction - Detailed -->
+    <div class="section-title">📌 Introduction / परिचय (Full Details)</div>
+    <div class="info-box">
+        <p><strong>🔹 What is this Smart ID Card System?</strong><br>
+        This is an advanced <strong>Digital Identity Ecosystem</strong> where a single smart card replaces all physical documents. Instead of carrying Aadhaar, PAN, Voter ID, Driving Licence, Passport, and other certificates, citizens carry <strong>ONE SMART CARD</strong> that securely links to all their data.</p>
+        
+        <p><strong>🔹 Key Concept:</strong> "One Card for All" — The card itself contains NO sensitive data. It only stores a <strong>secure encrypted token</strong>. When scanned (via NFC), the system fetches the required data from a <strong>centralized secure cloud database</strong> based on permissions.</p>
+        
+        <div class="hindi-text"><strong>हिंदी में पूरी जानकारी:</strong> यह एक डिजिटल पहचान प्रणाली है जिसमें एक स्मार्ट कार्ड से आधार, पैन, वोटर आईडी, ड्राइविंग लाइसेंस आदि सभी दस्तावेज़ जुड़े होते हैं। कार्ड में सिर्फ एक टोकन (गुप्त कोड) होता है, असली डेटा सुरक्षित क्लाउड पर रहता है।</div>
+    </div>
+
+    <!-- How Card Works - Step by Step -->
+    <div class="section-title">🔄 How the Card Works - Complete Process</div>
+    <div class="grid-2">
+        <div class="info-box">
+            <h3>📱 Step 1: Card Scan (NFC)</h3>
+            <p>User taps the Smart Card on any NFC-enabled device (mobile, CSC machine, traffic police device). The reader reads the <strong>secure token</strong> from the card's chip.</p>
+            <span class="tech-tag">NFC</span> <span class="tech-tag">13.56 MHz</span>
+        </div>
+        <div class="info-box">
+            <h3>☁️ Step 2: Cloud Fetch</h3>
+            <p>The token is sent to the <strong>Secure Government Cloud Database</strong>. The system verifies the token and retrieves only the necessary information based on the requester's permission level.</p>
+            <span class="tech-tag">AES-256 Encryption</span> <span class="tech-tag">TLS 1.3</span>
+        </div>
+        <div class="info-box">
+            <h3>🔢 Step 3: T-Code Generation</h3>
+            <p>For website form filling, user generates a <strong>temporary T-Code</strong> (valid 2-5 minutes) via mobile app. Entering this T-Code on any website auto-fills basic details (name, address, etc.).</p>
+            <span class="tech-tag">OTP-like</span> <span class="tech-tag">Time-limited</span>
+        </div>
+        <div class="info-box">
+            <h3>🔐 Step 4: Full Verification</h3>
+            <p>For sensitive operations (banking, property registration), multi-factor authentication is required: <strong>Card + Fingerprint + OTP on registered mobile</strong>. Only then full data is shared.</p>
+            <span class="tech-tag">Biometric</span> <span class="tech-tag">2FA/3FA</span>
+        </div>
+    </div>
+
+    <!-- Visual Flow Diagram -->
+    <div class="flow-diagram">
+        <strong>📊 Complete Data Flow Diagram:</strong><br><br>
+        [Smart Card] ──NFC Scan──▶ [Reader Device] ──Token──▶ [Cloud Server] ──Verification──▶ [Data Returned]<br>
+        ⬆️                                                                                          ⬇️<br>
+        [Mobile App] ◀──T-Code Generate──  [User]  ──Auto-fill──▶ [Website Form] ◀──Permission Check
+    </div>
+
+    <!-- System Architecture -->
+    <div class="section-title">🏗️ System Architecture & Components</div>
+    <div class="grid-3">
+        <div class="info-box">
+            <h3>💳 1. Smart ID Card</h3>
+            <p>• NFC Chip (NTAG / DESFire)<br>• Secure Element for token storage<br>• QR Code printed on back<br>• Tamper-proof design<br>• 5+ years durability</p>
+        </div>
+        <div class="info-box">
+            <h3>📱 2. Mobile Application</h3>
+            <p>• PIN + Fingerprint login<br>• View linked documents<br>• Generate T-Code<br>• Block lost card instantly<br>• Transaction history</p>
+        </div>
+        <div class="info-box">
+            <h3>🖥️ 3. Admin/CSC Portal</h3>
+            <p>• Verify citizens offline<br>• Update document status<br>• Issue new cards<br>• View audit logs<br>• Manage permissions</p>
+        </div>
+        <div class="info-box">
+            <h3>☁️ 4. Secure Cloud DB</h3>
+            <p>• Encrypted at rest (AES-256)<br>• Distributed across 5 regions<br>• Daily backup<br>• ISO 27001 certified<br>• Govt. audited</p>
+        </div>
+        <div class="info-box">
+            <h3>🔌 5. API Gateway</h3>
+            <p>• REST APIs for websites<br>• Rate limiting (100 req/min)<br>• OAuth 2.0 authentication<br>• Request logging<br>• Webhook support</p>
+        </div>
+        <div class="info-box">
+            <h3>🖨️ 6. Issuance System</h3>
+            <p>• Biometric enrollment<br>• Card personalization<br>• Secure delivery via India Post<br>• Replacement in 7 days</p>
+        </div>
+    </div>
+
+    <!-- Security Details -->
+    <div class="section-title">🔒 Security System - Multi Layer Protection</div>
+    <div class="grid-2">
+        <div class="info-box security-badge">
+            <h3>🛡️ Layer 1: Physical Security</h3>
+            <p>• Hologram + Ghost image<br>• Micro-text printing<br>• UV ink features<br>• Tamper-evident seal</p>
+        </div>
+        <div class="info-box security-badge">
+            <h3>🔐 Layer 2: Digital Security</h3>
+            <p>• Tokenization (no raw data on card)<br>• End-to-end encryption<br>• Secure boot on readers<br>• Anti-cloning mechanism</p>
+        </div>
+        <div class="info-box security-badge">
+            <h3>👤 Layer 3: Authentication</h3>
+            <p>• Fingerprint match (1:N)<br>• OTP on registered mobile<br>• PIN for low-risk uses<br>• Liveness detection</p>
+        </div>
+        <div class="info-box security-badge">
+            <h3>📜 Layer 4: Audit & Compliance</h3>
+            <p>• All access logged<br>• User consent required<br>• Data minimization<br>• Right to be forgotten</p>
+        </div>
+    </div>
+
+    <!-- Use Cases -->
+    <div class="section-title">📍 Real-World Use Cases</div>
+    <div class="grid-3">
+        <div class="info-box"><h3>🚦 Traffic Police</h3><p>Scan card → Check DL status, PUC, Insurance → Instant e-challan if violation.</p></div>
+        <div class="info-box"><h3>🏦 Bank Account Opening</h3><p>Card + Fingerprint + OTP → Auto-fill KYC form → Zero paperwork account opening.</p></div>
+        <div class="info-box"><h3>🏥 Hospital Admission</h3><p>Scan card → Fetch health records, insurance, blood group → Fast admission.</p></div>
+        <div class="info-box"><h3>🗳️ Voting</h3><p>Card scan at polling booth → Verify voter ID without separate card.</p></div>
+        <div class="info-box"><h3>📝 Exam Registration</h3><p>Generate T-Code → Enter on exam portal → Auto-fill name, photo, signature.</p></div>
+        <div class="info-box"><h3>🏨 Hotel Check-in</h3><p>Scan card at reception → Guest details auto-filled → C-form generated.</p></div>
+    </div>
+
+    <!-- Mobile App Features -->
+    <div class="section-title">📲 Mobile Application - Complete Features</div>
+    <div class="grid-2">
+        <div class="info-box"><h3>👤 User Module</h3><p>• Secure login (PIN + Fingerprint)<br>• Dashboard with all linked documents<br>• Download digital copy<br>• Share QR code<br>• Transaction history<br>• Raise complaints</p></div>
+        <div class="info-box"><h3>⚙️ Card Management</h3><p>• View card status<br>• Instantly block lost card<br>• Request replacement<br>• Change PIN<br>• Generate T-Code<br>• Set privacy preferences</p></div>
+        <div class="info-box"><h3>🔗 Document Linking</h3><p>• Link Aadhaar, PAN, Voter ID<br>• Add Driving Licence, Passport<br>• Upload education certificates<br>• Add health records<br>• Link vehicle registration</p></div>
+        <div class="info-box"><h3>🔔 Notifications</h3><p>• Alert on every data access<br>• Renewal reminders<br>• Security alerts<br>• Government scheme updates</p></div>
+    </div>
+
+    <!-- T-Code Explained -->
+    <div class="section-title">🔢 T-Code System - Complete Explanation</div>
+    <div class="info-box">
+        <p><strong>What is T-Code?</strong> A temporary, single-use or limited-time code that allows auto-filling forms without exposing your full data.</p>
+        <p><strong>How to use:</strong><br>1️⃣ Open Mobile App → "Generate T-Code"<br>2️⃣ Choose validity (2 min, 5 min, 10 min)<br>3️⃣ Select which fields to share<br>4️⃣ Enter 6-digit T-Code on any website form<br>5️⃣ Form auto-fills automatically → Submit</p>
+        <div class="hindi-text"><strong>टी-कोड क्या है?</strong> यह एक अस्थायी कोड है जो बिना पूरा डेटा दिखाए वेबसाइट पर फॉर्म ऑटो-फिल करता है।</div>
+    </div>
+
+    <!-- Benefits -->
+    <div class="section-title">✅ Benefits & Advantages</div>
+    <div class="grid-2">
+        <div class="info-box"><h3>For Citizens</h3><p>• No need to carry 10+ documents<br>• Zero paperwork<br>• Lost card can be blocked instantly<br>• Privacy control<br>• Time saving<br>• One app to manage all IDs</p></div>
+        <div class="info-box"><h3>For Government</h3><p>• Reduced fraud<br>• Lower administrative costs<br>• Real-time data validation<br>• Better service delivery<br>• Digital India mission<br>• Environment friendly</p></div>
+    </div>
+
+    <!-- Comparison Table -->
+    <div class="section-title">📊 Comparison: Smart ID vs Traditional</div>
+    <div class="info-box" style="overflow-x: auto;">
+        <table style="width:100%; border-collapse: collapse;">
+            <tr style="background:#ff9933; color:#0a0e1a;">
+                <th style="padding:10px; border:1px solid #2a3655;">Feature</th>
+                <th style="padding:10px; border:1px solid #2a3655;">Traditional System</th>
+                <th style="padding:10px; border:1px solid #2a3655;">Smart ID Card System</th>
+            </tr>
+            <tr><td style="padding:8px; border:1px solid #2a3655;">Documents to carry</td><td style="padding:8px; border:1px solid #2a3655;">10+ cards/papers</td><td style="padding:8px; border:1px solid #2a3655;">1 Smart Card</td></tr>
+            <tr><td style="padding:8px; border:1px solid #2a3655;">Verification time</td><td style="padding:8px; border:1px solid #2a3655;">5-15 minutes</td><td style="padding:8px; border:1px solid #2a3655;">5-10 seconds</td></tr>
+            <tr><td style="padding:8px; border:1px solid #2a3655;">Form filling</td><td style="padding:8px; border:1px solid #2a3655;">Manual</td><td style="padding:8px; border:1px solid #2a3655;">Auto-fill with T-Code</td></tr>
+            <tr><td style="padding:8px; border:1px solid #2a3655;">Security</td><td style="padding:8px; border:1px solid #2a3655;">Easy to forge</td><td style="padding:8px; border:1px solid #2a3655;">Biometric + Encryption</td></tr>
+         </table>
+    </div>
+
+    <!-- Limitations & Future Scope -->
+    <div class="section-title">⚠️ Limitations & Future Scope</div>
+    <div class="grid-2">
+        <div class="info-box"><h3>Current Limitations</h3><p>• High initial cost<br>• Requires NFC readers<br>• Internet needed<br>• Website integration required<br>• Awareness needed</p></div>
+        <div class="info-box"><h3>Future Scope</h3><p>• 🌐 National rollout (2027-30)<br>• 💳 Banking integration (UPI on card)<br>• 🏥 National Health ID merge<br>• 🗳️ Blockchain voting<br>• 🌆 Smart city projects</p></div>
+    </div>
+
+    <!-- Conclusion -->
+    <div class="section-title">📝 Conclusion / निष्कर्ष</div>
+    <div class="info-box">
+        <p><strong>Final Summary:</strong> The Smart ID Card system is a revolutionary step towards <strong>Digital India</strong>. It eliminates multiple documents, reduces fraud, saves time, and provides citizens with <strong>complete control over their data</strong>.</p>
+        <div class="hindi-text"><strong>निष्कर्ष:</strong> स्मार्ट आईडी कार्ड प्रणाली डिजिटल इंडिया की दिशा में एक क्रांतिकारी कदम है।</div>
+    </div>
+
+    <!-- ========== CREATOR SECTION (Added as requested) ========== -->
+    <div class="creator-section">
+        <div class="creator-info">
+            <div class="creator-name">Amit Vishwakarma</div>
+            <div class="creator-title">📌 Project Creator | Smart ID Card System Designer</div>
+            <div class="creator-title">🚀 "One Nation - One Smart ID" Initiative</div>
+            <div class="social-links">
+                <a href="https://www.linkedin.com/in/amit-vishwakarma-a26406360?utm_source=share_via&utm_content=profile&utm_medium=member_android" target="_blank" class="social-link">🔗 LinkedIn</a>
+                <a href="https://www.instagram.com/ak__unspoken?igsh=ZmdkdWtldXRqeGto" target="_blank" class="social-link">📸 Instagram</a>
+            </div>
+        </div>
+        <div class="creator-photo">
+            <!-- Your photo placeholder - replace src with your actual image URL when available -->
+            <img src="https://gooo26.github.io/Ai/file_00000000aca8722fa0f4341bc12e802a.png" alt="Amit Vishwakarma" onerror="this.onerror=null; this.src='https://via.placeholder.com/140x140?text=Amit+V'; this.parentElement.querySelector('.photo-placeholder')?.remove();">
+        </div>
+    </div>
+    <!-- ========================================================= -->
+
+    <footer>
+        <p>🔗 ONE NATION ONE SMART ID | A Project for Digital India | © 2026</p>
+        <p style="font-size: 0.85rem; opacity: 0.7;">Project by Amit Vishwakarma — Secure | Private | Fast | Made in India</p>
+    </footer>
+</div>
+
+<!-- Download Buttons -->
+<div class="btn-group">
+    <button class="btn" id="downloadPDF">📄 Download Complete Report (PDF)</button>
+    <button class="btn btn-secondary" id="printView">🖨️ Print / Save as PDF</button>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+    const downloadBtn = document.getElementById('downloadPDF');
+    const printBtn = document.getElementById('printView');
+    const element = document.getElementById('reportContent');
+
+    downloadBtn.addEventListener('click', () => {
+        html2pdf().from(element).set({
+            margin: [0.5, 0.5, 0.5, 0.5],
+            filename: 'Smart_ID_Card_Project_By_Amit_Vishwakarma.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, letterRendering: true },
+            jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+        }).save();
+    });
+
+    printBtn.addEventListener('click', () => {
+        window.print();
+    });
+</script>
+</body>
+</html>
