@@ -1,1 +1,504 @@
-j
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Mehta Agency | Premium Electronics Hub - Luxury Experience</title>
+    <!-- Tailwind CSS + Font Awesome + Google Fonts -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <!-- AOS Library for scroll animations -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        body {
+            transition: background-color 0.4s ease, color 0.3s ease;
+        }
+        
+        /* Premium Animated Gradient Background for Light Mode */
+        .premium-bg-light {
+            background: linear-gradient(135deg, #f5f7ff 0%, #eef2ff 25%, #ffffff 50%, #f0f9ff 75%, #e6f7ec 100%);
+            background-size: 200% 200%;
+            animation: gradientShift 12s ease infinite;
+        }
+        
+        /* Premium Animated Gradient Background for Dark Mode */
+        .premium-bg-dark {
+            background: linear-gradient(135deg, #0a0f1a 0%, #0f1622 25%, #0b1120 50%, #111827 75%, #0a0f1a 100%);
+            background-size: 200% 200%;
+            animation: gradientShift 15s ease infinite;
+        }
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        /* Premium Glassmorphism Card */
+        .premium-card {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(16px);
+            border-radius: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .premium-card:hover {
+            transform: translateY(-8px) scale(1.01);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(59, 130, 246, 0.2);
+            background: rgba(255, 255, 255, 0.85);
+        }
+        
+        .dark .premium-card {
+            background: rgba(15, 25, 45, 0.65);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        .dark .premium-card:hover {
+            background: rgba(20, 32, 55, 0.8);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(163, 230, 53, 0.3);
+        }
+        
+        /* Premium Category Cards */
+        .category-premium {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border-radius: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .category-premium:hover {
+            transform: translateY(-6px);
+            background: white;
+            box-shadow: 0 25px 35px -12px rgba(0, 0, 0, 0.2);
+            border-color: rgba(59, 130, 246, 0.5);
+        }
+        
+        .dark .category-premium {
+            background: rgba(20, 30, 45, 0.6);
+            border-color: rgba(255, 255, 255, 0.05);
+        }
+        
+        .dark .category-premium:hover {
+            background: rgba(30, 45, 65, 0.9);
+            box-shadow: 0 25px 35px -12px rgba(0, 0, 0, 0.5);
+            border-color: rgba(163, 230, 53, 0.4);
+        }
+        
+        /* Premium Button Style */
+        .premium-btn {
+            background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+            border: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+        }
+        
+        .premium-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+            background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
+        }
+        
+        /* Premium Slider */
+        .slider-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        
+        .slider-track {
+            display: flex;
+            transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        
+        .slider-slide {
+            min-width: 100%;
+            backdrop-filter: blur(4px);
+        }
+        
+        /* Floating WhatsApp Button Premium */
+        .whatsapp-premium {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+            color: white;
+            border-radius: 60px;
+            padding: 14px 24px;
+            box-shadow: 0 10px 30px rgba(37, 211, 102, 0.4);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            backdrop-filter: blur(8px);
+        }
+        
+        .whatsapp-premium:hover {
+            transform: scale(1.08) translateY(-3px);
+            box-shadow: 0 15px 35px rgba(37, 211, 102, 0.5);
+        }
+        
+        /* Dark mode toggle premium */
+        .dark-toggle {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(12px);
+            border-radius: 50px;
+            transition: all 0.3s;
+        }
+        
+        .dark-toggle:hover {
+            transform: rotate(15deg);
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        /* Marquee premium */
+        .marquee-premium {
+            display: flex;
+            overflow-x: auto;
+            scrollbar-width: none;
+            gap: 1.5rem;
+            padding: 0.75rem 0;
+            white-space: nowrap;
+            animation: scrollPremium 22s linear infinite;
+        }
+        
+        .marquee-premium::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .marquee-premium:hover {
+            animation-play-state: paused;
+        }
+        
+        .brand-badge {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(8px);
+            padding: 0.6rem 1.5rem;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            color: #1e293b;
+        }
+        
+        .dark .brand-badge {
+            background: rgba(30, 41, 59, 0.7);
+            color: #cbd5e1;
+        }
+        
+        .brand-badge:hover {
+            transform: scale(1.05);
+            background: white;
+            color: #2563eb;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        @keyframes scrollPremium {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        
+        /* Premium footer */
+        .premium-footer {
+            background: linear-gradient(135deg, #0f172a 0%, #020617 100%);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Scroll animations */
+        [data-aos] {
+            transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+    </style>
+</head>
+<body class="premium-bg-light text-gray-800 transition-colors duration-300">
+    <div id="root"></div>
+    
+    <!-- Floating WhatsApp Button Premium -->
+    <a href="https://wa.me/919925525578?text=Hello%20Mehta%20Agency%2C%20I%27m%20interested%20in%20premium%20electronics!" 
+       class="whatsapp-premium" target="_blank">
+        <i class="fab fa-whatsapp fa-2x"></i>
+        <span class="hidden sm:inline font-semibold">Chat with Expert</span>
+    </a>
+
+    <!-- Dark Mode Toggle Premium -->
+    <div class="fixed top-5 right-5 z-50">
+        <button id="darkModeToggle" class="dark-toggle w-12 h-12 rounded-full shadow-lg text-blue-600 dark:text-lime-400 transition flex items-center justify-center">
+            <i id="darkIcon" class="fas fa-moon text-xl"></i>
+        </button>
+    </div>
+
+    <!-- Sticky Header Premium -->
+    <header class="sticky top-0 z-40 bg-white/70 dark:bg-gray-900/80 backdrop-blur-xl shadow-lg border-b border-gray-200/50 dark:border-gray-700/50">
+        <div class="container mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center space-x-3">
+                <div class="w-12 h-12 bg-gradient-to-br from-blue-600 to-lime-500 rounded-2xl flex items-center justify-center shadow-lg transform rotate-3 hover:rotate-0 transition">
+                    <i class="fas fa-microchip text-white text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="font-extrabold text-2xl tracking-tight bg-gradient-to-r from-blue-700 to-lime-600 bg-clip-text text-transparent">Mehta <span>Agency</span></h1>
+                    <p class="text-[10px] font-medium text-gray-500 tracking-wide">EST. 2004 | 110+ STORES</p>
+                </div>
+            </div>
+            <div class="flex-1 max-w-md mx-2">
+                <div class="relative group">
+                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-hover:text-blue-500 transition"></i>
+                    <input type="text" placeholder="Search 5000+ products..." class="w-full pl-12 pr-4 py-3 rounded-2xl border-0 bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm shadow-inner focus:ring-2 focus:ring-blue-400 transition-all">
+                </div>
+            </div>
+            <div class="flex items-center gap-4 text-sm">
+                <a href="#" class="hidden md:flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-white/50 transition"><i class="fas fa-map-marker-alt text-lime-600"></i> Find Store</a>
+                <a href="tel:9925525578" class="flex items-center gap-2 font-semibold px-3 py-2 rounded-xl bg-blue-50 dark:bg-blue-900/30 hover:bg-blue-100 transition"><i class="fas fa-phone-alt text-blue-600"></i> +91 99255 25578</a>
+            </div>
+        </div>
+        <div class="bg-black/5 dark:bg-white/5 backdrop-blur-sm py-2 overflow-x-auto">
+            <div class="container mx-auto px-4 flex gap-8 text-sm font-semibold">
+                <a href="#" class="hover:text-blue-600 transition">🔥 Smartphones</a>
+                <a href="#" class="hover:text-blue-600 transition">📺 Smart TVs</a>
+                <a href="#" class="hover:text-blue-600 transition">💻 Laptops</a>
+                <a href="#" class="hover:text-blue-600 transition">🎮 Gaming Rigs</a>
+                <a href="#" class="hover:text-blue-600 transition">🏠 Appliances</a>
+                <a href="#" class="hover:text-blue-600 transition">⚡ EMI Offers</a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Slider Premium -->
+        <section class="container mx-auto px-4 mt-8">
+            <div class="slider-container">
+                <div id="heroSlider" class="slider-track">
+                    <div class="slider-slide bg-gradient-to-br from-blue-900 via-indigo-800 to-purple-900 text-white p-10 md:p-16 flex flex-col md:flex-row items-center justify-between">
+                        <div data-aos="fade-right">
+                            <span class="text-lime-400 font-semibold tracking-wide">NEW ARRIVALS</span>
+                            <h2 class="text-4xl md:text-6xl font-extrabold mt-2">iPhone 16 Pro<br> & Galaxy S24</h2>
+                            <p class="mt-3 text-blue-100">Experience the future. 0% EMI available.</p>
+                            <button class="premium-btn mt-6 text-white px-8 py-3 rounded-full font-bold">Shop Now →</button>
+                        </div>
+                        <i class="fas fa-mobile-alt text-8xl md:text-9xl opacity-90 drop-shadow-2xl"></i>
+                    </div>
+                    <div class="slider-slide bg-gradient-to-br from-gray-900 via-black to-gray-800 text-white p-10 md:p-16 flex flex-col md:flex-row items-center justify-between">
+                        <div data-aos="fade-up">
+                            <span class="text-lime-400 font-semibold">LIMITED OFFER</span>
+                            <h2 class="text-4xl md:text-6xl font-extrabold">Samsung Neo QLED<br> 8K TV</h2>
+                            <p class="mt-3">Cinematic experience at home. Save up to ₹40,000</p>
+                            <button class="premium-btn mt-6 text-white px-8 py-3 rounded-full font-bold">Explore →</button>
+                        </div>
+                        <i class="fas fa-tv text-8xl md:text-9xl opacity-90"></i>
+                    </div>
+                    <div class="slider-slide bg-gradient-to-br from-purple-800 via-pink-700 to-red-700 text-white p-10 md:p-16 flex flex-col md:flex-row items-center justify-between">
+                        <div data-aos="fade-left">
+                            <span class="text-lime-300 font-semibold">GAMING ZONE</span>
+                            <h2 class="text-4xl md:text-6xl font-extrabold">RTX 4090 Rigs<br> & PS5 Pro</h2>
+                            <p class="mt-3">Ultimate gaming performance. Book now!</p>
+                            <button class="premium-btn mt-6 text-white px-8 py-3 rounded-full font-bold">Claim Deal →</button>
+                        </div>
+                        <i class="fas fa-gamepad text-8xl md:text-9xl opacity-90"></i>
+                    </div>
+                </div>
+                <div class="absolute bottom-5 left-0 right-0 flex justify-center gap-3">
+                    <button class="slider-dot w-3 h-3 rounded-full bg-white/60 transition-all"></button>
+                    <button class="slider-dot w-3 h-3 rounded-full bg-white/30 transition-all"></button>
+                    <button class="slider-dot w-3 h-3 rounded-full bg-white/30 transition-all"></button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Category Grid Premium -->
+        <section class="container mx-auto px-4 py-16">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-extrabold bg-gradient-to-r from-blue-600 to-lime-500 bg-clip-text text-transparent">Shop by Category</h2>
+                <p class="text-gray-500 mt-2">Premium electronics at unbeatable prices</p>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-8 gap-5">
+                <div class="category-premium p-5 text-center" data-aos="fade-up"><i class="fas fa-mobile-alt text-4xl text-blue-600"></i><p class="font-bold mt-3">Mobile & Tablets</p></div>
+                <div class="category-premium p-5 text-center" data-aos="fade-up" data-aos-delay="50"><i class="fas fa-headphones text-4xl text-blue-600"></i><p class="font-bold mt-3">Accessories</p></div>
+                <div class="category-premium p-5 text-center" data-aos="fade-up" data-aos-delay="100"><i class="fas fa-tv text-4xl text-blue-600"></i><p class="font-bold mt-3">LED/Smart TV</p></div>
+                <div class="category-premium p-5 text-center" data-aos="fade-up" data-aos-delay="150"><i class="fas fa-laptop text-4xl text-blue-600"></i><p class="font-bold mt-3">Laptop & Desktop</p></div>
+                <div class="category-premium p-5 text-center" data-aos="fade-up" data-aos-delay="200"><i class="fas fa-music text-4xl text-blue-600"></i><p class="font-bold mt-3">Audio & Video</p></div>
+                <div class="category-premium p-5 text-center" data-aos="fade-up" data-aos-delay="250"><i class="fas fa-robot text-4xl text-blue-600"></i><p class="font-bold mt-3">Appliances</p></div>
+                <div class="category-premium p-5 text-center" data-aos="fade-up" data-aos-delay="300"><i class="fas fa-gamepad text-4xl text-blue-600"></i><p class="font-bold mt-3">Gaming</p></div>
+                <div class="category-premium p-5 text-center" data-aos="fade-up" data-aos-delay="350"><i class="fas fa-wind text-4xl text-blue-600"></i><p class="font-bold mt-3">Air Conditioners</p></div>
+            </div>
+        </section>
+
+        <!-- Trust Signals Premium -->
+        <section class="py-16 my-4">
+            <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                <div class="premium-card p-8" data-aos="zoom-in"><i class="fas fa-award text-5xl text-blue-600"></i><h3 class="text-3xl font-extrabold mt-3">20+ Years</h3><p class="font-medium">of Excellence</p></div>
+                <div class="premium-card p-8" data-aos="zoom-in" data-aos-delay="100"><i class="fas fa-store text-5xl text-blue-600"></i><h3 class="text-3xl font-extrabold mt-3">110+ Stores</h3><p class="font-medium">Across Gujarat</p></div>
+                <div class="premium-card p-8" data-aos="zoom-in" data-aos-delay="200"><i class="fas fa-smile text-5xl text-blue-600"></i><h3 class="text-3xl font-extrabold mt-3">70 Lakh+</h3><p class="font-medium">Happy Customers</p></div>
+            </div>
+        </section>
+
+        <!-- Offers Features -->
+        <section class="container mx-auto px-4 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="premium-card p-6 flex items-center gap-5"><i class="fas fa-rupee-sign text-4xl text-lime-600"></i><div><h3 class="font-bold text-xl">Best Price Guarantee</h3><p>Zero hidden charges</p></div></div>
+                <div class="premium-card p-6 flex items-center gap-5"><i class="fas fa-credit-card text-4xl text-lime-600"></i><div><h3 class="font-bold text-xl">Easy EMI Options</h3><p>No Cost EMI up to 24 months</p></div></div>
+                <div class="premium-card p-6 flex items-center gap-5"><i class="fas fa-tools text-4xl text-lime-600"></i><div><h3 class="font-bold text-xl">Expert Repair Desk</h3><p>Free checkup & exchange</p></div></div>
+            </div>
+        </section>
+
+        <!-- Authorised Brands Marquee -->
+        <section class="py-12">
+            <div class="container mx-auto px-4">
+                <h3 class="text-3xl font-bold text-center mb-8">✨ Trusted Authorised Partners ✨</h3>
+                <div class="overflow-hidden">
+                    <div class="marquee-premium inline-flex gap-4">
+                        <span class="brand-badge">Vivo</span><span class="brand-badge">Samsung</span><span class="brand-badge">iPhone</span><span class="brand-badge">Realme</span><span class="brand-badge">Oppo</span><span class="brand-badge">Motorola</span>
+                        <span class="brand-badge">Infinix</span><span class="brand-badge">Xiaomi</span><span class="brand-badge">OnePlus</span><span class="brand-badge">Pixel</span><span class="brand-badge">Nothing</span><span class="brand-badge">Tecno</span>
+                        <span class="brand-badge">Lava</span><span class="brand-badge">Nokia</span><span class="brand-badge">Poco</span><span class="brand-badge">Haier</span><span class="brand-badge">TCL</span><span class="brand-badge">LG</span>
+                        <span class="brand-badge">Daikin</span><span class="brand-badge">Voltas</span><span class="brand-badge">Panasonic</span><span class="brand-badge">Onida</span>
+                        <!-- duplicate -->
+                        <span class="brand-badge">Vivo</span><span class="brand-badge">Samsung</span><span class="brand-badge">iPhone</span><span class="brand-badge">Realme</span><span class="brand-badge">Oppo</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Map + Newsletter -->
+        <section class="container mx-auto px-4 py-12">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="premium-card p-6" data-aos="fade-right">
+                    <h3 class="text-2xl font-bold"><i class="fas fa-map-pin text-red-500"></i> Flagship Store</h3>
+                    <p class="mt-2">5, Hansraj complex, Nr. Sankalp Hotel, Maninagar, Ahmedabad</p>
+                    <div class="mt-4 rounded-2xl overflow-hidden shadow-xl h-64">
+                        <iframe class="w-full h-full" frameborder="0" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3671.613567432867!2d72.600886!3d23.022506!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x395e84e5e3e5e5e5%3A0x3f2f8f2f8f2f8f!2sManinagar%2C%20Ahmedabad!5e0!3m2!1sen!2sin!4v1645000000000!5m2!1sen!2sin" allowfullscreen></iframe>
+                    </div>
+                </div>
+                <div class="premium-card p-8" data-aos="fade-left">
+                    <h3 class="text-2xl font-bold"><i class="fas fa-gift text-lime-600"></i> Subscribe & Save ₹500</h3>
+                    <p class="mt-2">Get exclusive coupons & early access to sales</p>
+                    <div class="mt-6 flex gap-3">
+                        <input type="email" placeholder="Your best email" class="flex-1 p-3 rounded-xl bg-white/50 dark:bg-gray-800/50 border-0 focus:ring-2 focus:ring-blue-500">
+                        <button class="premium-btn text-white px-6 py-3 rounded-xl font-bold">Subscribe</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Premium Footer -->
+    <footer class="premium-footer text-gray-300 pt-12 pb-6 mt-10">
+        <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div>
+                <div class="flex items-center gap-2"><i class="fas fa-crown text-lime-400 text-2xl"></i><span class="font-bold text-xl text-white">Mehta Agency</span></div>
+                <p class="mt-3">Smartphones to Smart TVs – Find It All at Mehta Agency.</p>
+                <p class="mt-2 text-sm">📌 5, Hansraj complex, Nr. Sankalp Hotel, Maninagar, Ahmedabad - 380008</p>
+                <p class="mt-2">📞 <a href="tel:9925525578" class="hover:text-lime-400">99255 25578</a> | ✉️ <a href="mailto:mehta.info@gmail.com" class="hover:text-lime-400">mehta.info@gmail.com</a></p>
+            </div>
+            <div>
+                <h4 class="font-bold text-white mb-4">Quick Support</h4>
+                <ul class="space-y-2">
+                    <li><a href="#" class="hover:text-lime-400">EMI Calculator</a></li>
+                    <li><a href="#" class="hover:text-lime-400">Exchange Offer</a></li>
+                    <li><a href="#" class="hover:text-lime-400">Repair Booking</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-bold text-white mb-4">Connect With Us</h4>
+                <div class="flex gap-5 text-3xl">
+                    <a href="#" class="hover:text-blue-400"><i class="fab fa-facebook"></i></a>
+                    <a href="#" class="hover:text-sky-400"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="hover:text-red-500"><i class="fab fa-youtube"></i></a>
+                    <a href="#" class="hover:text-pink-500"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="hover:text-lime-400"><i class="fas fa-tree"></i></a>
+                    <a href="#" class="hover:text-blue-500"><i class="fab fa-telegram"></i></a>
+                </div>
+                <p class="mt-6 text-xs opacity-75">© 2025 Mehta Agency — Since 2004</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Dark Mode Toggle
+        const darkToggle = document.getElementById('darkModeToggle');
+        const darkIcon = document.getElementById('darkIcon');
+        const body = document.body;
+        
+        if (localStorage.getItem('theme') === 'dark') {
+            body.classList.add('dark');
+            body.classList.remove('premium-bg-light');
+            body.classList.add('premium-bg-dark');
+            darkIcon.classList.remove('fa-moon');
+            darkIcon.classList.add('fa-sun');
+        } else {
+            body.classList.add('premium-bg-light');
+        }
+        
+        darkToggle.addEventListener('click', () => {
+            body.classList.toggle('dark');
+            if (body.classList.contains('dark')) {
+                body.classList.remove('premium-bg-light');
+                body.classList.add('premium-bg-dark');
+                localStorage.setItem('theme', 'dark');
+                darkIcon.classList.remove('fa-moon');
+                darkIcon.classList.add('fa-sun');
+            } else {
+                body.classList.remove('premium-bg-dark');
+                body.classList.add('premium-bg-light');
+                localStorage.setItem('theme', 'light');
+                darkIcon.classList.remove('fa-sun');
+                darkIcon.classList.add('fa-moon');
+            }
+        });
+        
+        // Hero Slider
+        let currentSlide = 0;
+        const track = document.getElementById('heroSlider');
+        const slides = document.querySelectorAll('.slider-slide');
+        const dots = document.querySelectorAll('.slider-dot');
+        const total = slides.length;
+        
+        function updateSlider() {
+            track.style.transform = `translateX(-${currentSlide * 100}%)`;
+            dots.forEach((dot, idx) => {
+                dot.style.backgroundColor = idx === currentSlide ? '#a3e635' : 'rgba(255,255,255,0.4)';
+                dot.style.width = idx === currentSlide ? '12px' : '8px';
+            });
+        }
+        
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % total;
+            updateSlider();
+        }
+        
+        let interval = setInterval(nextSlide, 5500);
+        document.querySelector('.slider-container').addEventListener('mouseenter', () => clearInterval(interval));
+        document.querySelector('.slider-container').addEventListener('mouseleave', () => { interval = setInterval(nextSlide, 5500); });
+        dots.forEach((dot, idx) => {
+            dot.addEventListener('click', () => {
+                clearInterval(interval);
+                currentSlide = idx;
+                updateSlider();
+                interval = setInterval(nextSlide, 5500);
+            });
+        });
+        updateSlider();
+        
+        // AOS
+        AOS.init({ duration: 800, once: true, offset: 40 });
+        
+        // Newsletter Alert
+        document.querySelector('.premium-card .premium-btn')?.addEventListener('click', function() {
+            const input = document.querySelector('.premium-card input');
+            if(input?.value.includes('@')) alert('🎉 Welcome! Your ₹500 coupon is on the way!');
+            else alert('Please enter valid email to unlock offers');
+        });
+    </script>
+</body>
+</html>
