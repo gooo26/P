@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="Soniya - Premium Personal Portfolio. Self Growth, Discipline & Mindset. Explore the journey of a self-motivated individual.">
+    <meta name="keywords" content="Soniya, personal growth, discipline, mindset, portfolio, self improvement">
+    <meta name="author" content="Soniya">
+    <title>Soniya | Self Growth · Discipline · Mindset</title>
+    
+    <!-- Google Fonts: Poppins + Montserrat -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <!-- GSAP & ScrollTrigger -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #05050A;
+            font-family: 'Inter', 'Poppins', sans-serif;
+            color: #F0F0F8;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+            cursor: none;
+        }
+
+        /* Custom Cursor Glow Effect */
+        .cursor-glow {
+            position: fixed;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(138, 43, 226, 0.7), rgba(0, 255, 255, 0.2));
+            filter: blur(6px);
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+            transition: transform 0.05s linear;
+            mix-blend-mode: screen;
+        }
+
+        /* Scroll Progress Bar */
+        .progress-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(255,255,255,0.05);
+            z-index: 10000;
+        }
+        .progress-bar {
+            height: 4px;
+            background: linear-gradient(90deg, #a855f7, #06b6d4);
+            width: 0%;
+            transition: width 0.1s ease;
+            box-shadow: 0 0 12px #a855f7;
+        }
+
+        /* Back to Top */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(20, 20, 40, 0.7);
+            backdrop-filter: blur(12px);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.4rem;
+            border: 1px solid rgba(168, 85, 247, 0.6);
+            cursor: pointer;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(168,85,247,0.3);
+        }
+        .back-to-top.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .back-to-top:hover {
+            background: #a855f7;
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px #a855f7;
+        }
+
+        /* Loading Animation */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #05050A;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 20000;
+            transition: opacity 0.8s ease, visibility 0.8s;
+        }
+        .loader.hide {
+            opacity: 0;
+            visibility: hidden;
+        }
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 3px solid rgba(168,85,247,0.2);
+            border-top: 3px solid #a855f7;
+            border-right: 3px solid #06b6d4;
+            border-radius: 50%;
+            animation: spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Sections & General */
+        section {
+            padding: 100px 7%;
+            position: relative;
+        }
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+        h2 {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #FFFFFF, #c084fc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 2rem;
+            letter-spacing: -0.02em;
+        }
+        .glass-card {
+            background: rgba(15, 15, 30, 0.4);
+            backdrop-filter: blur(12px);
+            border-radius: 32px;
+            border: 1px solid rgba(168, 85, 247, 0.25);
+            transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+        .glass-card:hover {
+            border-color: rgba(168, 85, 247, 0.7);
+            box-shadow: 0 20px 35px -15px rgba(168,85,247,0.3);
+            transform: translateY(-6px);
+        }
+
+        /* Hero */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        #particle-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        /* Modern profile image - Rounded rectangle with glass effect, NOT a circle */
+        .profile-wrapper {
+            display: inline-block;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+        .profile-img {
+            width: 220px;
+            height: 260px;
+            object-fit: cover;
+            border-radius: 28px;
+            background: linear-gradient(135deg, rgba(168,85,247,0.2), rgba(6,182,212,0.1));
+            padding: 4px;
+            box-shadow: 0 25px 40px -12px rgba(0,0,0,0.5), 0 0 0 1px rgba(168,85,247,0.3), 0 0 30px rgba(168,85,247,0.2);
+            transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.2);
+            backdrop-filter: blur(2px);
+        }
+        .profile-img:hover {
+            transform: scale(1.02) translateY(-5px);
+            box-shadow: 0 30px 50px -15px rgba(168,85,247,0.5), 0 0 0 2px rgba(168,85,247,0.6), 0 0 40px #a855f7;
+        }
+        
+        /* Decorative glow behind profile */
+        .profile-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(168,85,247,0.3), transparent 70%);
+            transform: translate(-50%, -50%);
+            filter: blur(25px);
+            z-index: -1;
+            border-radius: 28px;
+        }
+        
+        h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #FFFFFF, #e2c6ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .typing-text {
+            font-size: 1.8rem;
+            font-weight: 500;
+            margin: 1rem 0;
+            color: #c4b5fd;
+            min-height: 80px;
+        }
+        .btn-group {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+        .btn-primary, .btn-secondary {
+            padding: 12px 32px;
+            border-radius: 40px;
+            font-weight: 600;
+            transition: 0.25s;
+            cursor: pointer;
+            font-size: 1rem;
+            border: none;
+        }
+        .btn-primary {
+            background: linear-gradient(95deg, #a855f7, #06b6d4);
+            color: white;
+            box-shadow: 0 5px 15px rgba(168,85,247,0.3);
+        }
+        .btn-primary:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 25px rgba(168,85,247,0.5);
+        }
+        .btn-secondary {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(168,85,247,0.6);
+            color: white;
+            backdrop-filter: blur(4px);
+        }
+        .btn-secondary:hover {
+            background: rgba(168,85,247,0.2);
+            transform: translateY(-4px);
+            border-color: #a855f7;
+        }
+
+        /* About Cards */
+        .about-text {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            background: rgba(20,20,40,0.5);
+            padding: 2rem;
+            border-radius: 32px;
+            border-left: 4px solid #a855f7;
+        }
+        .icon-grid {
+            display: flex;
+            gap: 2rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .icon-card {
+            background: rgba(25,25,45,0.6);
+            backdrop-filter: blur(8px);
+            padding: 1.2rem 1.8rem;
+            border-radius: 60px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 500;
+            border: 1px solid rgba(168,85,247,0.3);
+        }
+        .icon-card i {
+            font-size: 1.8rem;
+            color: #a855f7;
+        }
+
+        /* Social Cards */
+        .social-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .social-card {
+            background: rgba(20,20,40,0.5);
+            backdrop-filter: blur(12px);
+            padding: 2rem 2rem;
+            width: 240px;
+            text-align: center;
+            border-radius: 28px;
+            transition: all 0.3s;
+            border: 1px solid rgba(0,255,255,0.2);
+            text-decoration: none;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .social-card i {
+            font-size: 3rem;
+            transition: 0.2s;
+        }
+        .social-card:hover {
+            transform: translateY(-12px);
+            border-color: #a855f7;
+            box-shadow: 0 0 25px rgba(168,85,247,0.6);
+            background: rgba(30,30,55,0.8);
+        }
+        .social-card:hover i {
+            text-shadow: 0 0 12px #a855f7;
+        }
+
+        /* Skills */
+        .skills-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 3rem;
+        }
+        .circular-skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+            flex: 1;
+        }
+        .circle-card {
+            text-align: center;
+            width: 140px;
+        }
+        canvas.circle-canvas {
+            width: 120px;
+            height: 120px;
+        }
+        .skill-label {
+            margin-top: 10px;
+            font-weight: 600;
+        }
+        .progress-list {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 1.8rem;
+            justify-content: center;
+        }
+        .progress-item {
+            width: 100%;
+        }
+        .progress-item span {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        .progress-bar-bg {
+            background: #2a2a3a;
+            border-radius: 40px;
+            height: 12px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #a855f7, #06b6d4);
+            border-radius: 40px;
+            transition: width 1.2s ease-out;
+        }
+
+        /* Contact Form */
+        .contact-form {
+            background: rgba(15,15,30,0.45);
+            backdrop-filter: blur(12px);
+            padding: 2rem;
+            border-radius: 32px;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        input, textarea {
+            width: 100%;
+            background: rgba(10,10,20,0.7);
+            border: 1px solid rgba(168,85,247,0.4);
+            padding: 14px 18px;
+            border-radius: 28px;
+            color: white;
+            font-family: inherit;
+            transition: 0.2s;
+        }
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #a855f7;
+            box-shadow: 0 0 12px rgba(168,85,247,0.4);
+        }
+        .send-btn {
+            background: linear-gradient(95deg, #a855f7, #06b6d4);
+            padding: 12px 30px;
+            border: none;
+            border-radius: 40px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .send-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 20px #a855f7;
+        }
+        .success-msg {
+            margin-top: 1rem;
+            padding: 12px;
+            background: rgba(0,255,0,0.1);
+            border-radius: 28px;
+            text-align: center;
+            display: none;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            border-top: 1px solid rgba(168,85,247,0.2);
+        }
+
+        /* Section Reveal */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s ease;
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @media (max-width: 768px) {
+            section { padding: 60px 5%; }
+            h1 { font-size: 2.5rem; }
+            .typing-text { font-size: 1.2rem; }
+            .skills-wrapper { flex-direction: column; }
+            .profile-img { width: 160px; height: 190px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="loader" id="loader">
+    <div class="spinner"></div>
+</div>
+
+<div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+</div>
+<div class="cursor-glow" id="cursorGlow"></div>
+<div class="back-to-top" id="backToTop"><i class="fas fa-arrow-up"></i></div>
+
+<!-- Hero Section -->
+<section class="hero" id="home">
+    <canvas id="particle-canvas"></canvas>
+    <div class="hero-content">
+        <div class="profile-wrapper">
+            <div class="profile-glow"></div>
+            <img src="https://github.com/gooo26/Ai/blob/main/file_00000000594072089a78a2a056ea40cb.png?raw=true" alt="Soniya Profile" class="profile-img" onerror="this.src='https://via.placeholder.com/220x260?text=Soniya'">
+        </div>
+        <h1>Soniya</h1>
+        <div class="typing-text" id="typedText"></div>
+        <div class="btn-group">
+            <button class="btn-primary" id="exploreBtn">Explore My Journey</button>
+            <button class="btn-secondary" id="followBtn">Follow Me</button>
+        </div>
+    </div>
+</section>
+
+<!-- About Section -->
+<section id="about">
+    <div class="container">
+        <h2 class="reveal">✦ About Me</h2>
+        <div class="about-text reveal">
+            I am a self-motivated individual with a strong focus on self-improvement and personal growth. I actively work on building discipline, improving focus, and overcoming challenges such as fear of judgment. I believe in continuous learning through daily habits, goal-setting, and consistent effort. I am passionate about developing my skills, mindset, and personality to achieve long-term success.
+        </div>
+        <div class="icon-grid reveal">
+            <div class="icon-card"><i class="fas fa-brain"></i> Mindset</div>
+            <div class="icon-card"><i class="fas fa-dumbbell"></i> Discipline</div>
+            <div class="icon-card"><i class="fas fa-chart-line"></i> Growth</div>
+            <div class="icon-card"><i class="fas fa-heart"></i> Resilience</div>
+        </div>
+    </div>
+</section>
+
+<!-- Social Media Section -->
+<section id="social">
+    <div class="container">
+        <h2 class="reveal">✨ Connect & Follow</h2>
+        <div class="social-grid reveal">
+            <a href="https://youtube.com/@unbreakabledrean?si=EsBkqRxasf2zg7QL" target="_blank" class="social-card glass-card">
+                <i class="fab fa-youtube"></i>
+                <h3>YouTube</h3>
+                <p>@unbreakabledrean</p>
+            </a>
+            <a href="https://www.instagram.com/soniyabydocumentry?igsh=cHZiOWE1Nzdjd2dj" target="_blank" class="social-card glass-card">
+                <i class="fab fa-instagram"></i>
+                <h3>Instagram</h3>
+                <p>soniyabydocumentry</p>
+            </a>
+            <a href="https://linkedin.com" target="_blank" class="social-card glass-card">
+                <i class="fab fa-linkedin-in"></i>
+                <h3>LinkedIn</h3>
+                <p>Soniya Official</p>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Skills Section -->
+<section id="skills">
+    <div class="container">
+        <h2 class="reveal">📈 Growth Metrics</h2>
+        <div class="skills-wrapper reveal">
+            <div class="circular-skills">
+                <div class="circle-card" data-skill="Discipline" data-value="92"><canvas width="120" height="120" class="circle-canvas"></canvas><div class="skill-label">Discipline</div></div>
+                <div class="circle-card" data-skill="Focus" data-value="88"><canvas width="120" height="120" class="circle-canvas"></canvas><div class="skill-label">Focus</div></div>
+                <div class="circle-card" data-skill="Mindset" data-value="95"><canvas width="120" height="120" class="circle-canvas"></canvas><div class="skill-label">Mindset</div></div>
+                <div class="circle-card" data-skill="Consistency" data-value="90"><canvas width="120" height="120" class="circle-canvas"></canvas><div class="skill-label">Consistency</div></div>
+            </div>
+            <div class="progress-list">
+                <div class="progress-item"><span>Discipline</span><div class="progress-bar-bg"><div class="progress-fill" data-target="92"></div></div></div>
+                <div class="progress-item"><span>Focus</span><div class="progress-bar-bg"><div class="progress-fill" data-target="88"></div></div></div>
+                <div class="progress-item"><span>Mindset</span><div class="progress-bar-bg"><div class="progress-fill" data-target="95"></div></div></div>
+                <div class="progress-item"><span>Consistency</span><div class="progress-bar-bg"><div class="progress-fill" data-target="90"></div></div></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Section -->
+<section id="contact">
+    <div class="container">
+        <h2 class="reveal">📬 Let's Connect</h2>
+        <div class="contact-form reveal">
+            <p style="margin-bottom: 1rem; text-align: center;"><i class="fas fa-envelope"></i> soniya2811998@gmail.com</p>
+            <form id="contactForm">
+                <div class="form-group"><input type="text" placeholder="Your Name" id="name" required></div>
+                <div class="form-group"><input type="email" placeholder="Email Address" id="email" required></div>
+                <div class="form-group"><textarea rows="4" placeholder="Your Message" id="message" required></textarea></div>
+                <button type="submit" class="send-btn"><i class="fas fa-paper-plane"></i> Send Message</button>
+                <div id="successMessage" class="success-msg">✨ Message sent successfully! Soniya will reach out soon.</div>
+            </form>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <p>© 2025 Soniya — Self Growth · Discipline · Mindset</p>
+</footer>
+
+<script>
+    // ---------- LOADER ----------
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            document.getElementById('loader').classList.add('hide');
+        }, 800);
+        initParticles();
+        initTyping();
+        initCircularProgress();
+        initProgressFillObserver();
+        initRevealAnimations();
+        initBackToTop();
+        initCursor();
+        initScrollProgress();
+        initFormSubmit();
+    });
+
+    // Particle Background
+    function initParticles() {
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        let width = window.innerWidth;
+        let height = window.innerHeight;
+        canvas.width = width;
+        canvas.height = height;
+        let particles = [];
+        const PARTICLE_COUNT = 90;
+
+        for (let i = 0; i < PARTICLE_COUNT; i++) {
+            particles.push({
+                x: Math.random() * width,
+                y: Math.random() * height,
+                radius: Math.random() * 2 + 1,
+                alpha: Math.random() * 0.5 + 0.2,
+                speedX: (Math.random() - 0.5) * 0.3,
+                speedY: (Math.random() - 0.5) * 0.2
+            });
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+            for (let p of particles) {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(168, 85, 247, ${p.alpha})`;
+                ctx.fill();
+                p.x += p.speedX;
+                p.y += p.speedY;
+                if (p.x < 0) p.x = width;
+                if (p.x > width) p.x = 0;
+                if (p.y < 0) p.y = height;
+                if (p.y > height) p.y = 0;
+            }
+            requestAnimationFrame(animate);
+        }
+        animate();
+        window.addEventListener('resize', () => {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+        });
+    }
+
+    // Typing Animation
+    const phrases = ["Self Growth", "Discipline", "Mindset"];
+    let idx = 0;
+    let charIdx = 0;
+    let isDeleting = false;
+    const typedSpan = document.getElementById('typedText');
+    function initTyping() {
+        function typeEffect() {
+            const current = phrases[idx];
+            if (isDeleting) {
+                typedSpan.innerText = current.substring(0, charIdx-1);
+                charIdx--;
+                if (charIdx === 0) {
+                    isDeleting = false;
+                    idx = (idx+1) % phrases.length;
+                }
+            } else {
+                typedSpan.innerText = current.substring(0, charIdx+1);
+                charIdx++;
+                if (charIdx === current.length) {
+                    isDeleting = true;
+                    setTimeout(typeEffect, 1500);
+                    return;
+                }
+            }
+            setTimeout(typeEffect, isDeleting ? 60 : 120);
+        }
+        typeEffect();
+    }
+
+    // Circular Progress Draw
+    function initCircularProgress() {
+        const circles = document.querySelectorAll('.circle-card');
+        circles.forEach(card => {
+            const canvas = card.querySelector('canvas');
+            const value = parseInt(card.dataset.value);
+            const ctx = canvas.getContext('2d');
+            let startAngle = -90;
+            function draw(percent) {
+                ctx.clearRect(0,0,120,120);
+                ctx.beginPath();
+                ctx.arc(60,60,50,0,2*Math.PI);
+                ctx.strokeStyle = '#2a2a3a';
+                ctx.lineWidth = 8;
+                ctx.stroke();
+                ctx.beginPath();
+                let radEnd = (startAngle + (percent/100)*360) * Math.PI/180;
+                ctx.arc(60,60,50,startAngle * Math.PI/180, radEnd);
+                const gradient = ctx.createLinearGradient(20,20,100,100);
+                gradient.addColorStop(0,'#a855f7');
+                gradient.addColorStop(1,'#06b6d4');
+                ctx.strokeStyle = gradient;
+                ctx.lineWidth = 8;
+                ctx.stroke();
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 18px Inter';
+                ctx.fillText(percent+'%', 48, 70);
+            }
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if(entry.isIntersecting){
+                        let count = 0;
+                        const interval = setInterval(()=>{
+                            if(count >= value) clearInterval(interval);
+                            else { count++; draw(count); }
+                        }, 12);
+                        observer.unobserve(canvas);
+                    }
+                });
+            }, {threshold:0.5});
+            observer.observe(canvas);
+        });
+    }
+
+    // Animated progress fill on scroll
+    function initProgressFillObserver() {
+        const fills = document.querySelectorAll('.progress-fill');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if(entry.isIntersecting) {
+                    const target = entry.target.getAttribute('data-target');
+                    entry.target.style.width = target + '%';
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.4 });
+        fills.forEach(fill => observer.observe(fill));
+    }
+
+    // GSAP Scroll Reveal
+    function initRevealAnimations() {
+        gsap.registerPlugin(ScrollTrigger);
+        const reveals = document.querySelectorAll('.reveal');
+        reveals.forEach(el => {
+            gsap.fromTo(el, { y: 40, opacity: 0 }, {
+                y: 0,
+                opacity: 1,
+                duration: 0.9,
+                ease: "power2.out",
+                scrollTrigger: {
+                    trigger: el,
+                    start: "top 85%",
+                    toggleActions: "play none none reverse"
+                }
+            });
+        });
+    }
+
+    // Back to top
+    function initBackToTop() {
+        const btn = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if(window.scrollY > 500) btn.classList.add('show');
+            else btn.classList.remove('show');
+        });
+        btn.addEventListener('click', () => window.scrollTo({top:0, behavior:'smooth'}));
+    }
+
+    // Scroll progress bar
+    function initScrollProgress() {
+        window.addEventListener('scroll', () => {
+            const winScroll = document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - window.innerHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('progressBar').style.width = scrolled + '%';
+        });
+    }
+
+    // Custom cursor
+    function initCursor() {
+        const cursor = document.getElementById('cursorGlow');
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+        document.querySelectorAll('a, button, .social-card, .btn-primary, .btn-secondary, .icon-card').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.style.transform = 'translate(-50%, -50%) scale(1.6)');
+            el.addEventListener('mouseleave', () => cursor.style.transform = 'translate(-50%, -50%) scale(1)');
+        });
+    }
+
+    // Contact Form + success msg
+    function initFormSubmit() {
+        const form = document.getElementById('contactForm');
+        const successDiv = document.getElementById('successMessage');
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const msg = document.getElementById('message').value.trim();
+            if(name && email && msg) {
+                successDiv.style.display = 'block';
+                form.reset();
+                setTimeout(() => successDiv.style.display = 'none', 4000);
+            } else {
+                alert('Please fill all fields');
+            }
+        });
+    }
+
+    // CTA Buttons
+    document.getElementById('exploreBtn').addEventListener('click', () => {
+        document.getElementById('about').scrollIntoView({behavior: 'smooth'});
+    });
+    document.getElementById('followBtn').addEventListener('click', () => {
+        document.getElementById('social').scrollIntoView({behavior: 'smooth'});
+    });
+</script>
+</body>
+</html>
