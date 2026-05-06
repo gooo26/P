@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>T29s — Real-Time Conversation Translator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ============================================================
+       DESIGN TOKENS
+    ============================================================ */
+    :root {
+      --bg:           #06070F;
+      --surface:      rgba(255,255,255,0.04);
+      --surface-2:    rgba(255,255,255,0.07);
+      --border:       rgba(255,255,255,0.08);
+      --border-2:     rgba(255,255,255,0.14);
+
+      /* Accent colours */
+      --cyan:         #22D3EE;
+      --amber:        #F59E0B;
+      --indigo:       #818CF8;
+      --green:        #10B981;
+      --red:          #EF4444;
+
+      /* Glows */
+      --glow-cyan:    rgba(34, 211, 238, 0.18);
+      --glow-amber:   rgba(245, 158, 11, 0.18);
+      --glow-indigo:  rgba(129, 140, 248, 0.18);
+
+      /* Text */
+      --t1: #F1F5F9;
+      --t2: rgba(241,245,249,0.55);
+      --t3: rgba(241,245,249,0.28);
+
+      /* Geometry */
+      --r:   20px;
+      --r-s: 12px;
+      --r-xs: 8px;
+    }
+
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--t1);
+      font-family: 'Outfit', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Background atmosphere ── */
+    body::before {
+      content:'';
+      position:fixed; inset:0; pointer-events:none; z-index:0;
+      background:
+        radial-gradient(ellipse 60% 50% at 15%  5%,  rgba(34,211,238,0.07)  0%, transparent 55%),
+        radial-gradient(ellipse 60% 50% at 85% 95%,  rgba(245,158,11,0.07)  0%, transparent 55%),
+        radial-gradient(ellipse 50% 40% at 50% 50%,  rgba(129,140,248,0.05) 0%, transparent 65%);
+    }
+    body::after {
+      content:'';
+      position:fixed; inset:0; pointer-events:none; z-index:0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
+      background-size: 52px 52px;
+    }
+
+    /* ============================================================
+       APP SHELL
+    ============================================================ */
+    .app {
+      position:relative; z-index:1;
+      max-width:1160px; margin:0 auto;
+      padding:22px 18px 28px;
+      display:flex; flex-direction:column; gap:16px;
+      min-height:100vh;
+    }
+
+    /* ============================================================
+       HEADER
+    ============================================================ */
+    .header {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:14px 24px;
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:var(--r);
+      backdrop-filter:blur(24px);
+    }
+
+    .logo { display:flex; align-items:center; gap:13px; }
+
+    .logo-icon {
+      width:42px; height:42px; border-radius:10px; flex-shrink:0;
+      background:linear-gradient(135deg, var(--cyan), var(--indigo));
+      display:flex; align-items:center; justify-content:center;
+      font-family:'Syne',sans-serif; font-weight:800; font-size:13px;
+      color:#06070F; letter-spacing:-0.5px;
+    }
+
+    .logo-name {
+      font-family:'Syne',sans-serif; font-weight:800; font-size:21px;
+      background:linear-gradient(130deg, var(--cyan) 0%, var(--indigo) 60%, var(--amber) 100%);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    }
+
+    .logo-sub { font-size:11.5px; color:var(--t3); font-weight:300; margin-top:1px; }
+
+    /* Global status pill */
+    .status-pill {
+      display:flex; align-items:center; gap:8px;
+      padding:8px 16px;
+      background:var(--surface); border:1px solid var(--border);
+      border-radius:100px; font-size:13px; color:var(--t2);
+      transition:color .3s;
+    }
+
+    .sdot {
+      width:8px; height:8px; border-radius:50%;
+      background:var(--t3); transition:background .3s, box-shadow .3s;
+      flex-shrink:0;
+    }
+    .sdot.listening { background:var(--cyan);   box-shadow:0 0 10px var(--cyan);   animation:sdot-pulse 1.5s ease-in-out infinite; }
+    .sdot.processing{ background:var(--amber);  box-shadow:0 0 10px var(--amber);  animation:sdot-pulse  .8s ease-in-out infinite; }
+    .sdot.speaking  { background:var(--green);  box-shadow:0 0 10px var(--green);  animation:sdot-pulse 1.1s ease-in-out infinite; }
+
+    @keyframes sdot-pulse {
+      0%,100%{ opacity:1; transform:scale(1); }
+      50%    { opacity:.4; transform:scale(.65); }
+    }
+
+    /* ============================================================
+       LANGUAGE SETUP
+    ============================================================ */
+    .lang-row {
+      display:grid; grid-template-columns:1fr 48px 1fr; gap:14px; align-items:end;
+    }
+
+    .lang-card {
+      background:var(--surface); border:1px solid var(--border);
+      border-radius:var(--r); padding:18px 22px;
+      backdrop-filter:blur(20px); transition:border-color .3s;
+    }
+    .lang-card.u-card { border-top:2px solid var(--cyan); }
+    .lang-card.o-card { border-top:2px solid var(--amber); }
+
+    .lang-card label {
+      display:block; font-size:10.5px; font-weight:600;
+      letter-spacing:1.6px; text-transform:uppercase; margin-bottom:10px;
+    }
+    .u-card label { color:var(--cyan); }
+    .o-card label { color:var(--amber); }
+
+    .sel-wrap { position:relative; }
+
+    select.lang-sel {
+      width:100%; appearance:none; cursor:pointer;
+      background:rgba(255,255,255,0.05); border:1px solid var(--border);
+      border-radius:var(--r-s); padding:11px 38px 11px 15px;
+      color:var(--t1); font-family:'Outfit',sans-serif; font-size:15px; font-weight:500;
+      transition:border-color .3s, background .3s;
+    }
+    select.lang-sel:focus {
+      outline:none; border-color:var(--cyan); background:rgba(34,211,238,0.06);
+    }
+    .o-card select.lang-sel:focus { border-color:var(--amber); background:rgba(245,158,11,0.06); }
+    select.lang-sel option { background:#111827; }
+
+    .sel-arr {
+      position:absolute; right:13px; top:50%; transform:translateY(-50%);
+      pointer-events:none; color:var(--t3); font-size:11px;
+    }
+
+    /* Swap button (centre column) */
+    .swap-btn {
+      width:44px; height:44px; border-radius:50%;
+      background:var(--surface); border:1px solid var(--border);
+      color:var(--t2); cursor:pointer;
+      display:flex; align-items:center; justify-content:center;
+      font-size:17px; transition:all .35s;
+      backdrop-filter:blur(20px); align-self:flex-end; margin-bottom:2px;
+    }
+    .swap-btn:hover {
+      background:var(--surface-2); color:var(--t1); transform:rotate(180deg);
+    }
+
+    /* ============================================================
+       NOTICE BANNER
+    ============================================================ */
+    .notice {
+      display:none; align-items:center; gap:10px;
+      padding:12px 18px; border-radius:var(--r-s);
+      font-size:13px; line-height:1.5;
+    }
+    .notice.show { display:flex; }
+    .notice.error   { background:rgba(239,68,68,.1);  border:1px solid rgba(239,68,68,.22);  color:#FCA5A5; }
+    .notice.warning { background:rgba(245,158,11,.1); border:1px solid rgba(245,158,11,.22); color:#FCD34D; }
+
+    /* ============================================================
+       CHAT AREA
+    ============================================================ */
+    .chat-grid {
+      display:grid; grid-template-columns:1fr 1fr; gap:14px;
+    }
+
+    .chat-panel {
+      background:var(--surface); border:1px solid var(--border);
+      border-radius:var(--r); backdrop-filter:blur(20px);
+      display:flex; flex-direction:column;
+      min-height:340px; max-height:440px; overflow:hidden;
+      transition:border-color .4s, box-shadow .4s;
+    }
+    .chat-panel.active-panel.u-panel {
+      border-color:rgba(34,211,238,.28); box-shadow:0 0 28px rgba(34,211,238,.08);
+    }
+    .chat-panel.active-panel.o-panel {
+      border-color:rgba(245,158,11,.28); box-shadow:0 0 28px rgba(245,158,11,.08);
+    }
+
+    /* Panel header */
+    .panel-hdr {
+      padding:14px 18px; border-bottom:1px solid var(--border);
+      display:flex; align-items:center; gap:10px; flex-shrink:0;
+    }
+    .u-panel .panel-hdr { background:rgba(34,211,238,.04); }
+    .o-panel .panel-hdr { background:rgba(245,158,11,.04);  }
+
+    .p-avatar {
+      width:30px; height:30px; border-radius:50%;
+      display:flex; align-items:center; justify-content:center;
+      font-size:13px; font-weight:700; flex-shrink:0;
+    }
+    .u-panel .p-avatar { background:rgba(34,211,238,.14); color:var(--cyan);  border:1px solid rgba(34,211,238,.3); }
+    .o-panel .p-avatar { background:rgba(245,158,11,.14);  color:var(--amber); border:1px solid rgba(245,158,11,.3); }
+
+    .p-title { font-family:'Syne',sans-serif; font-size:13.5px; font-weight:600; }
+    .u-panel .p-title { color:var(--cyan);  }
+    .o-panel .p-title { color:var(--amber); }
+
+    .p-lang {
+      margin-left:auto; font-size:10.5px; color:var(--t3);
+      background:rgba(255,255,255,.05); padding:3px 9px;
+      border-radius:100px; border:1px solid var(--border);
+    }
+
+    /* Messages scroll area */
+    .msgs {
+      flex:1; overflow-y:auto; padding:14px;
+      display:flex; flex-direction:column; gap:11px;
+      scroll-behavior:smooth;
+    }
+    .msgs::-webkit-scrollbar { width:3px; }
+    .msgs::-webkit-scrollbar-track { background:transparent; }
+    .msgs::-webkit-scrollbar-thumb { background:rgba(255,255,255,.1); border-radius:2px; }
+
+    /* Empty state */
+    .empty-st {
+      flex:1; display:flex; flex-direction:column;
+      align-items:center; justify-content:center;
+      gap:8px; opacity:.35; padding:20px; text-align:center;
+    }
+    .empty-icon { font-size:28px; }
+    .empty-txt  { font-size:12.5px; color:var(--t3); line-height:1.6; }
+
+    /* Message bubble */
+    .bubble {
+      animation:fadeUp .4s ease-out both;
+      padding:11px 15px; border-radius:13px; position:relative;
+    }
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(10px); }
+      to   { opacity:1; transform:translateY(0);    }
+    }
+
+    .u-panel .bubble {
+      background:rgba(34,211,238,.07);
+      border:1px solid rgba(34,211,238,.14);
+      border-bottom-left-radius:3px;
+    }
+    .o-panel .bubble {
+      background:rgba(245,158,11,.07);
+      border:1px solid rgba(245,158,11,.14);
+      border-bottom-right-radius:3px;
+    }
+
+    .b-orig {
+      font-size:10.5px; color:var(--t3); font-style:italic; margin-bottom:5px;
+    }
+    .b-trans {
+      font-size:14px; color:var(--t1); line-height:1.55; font-weight:400;
+    }
+    .b-time {
+      font-size:9.5px; color:var(--t3); margin-top:6px; text-align:right;
+    }
+
+    /* Listening wave indicator */
+    .listen-ind {
+      display:flex; align-items:center; gap:8px;
+      padding:9px 13px; border-radius:12px;
+      font-size:12px; color:var(--t3);
+      animation:fadeUp .3s ease-out both;
+    }
+    .u-panel .listen-ind { background:rgba(34,211,238,.05); border:1px dashed rgba(34,211,238,.2); }
+    .o-panel .listen-ind { background:rgba(245,158,11,.05);  border:1px dashed rgba(245,158,11,.2);  }
+
+    .waves { display:flex; align-items:center; gap:2px; height:16px; }
+    .w { width:3px; border-radius:2px; animation:wb .8s ease-in-out infinite; }
+    .u-panel .w { background:var(--cyan);  }
+    .o-panel .w { background:var(--amber); }
+    .w:nth-child(1){ height:5px;  animation-delay:0s;   }
+    .w:nth-child(2){ height:13px; animation-delay:.12s; }
+    .w:nth-child(3){ height:9px;  animation-delay:.24s; }
+    .w:nth-child(4){ height:15px; animation-delay:.36s; }
+    .w:nth-child(5){ height:7px;  animation-delay:.48s; }
+    @keyframes wb {
+      0%,100%{ transform:scaleY(1); }
+      50%    { transform:scaleY(.25); }
+    }
+
+    /* Processing indicator */
+    .proc-ind {
+      display:flex; align-items:center; gap:8px;
+      padding:9px 13px; border-radius:12px;
+      font-size:12px; color:var(--amber);
+      background:rgba(245,158,11,.06); border:1px dashed rgba(245,158,11,.22);
+      animation:fadeUp .3s ease-out both;
+    }
+    .spinner {
+      width:14px; height:14px; border-radius:50%;
+      border:2px solid rgba(245,158,11,.3); border-top-color:var(--amber);
+      animation:spin .6s linear infinite; flex-shrink:0;
+    }
+    @keyframes spin { to { transform:rotate(360deg); } }
+
+    /* Interim text preview */
+    .interim-el {
+      padding:7px 12px; border-radius:10px;
+      font-size:12.5px; color:var(--t3); font-style:italic;
+      background:rgba(255,255,255,.03); border:1px dashed rgba(255,255,255,.07);
+      animation:fadeUp .2s ease-out both;
+    }
+
+    /* ============================================================
+       CONTROLS BAR
+    ============================================================ */
+    .controls {
+      background:var(--surface); border:1px solid var(--border);
+      border-radius:var(--r); backdrop-filter:blur(20px);
+      padding:18px 24px;
+      display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+    }
+
+    /* Mic orb */
+    .mic-orb {
+      width:60px; height:60px; border-radius:50%; flex-shrink:0;
+      border:none; cursor:pointer;
+      display:flex; align-items:center; justify-content:center; font-size:22px;
+      background:linear-gradient(135deg, var(--cyan), var(--indigo));
+      color:#06070F; transition:transform .25s, box-shadow .3s;
+      box-shadow:0 0 0 0 rgba(34,211,238,.5);
+    }
+    .mic-orb:hover { transform:scale(1.06); }
+    .mic-orb.mic-active {
+      animation:mic-ring 1.8s ease-in-out infinite;
+    }
+    .mic-orb.mic-idle {
+      background:rgba(255,255,255,.07); color:var(--t2); box-shadow:none;
+    }
+    @keyframes mic-ring {
+      0%  { box-shadow:0 0 0  0 rgba(34,211,238,.5); }
+      70% { box-shadow:0 0 0 22px rgba(34,211,238,0); }
+      100%{ box-shadow:0 0 0  0 rgba(34,211,238,0); }
+    }
+
+    /* Status section */
+    .sts-section { flex:1; display:flex; flex-direction:column; gap:5px; min-width:120px; }
+
+    .sts-label {
+      font-size:10px; text-transform:uppercase; letter-spacing:1.4px;
+      color:var(--t3); font-weight:600;
+    }
+    .sts-text {
+      font-size:13.5px; color:var(--t2); font-weight:400;
+      transition:color .3s;
+    }
+    .sts-text.listening  { color:var(--cyan);  }
+    .sts-text.processing { color:var(--amber); }
+    .sts-text.speaking   { color:var(--green); }
+
+    /* Speaker turn tags */
+    .turn-row { display:flex; align-items:center; gap:7px; margin-top:2px; }
+    .turn-tag {
+      padding:3px 11px; border-radius:100px;
+      font-size:10px; font-weight:600; letter-spacing:.5px;
+      opacity:.35; transition:opacity .3s, box-shadow .3s;
+    }
+    .turn-tag.u-tag {
+      background:rgba(34,211,238,.1); color:var(--cyan);  border:1px solid rgba(34,211,238,.2);
+    }
+    .turn-tag.o-tag {
+      background:rgba(245,158,11,.1);  color:var(--amber); border:1px solid rgba(245,158,11,.2);
+    }
+    .turn-tag.on { opacity:1; }
+    .turn-tag.u-tag.on { box-shadow:0 0 10px rgba(34,211,238,.35); }
+    .turn-tag.o-tag.on { box-shadow:0 0 10px rgba(245,158,11,.35);  }
+    .turn-sep { color:var(--t3); font-size:11px; }
+
+    /* Main start/stop button */
+    .start-btn {
+      padding:13px 30px; border-radius:100px; border:none; cursor:pointer;
+      font-family:'Syne',sans-serif; font-size:14.5px; font-weight:700;
+      letter-spacing:.4px; transition:all .3s;
+      background:linear-gradient(135deg, var(--cyan), var(--indigo));
+      color:#06070F; white-space:nowrap;
+    }
+    .start-btn:hover { transform:translateY(-2px); box-shadow:0 8px 22px rgba(34,211,238,.3); }
+    .start-btn.stop-mode {
+      background:linear-gradient(135deg, var(--red), var(--amber));
+      color:#fff;
+    }
+    .start-btn.stop-mode:hover { box-shadow:0 8px 22px rgba(239,68,68,.3); }
+
+    /* Secondary buttons */
+    .ctrl-group { display:flex; gap:9px; align-items:center; }
+
+    .sec-btn {
+      padding:9px 18px; border-radius:100px;
+      border:1px solid var(--border); background:var(--surface);
+      color:var(--t2); cursor:pointer;
+      font-family:'Outfit',sans-serif; font-size:12.5px; font-weight:500;
+      transition:all .25s; white-space:nowrap;
+    }
+    .sec-btn:hover {
+      background:var(--surface-2); color:var(--t1); border-color:var(--border-2);
+    }
+
+    /* ============================================================
+       RESPONSIVE
+    ============================================================ */
+    @media (max-width: 760px) {
+      .app { padding:14px 14px 22px; gap:12px; }
+      .header { padding:11px 15px; }
+      .logo-sub { display:none; }
+      .lang-row { grid-template-columns:1fr 1fr; }
+      .swap-btn { display:none; }
+      .chat-grid { grid-template-columns:1fr; }
+      .chat-panel { min-height:200px; max-height:280px; }
+      .controls { padding:15px 16px; gap:11px; }
+    }
+
+    @media (max-width: 480px) {
+      .lang-row { grid-template-columns:1fr; }
+      .controls { flex-direction:column; align-items:stretch; }
+      .sts-section { width:100%; }
+      .ctrl-group { justify-content:center; }
+      .start-btn { width:100%; text-align:center; }
+      .mic-orb { align-self:center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ============================================================
+     APP WRAPPER
+============================================================ -->
+<div class="app">
+
+  <!-- ── Header ── -->
+  <header class="header">
+    <div class="logo">
+      <div class="logo-icon">T29s</div>
+      <div>
+        <div class="logo-name">T29s</div>
+        <div class="logo-sub">Real-Time Conversation Translator</div>
+      </div>
+    </div>
+    <div class="status-pill">
+      <div class="sdot" id="gDot"></div>
+      <span id="gStatus">Ready</span>
+    </div>
+  </header>
+
+  <!-- ── Language selector row ── -->
+  <section class="lang-row">
+    <div class="lang-card u-card">
+      <label>Your Language</label>
+      <div class="sel-wrap">
+        <select class="lang-sel" id="userLang"></select>
+        <span class="sel-arr">▾</span>
+      </div>
+    </div>
+
+    <button class="swap-btn" id="swapBtn" title="Swap languages">⇄</button>
+
+    <div class="lang-card o-card">
+      <label>Other Person's Language</label>
+      <div class="sel-wrap">
+        <select class="lang-sel" id="otherLang"></select>
+        <span class="sel-arr">▾</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Notice banner ── -->
+  <div class="notice" id="notice">
+    <span id="noticeIcon">⚠️</span>
+    <span id="noticeMsg"></span>
+  </div>
+
+  <!-- ── Chat panels ── -->
+  <div class="chat-grid">
+
+    <!-- Left — You -->
+    <div class="chat-panel u-panel" id="uPanel">
+      <div class="panel-hdr">
+        <div class="p-avatar">Y</div>
+        <div class="p-title">You</div>
+        <div class="p-lang" id="uLangTag">Hindi</div>
+      </div>
+      <div class="msgs" id="uMsgs">
+        <div class="empty-st" id="uEmpty">
+          <div class="empty-icon">🎙️</div>
+          <div class="empty-txt">Your translated output<br>will appear here</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right — Other Person -->
+    <div class="chat-panel o-panel" id="oPanel">
+      <div class="panel-hdr">
+        <div class="p-avatar">O</div>
+        <div class="p-title">Other Person</div>
+        <div class="p-lang" id="oLangTag">English</div>
+      </div>
+      <div class="msgs" id="oMsgs">
+        <div class="empty-st" id="oEmpty">
+          <div class="empty-icon">🎙️</div>
+          <div class="empty-txt">Other person's translated<br>output will appear here</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── Controls ── -->
+  <div class="controls">
+    <!-- Mic orb -->
+    <button class="mic-orb mic-idle" id="micOrb" title="Toggle conversation">🎙️</button>
+
+    <!-- Status + turn indicator -->
+    <div class="sts-section">
+      <div class="sts-label">Status</div>
+      <div class="sts-text" id="stsText">Tap "Start" to begin</div>
+      <div class="turn-row">
+        <div class="turn-tag u-tag" id="uTag">YOU</div>
+        <span class="turn-sep">↔</span>
+        <div class="turn-tag o-tag" id="oTag">OTHER</div>
+      </div>
+    </div>
+
+    <!-- Primary CTA -->
+    <button class="start-btn" id="startBtn">▶ Start Conversation</button>
+
+    <!-- Secondary controls -->
+    <div class="ctrl-group">
+      <button class="sec-btn" id="switchBtn">⇄ Switch</button>
+      <button class="sec-btn" id="clearBtn">🗑 Clear</button>
+    </div>
+  </div>
+
+</div><!-- /.app -->
+
+
+<script>
+/* ============================================================
+   T29s — Real-Time Conversation Translator
+   Single-file HTML/CSS/JS  |  Vanilla JS only
+============================================================ */
+
+/* ── Language registry ── */
+const LANGS = [
+  { code:'en', name:'English',              bcp:'en-US', vl:'en' },
+  { code:'hi', name:'Hindi',                bcp:'hi-IN', vl:'hi' },
+  { code:'es', name:'Spanish',              bcp:'es-ES', vl:'es' },
+  { code:'fr', name:'French',               bcp:'fr-FR', vl:'fr' },
+  { code:'de', name:'German',               bcp:'de-DE', vl:'de' },
+  { code:'zh', name:'Chinese (Simplified)', bcp:'zh-CN', vl:'zh' },
+  { code:'ja', name:'Japanese',             bcp:'ja-JP', vl:'ja' },
+  { code:'ar', name:'Arabic',               bcp:'ar-SA', vl:'ar' },
+  { code:'pt', name:'Portuguese',           bcp:'pt-BR', vl:'pt' },
+  { code:'ru', name:'Russian',              bcp:'ru-RU', vl:'ru' },
+  { code:'ko', name:'Korean',               bcp:'ko-KR', vl:'ko' },
+  { code:'it', name:'Italian',              bcp:'it-IT', vl:'it' },
+  { code:'tr', name:'Turkish',              bcp:'tr-TR', vl:'tr' },
+  { code:'nl', name:'Dutch',                bcp:'nl-NL', vl:'nl' },
+  { code:'bn', name:'Bengali',              bcp:'bn-BD', vl:'bn' },
+  { code:'gu', name:'Gujarati',             bcp:'gu-IN', vl:'gu' },
+  { code:'ta', name:'Tamil',                bcp:'ta-IN', vl:'ta' },
+  { code:'te', name:'Telugu',               bcp:'te-IN', vl:'te' },
+  { code:'mr', name:'Marathi',              bcp:'mr-IN', vl:'mr' },
+  { code:'ur', name:'Urdu',                 bcp:'ur-PK', vl:'ur' },
+  { code:'id', name:'Indonesian',           bcp:'id-ID', vl:'id' },
+  { code:'ms', name:'Malay',                bcp:'ms-MY', vl:'ms' },
+  { code:'th', name:'Thai',                 bcp:'th-TH', vl:'th' },
+  { code:'vi', name:'Vietnamese',           bcp:'vi-VN', vl:'vi' },
+  { code:'pl', name:'Polish',               bcp:'pl-PL', vl:'pl' },
+  { code:'sv', name:'Swedish',              bcp:'sv-SE', vl:'sv' },
+  { code:'uk', name:'Ukrainian',            bcp:'uk-UA', vl:'uk' },
+  { code:'ro', name:'Romanian',             bcp:'ro-RO', vl:'ro' },
+  { code:'el', name:'Greek',                bcp:'el-GR', vl:'el' },
+  { code:'hu', name:'Hungarian',            bcp:'hu-HU', vl:'hu' },
+];
+
+/* ── DOM references ── */
+const $  = id => document.getElementById(id);
+const userLangSel  = $('userLang');
+const otherLangSel = $('otherLang');
+const uLangTag     = $('uLangTag');
+const oLangTag     = $('oLangTag');
+const startBtn     = $('startBtn');
+const micOrb       = $('micOrb');
+const clearBtn     = $('clearBtn');
+const switchBtn    = $('switchBtn');
+const swapBtn      = $('swapBtn');
+const stsText      = $('stsText');
+const gDot         = $('gDot');
+const gStatus      = $('gStatus');
+const uMsgs        = $('uMsgs');
+const oMsgs        = $('oMsgs');
+const uPanel       = $('uPanel');
+const oPanel       = $('oPanel');
+const uTag         = $('uTag');
+const oTag         = $('oTag');
+const noticeEl     = $('notice');
+const noticeMsgEl  = $('noticeMsg');
+const noticeIcon   = $('noticeIcon');
+
+/* ── App state ── */
+let isActive      = false;
+let curSpeaker    = 'user'; // 'user' | 'other'
+let isProcessing  = false;
+let recognition   = null;
+let lastFinal     = '';     // dedupe guard
+
+/* ── Helpers ── */
+const getLang = code => LANGS.find(l => l.code === code) || LANGS[0];
+const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const now = () => new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+
+/* ── Populate selects ── */
+(function initSelects() {
+  LANGS.forEach(l => {
+    [userLangSel, otherLangSel].forEach(sel => {
+      const o = document.createElement('option');
+      o.value = l.code; o.textContent = l.name;
+      sel.appendChild(o);
+    });
+  });
+  userLangSel.value  = 'hi';
+  otherLangSel.value = 'en';
+  syncLangTags();
+})();
+
+function syncLangTags() {
+  uLangTag.textContent = getLang(userLangSel.value).name;
+  oLangTag.textContent = getLang(otherLangSel.value).name;
+}
+userLangSel.addEventListener('change',  syncLangTags);
+otherLangSel.addEventListener('change', syncLangTags);
+
+/* ── Browser support check ── */
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+function hasSpeechSupport() {
+  if (!SR) {
+    showNotice('error','🚫','Speech Recognition is not supported in this browser. Please use Google Chrome or Microsoft Edge.');
+    startBtn.disabled = true;
+    return false;
+  }
+  return true;
+}
+
+/* ── Translation (MyMemory free API) ── */
+async function translate(text, from, to) {
+  if (from === to) return text;                         // same language → skip
+  const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${from}|${to}`;
+  try {
+    const res  = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    if (data.responseStatus === 200 && data.responseData?.translatedText) {
+      return data.responseData.translatedText;
+    }
+    throw new Error(data.responseDetails || 'Unknown error');
+  } catch (err) {
+    console.warn('Translation failed:', err);
+    return `[⚠ Translation unavailable] ${text}`;
+  }
+}
+
+/* ── Text-to-Speech ── */
+function speak(text, langCode, onEnd) {
+  if (!window.speechSynthesis) { if(onEnd) onEnd(); return; }
+
+  window.speechSynthesis.cancel(); // stop any current speech
+
+  const utt  = new SpeechSynthesisUtterance(text);
+  const ld   = getLang(langCode);
+  utt.lang   = ld.bcp;
+  utt.rate   = 1.0;
+  utt.pitch  = 1.0;
+  utt.volume = 1.0;
+
+  // Best-effort voice selection
+  const voices = window.speechSynthesis.getVoices();
+  const pick   = voices.find(v => v.lang.startsWith(ld.vl))
+              || voices.find(v => v.lang.toLowerCase().includes(ld.vl.toLowerCase()));
+  if (pick) utt.voice = pick;
+
+  utt.onend   = () => { if(onEnd) onEnd(); };
+  utt.onerror = () => { if(onEnd) onEnd(); };
+
+  window.speechSynthesis.speak(utt);
+}
+
+/* ── Status helpers ── */
+function setStatus(state, msg) {
+  stsText.className = `sts-text ${state}`;
+  stsText.textContent = msg;
+  gDot.className   = `sdot ${state}`;
+  gStatus.textContent = msg;
+
+  const listening = (state === 'listening');
+  micOrb.classList.toggle('mic-active', listening);
+  micOrb.classList.toggle('mic-idle',   !listening);
+}
+
+function highlightTurn(speaker) {
+  uTag.classList.toggle('on', speaker === 'user');
+  oTag.classList.toggle('on', speaker === 'other');
+  uPanel.classList.toggle('active-panel', speaker === 'user');
+  oPanel.classList.toggle('active-panel', speaker === 'other');
+}
+
+function clearTurn() {
+  uTag.classList.remove('on');
+  oTag.classList.remove('on');
+  uPanel.classList.remove('active-panel');
+  oPanel.classList.remove('active-panel');
+}
+
+/* ── Notice banner ── */
+function showNotice(type, icon, msg) {
+  noticeEl.className = `notice ${type} show`;
+  noticeIcon.textContent = icon;
+  noticeMsgEl.textContent = msg;
+}
+function hideNotice() { noticeEl.className = 'notice'; }
+
+/* ── Indicator elements (listening wave, processing spinner, interim text) ── */
+function clearIndicators(container) {
+  container.querySelectorAll('.ind').forEach(el => el.remove());
+}
+
+function addListenWave(panel) {
+  const c = panel === 'user' ? uMsgs : oMsgs;
+  clearIndicators(c);
+  const el = document.createElement('div');
+  el.className = 'listen-ind ind';
+  el.innerHTML = `<div class="waves"><div class="w"></div><div class="w"></div><div class="w"></div><div class="w"></div><div class="w"></div></div><span>Listening…</span>`;
+  c.appendChild(el); c.scrollTop = c.scrollHeight;
+}
+
+function addProcessingSpinner(panel) {
+  const c = panel === 'user' ? uMsgs : oMsgs;
+  clearIndicators(c);
+  const el = document.createElement('div');
+  el.className = 'proc-ind ind';
+  el.innerHTML = `<div class="spinner"></div><span>Translating…</span>`;
+  c.appendChild(el); c.scrollTop = c.scrollHeight;
+}
+
+function updateInterim(panel, text) {
+  const c = panel === 'user' ? uMsgs : oMsgs;
+  let el = c.querySelector('.interim-el');
+  if (!text) { if (el) el.remove(); return; }
+  if (!el) {
+    el = document.createElement('div');
+    el.className = 'interim-el ind';
+    c.appendChild(el);
+  }
+  el.textContent = text + '…';
+  c.scrollTop = c.scrollHeight;
+}
+
+/* ── Remove empty-state placeholder (once first message arrives) ── */
+function removeEmpty(panel) {
+  const id = panel === 'user' ? 'uEmpty' : 'oEmpty';
+  const el = document.getElementById(id);
+  if (el) el.remove();
+}
+
+/* ── Append a finished message bubble ── */
+function addBubble(panel, original, translated, fromCode, toCode) {
+  removeEmpty(panel);
+  const c   = panel === 'user' ? uMsgs : oMsgs;
+  clearIndicators(c);
+
+  const div = document.createElement('div');
+  div.className = 'bubble';
+  div.innerHTML = `
+    <div class="b-orig">${esc(original)} <span style="opacity:.5">(${getLang(fromCode).name})</span></div>
+    <div class="b-trans">${esc(translated)}</div>
+    <div class="b-time">${now()}</div>
+  `;
+  c.appendChild(div);
+  c.scrollTop = c.scrollHeight;
+}
+
+/* ============================================================
+   CORE: Start listening for one speaker
+============================================================ */
+function listenFor(speaker) {
+  if (!isActive || isProcessing) return;
+
+  curSpeaker = speaker;
+  highlightTurn(speaker);
+
+  const langCode = speaker === 'user' ? userLangSel.value : otherLangSel.value;
+  const label    = speaker === 'user' ? 'You' : 'Other Person';
+  const ld       = getLang(langCode);
+
+  setStatus('listening', `Listening for ${label}…`);
+  addListenWave(speaker);
+
+  /* Tear down any previous recognition instance cleanly */
+  if (recognition) {
+    recognition.onresult = null;
+    recognition.onend    = null;
+    recognition.onerror  = null;
+    try { recognition.abort(); } catch(_) {}
+  }
+
+  /* Fresh instance per utterance (avoids stale state issues) */
+  recognition = new SR();
+  recognition.lang            = ld.bcp;
+  recognition.continuous      = false;
+  recognition.interimResults  = true;
+  recognition.maxAlternatives = 1;
+
+  let finalText = '';
+
+  /* Live interim preview */
+  recognition.onresult = e => {
+    let interim = ''; finalText = '';
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      if (e.results[i].isFinal) finalText += e.results[i][0].transcript;
+      else                       interim   += e.results[i][0].transcript;
+    }
+    if (interim) updateInterim(speaker, interim);
+  };
+
+  /* Speech end → process or retry */
+  recognition.onend = () => {
+    if (!isActive) return;
+    clearIndicators(speaker === 'user' ? uMsgs : oMsgs);
+
+    const text = finalText.trim();
+    /* Dedupe: ignore if same as last processed utterance */
+    if (text && text !== lastFinal) {
+      lastFinal = text;
+      processUtterance(speaker, text);
+    } else {
+      /* No speech / silence → keep listening for same speaker */
+      if (isActive) setTimeout(() => listenFor(speaker), 350);
+    }
+  };
+
+  recognition.onerror = e => {
+    clearIndicators(speaker === 'user' ? uMsgs : oMsgs);
+
+    if (e.error === 'not-allowed') {
+      showNotice('error','🚫','Microphone access denied. Allow permissions in your browser and refresh.');
+      stopConversation(); return;
+    }
+    if (e.error === 'network') {
+      showNotice('warning','⚠️','Network issue detected. Check your connection.');
+    }
+    /* Recoverable errors → retry */
+    if (isActive) setTimeout(() => listenFor(speaker), 400);
+  };
+
+  try { recognition.start(); }
+  catch(err) {
+    console.warn('recognition.start() error:', err);
+    if (isActive) setTimeout(() => listenFor(speaker), 600);
+  }
+}
+
+/* ============================================================
+   CORE: Translate & speak, then hand off to next speaker
+============================================================ */
+async function processUtterance(speaker, text) {
+  isProcessing = true;
+
+  const fromLang   = speaker === 'user' ? userLangSel.value  : otherLangSel.value;
+  const toLang     = speaker === 'user' ? otherLangSel.value : userLangSel.value;
+  /* Translation output appears in the OTHER person's panel so they can read it */
+  const outPanel   = speaker === 'user' ? 'other' : 'user';
+  const nextSpeaker = speaker === 'user' ? 'other' : 'user';
+
+  setStatus('processing', 'Translating…');
+  addProcessingSpinner(outPanel);
+
+  let translated;
+  try {
+    translated = await translate(text, fromLang, toLang);
+  } catch(_) {
+    translated = `[⚠ Translation error] ${text}`;
+  }
+
+  clearIndicators(speaker === 'user' ? uMsgs : oMsgs);
+  clearIndicators(speaker === 'user' ? oMsgs : uMsgs);
+
+  /* Render the bubble */
+  addBubble(outPanel, text, translated, fromLang, toLang);
+
+  /* Speak the translation aloud */
+  setStatus('speaking', 'Speaking translation…');
+  speak(translated, toLang, () => {
+    /* After TTS finishes → switch to next speaker */
+    isProcessing = false;
+    if (isActive) setTimeout(() => listenFor(nextSpeaker), 450);
+  });
+}
+
+/* ============================================================
+   START / STOP
+============================================================ */
+function startConversation() {
+  if (!hasSpeechSupport()) return;
+  hideNotice();
+
+  isActive     = true;
+  isProcessing = false;
+  lastFinal    = '';
+
+  startBtn.textContent = '⏹ Stop Conversation';
+  startBtn.classList.add('stop-mode');
+
+  /* Lock language selectors during session */
+  userLangSel.disabled  = true;
+  otherLangSel.disabled = true;
+
+  listenFor('user');
+}
+
+function stopConversation() {
+  isActive     = false;
+  isProcessing = false;
+
+  if (recognition) {
+    recognition.onresult = null;
+    recognition.onend    = null;
+    recognition.onerror  = null;
+    try { recognition.abort(); } catch(_) {}
+    recognition = null;
+  }
+  window.speechSynthesis.cancel();
+
+  clearIndicators(uMsgs);
+  clearIndicators(oMsgs);
+  clearTurn();
+  setStatus('', 'Stopped. Press Start to begin again.');
+
+  startBtn.textContent = '▶ Start Conversation';
+  startBtn.classList.remove('stop-mode');
+
+  userLangSel.disabled  = false;
+  otherLangSel.disabled = false;
+}
+
+/* ============================================================
+   CLEAR CHAT
+============================================================ */
+function clearChat() {
+  uMsgs.innerHTML = `<div class="empty-st" id="uEmpty"><div class="empty-icon">🎙️</div><div class="empty-txt">Your translated output<br>will appear here</div></div>`;
+  oMsgs.innerHTML = `<div class="empty-st" id="oEmpty"><div class="empty-icon">🎙️</div><div class="empty-txt">Other person's translated<br>output will appear here</div></div>`;
+}
+
+/* ============================================================
+   MANUAL SPEAKER SWITCH
+============================================================ */
+function manualSwitch() {
+  if (!isActive) return;
+  if (recognition) { try { recognition.abort(); } catch(_){} }
+  window.speechSynthesis.cancel();
+  isProcessing = false;
+  const next = curSpeaker === 'user' ? 'other' : 'user';
+  clearIndicators(uMsgs); clearIndicators(oMsgs);
+  setTimeout(() => listenFor(next), 300);
+}
+
+/* ============================================================
+   SWAP LANGUAGES (only when not active)
+============================================================ */
+function swapLanguages() {
+  if (isActive) return;
+  const tmp          = userLangSel.value;
+  userLangSel.value  = otherLangSel.value;
+  otherLangSel.value = tmp;
+  syncLangTags();
+}
+
+/* ============================================================
+   EVENT BINDINGS
+============================================================ */
+startBtn .addEventListener('click', () => isActive ? stopConversation() : startConversation());
+micOrb   .addEventListener('click', () => isActive ? stopConversation() : startConversation());
+clearBtn .addEventListener('click', clearChat);
+switchBtn.addEventListener('click', manualSwitch);
+swapBtn  .addEventListener('click', swapLanguages);
+
+/* Pre-load TTS voices (async in some browsers) */
+if (window.speechSynthesis) {
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
+
+/* Initial support check (non-blocking) */
+hasSpeechSupport();
+
+</script>
+</body>
+</html>
