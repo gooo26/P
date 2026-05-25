@@ -1,1 +1,2312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Load Calculator Pro ⚡ — © Vedant.Patel</title>
+<meta name="author" content="Vedant.Patel">
+<meta name="copyright" content="© 2025 Vedant.Patel. All rights reserved.">
+<style>
+:root {
+  --primary:#f59e0b; --primary-dark:#d97706; --primary-glow:#f59e0b33;
+  --bg:#0f172a; --card:#1e293b; --card2:#263348; --card3:#2d3f55;
+  --text:#f1f5f9; --muted:#94a3b8; --border:#334155; --input-bg:#0f172a;
+  --green:#10b981; --green-bg:#064e3b44; --green-border:#10b981; --green-text:#6ee7b7;
+  --yellow:#f59e0b; --yellow-bg:#451a0344; --yellow-border:#f59e0b; --yellow-text:#fde68a;
+  --red:#ef4444; --red-bg:#450a0a44; --red-border:#ef4444; --red-text:#fca5a5;
+  --blue:#3b82f6; --purple:#8b5cf6; --radius:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+::-webkit-scrollbar{width:6px} ::-webkit-scrollbar-track{background:var(--bg)} ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+/* ── COPYRIGHT WATERMARK (Vedant.Patel) ── */
+.copyright-bar{
+  background:linear-gradient(90deg,#0f172a,#1e293b,#0f172a);
+  border-bottom:1px solid var(--primary);
+  text-align:center;
+  padding:5px;
+  font-size:.72rem;
+  color:var(--primary);
+  font-weight:700;
+  letter-spacing:.08em;
+  user-select:none;
+}
+@media print{
+  .copyright-bar{display:block!important;color:#000;background:#fff7ed;border:1px solid #f59e0b}
+  .print-watermark{display:block!important}
+}background:linear-gradient(135deg,#1e293b,#0f172a);border-bottom:2px solid var(--primary);padding:18px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.header-left{display:flex;align-items:center;gap:14px}
+.header-icon{width:50px;height:50px;background:linear-gradient(135deg,var(--primary),var(--primary-dark));border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 0 20px var(--primary-glow)}
+header h1{font-size:1.5rem;font-weight:800}
+header p{font-size:.82rem;color:var(--muted);margin-top:2px}
+.header-badges{display:flex;gap:8px;flex-wrap:wrap}
+.hbadge{padding:4px 12px;border-radius:20px;font-size:.72rem;font-weight:700;border:1px solid}
+.hbadge-gold{border-color:var(--primary);color:var(--primary);background:var(--primary-glow)}
+.hbadge-blue{border-color:var(--blue);color:var(--blue);background:#1e40af22}
+
+/* TABS */
+.tab-bar{background:var(--card);border-bottom:1px solid var(--border);display:flex;overflow-x:auto;padding:0 24px}
+.tab-btn{padding:14px 20px;background:none;border:none;color:var(--muted);font-size:.85rem;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;transition:color .2s,border-color .2s;white-space:nowrap;display:flex;align-items:center;gap:6px}
+.tab-btn.active{color:var(--primary);border-bottom-color:var(--primary)}
+.tab-btn:hover{color:var(--text)}
+.tab-content{display:none} .tab-content.active{display:block}
+
+/* MAIN LAYOUT */
+.container{max-width:1200px;margin:0 auto;padding:28px 16px;display:grid;grid-template-columns:1fr 1fr;gap:22px}
+@media(max-width:900px){.container{grid-template-columns:1fr}}
+.full-col{grid-column:1/-1}
+
+/* CARDS */
+.card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:22px}
+.card-title{font-size:.9rem;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:.08em;margin-bottom:18px;display:flex;align-items:center;gap:8px}
+
+/* APPLIANCE ROW */
+.appliance-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;background:var(--input-bg);border:1px solid var(--border);margin-bottom:10px;transition:border-color .2s,box-shadow .2s}
+.appliance-row:focus-within{border-color:var(--primary);box-shadow:0 0 0 2px var(--primary-glow)}
+.appliance-row.active-row{border-color:#334155;border-left:3px solid var(--primary)}
+.app-icon{font-size:20px;width:32px;text-align:center;flex-shrink:0}
+.app-info{flex:1;min-width:0}
+.app-name{font-size:.85rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.app-sub{font-size:.7rem;color:var(--muted);margin-top:1px}
+.app-controls{display:flex;align-items:center;gap:5px;flex-shrink:0}
+.qty-btn{width:26px;height:26px;border-radius:50%;border:1px solid var(--border);background:var(--card2);color:var(--text);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s,border-color .15s;line-height:1;flex-shrink:0}
+.qty-btn:hover{background:var(--primary);border-color:var(--primary);color:#000}
+.qty-display{width:32px;height:26px;text-align:center;background:var(--card2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:.9rem;font-weight:700}
+.qty-display:focus{outline:none;border-color:var(--primary)}
+.watt-input{width:66px;height:26px;background:var(--card2);border:1px solid var(--border);border-radius:6px;color:var(--muted);font-size:.78rem;text-align:center;padding:0 4px}
+.watt-input:focus{outline:none;border-color:var(--primary);color:var(--text)}
+
+/* CATEGORY FILTER */
+.cat-filter{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.cat-btn{padding:4px 12px;border-radius:20px;font-size:.75rem;font-weight:600;border:1px solid var(--border);background:var(--input-bg);color:var(--muted);cursor:pointer;transition:all .15s}
+.cat-btn.active,.cat-btn:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-glow)}
+
+/* SETTINGS */
+.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.sg label{display:block;font-size:.75rem;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.06em}
+.sg select,.sg input[type="number"]{width:100%;padding:8px 10px;background:var(--input-bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.88rem}
+.sg select:focus,.sg input:focus{outline:none;border-color:var(--primary)}
+
+/* BUTTONS */
+.calc-btn{width:100%;margin-top:16px;padding:13px;background:linear-gradient(135deg,var(--primary),var(--primary-dark));border:none;border-radius:10px;color:#000;font-size:.95rem;font-weight:800;cursor:pointer;letter-spacing:.04em;transition:opacity .2s,transform .1s;display:flex;align-items:center;justify-content:center;gap:8px}
+.calc-btn:hover{opacity:.9;transform:translateY(-1px)}
+.calc-btn:active{transform:translateY(0)}
+.sec-btn{padding:8px 16px;border-radius:8px;font-size:.82rem;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--card2);color:var(--text);transition:all .15s;display:inline-flex;align-items:center;gap:5px}
+.sec-btn:hover{border-color:var(--primary);color:var(--primary)}
+.reset-btn{border-color:var(--red-border);color:var(--red-text);background:var(--red-bg)}
+.reset-btn:hover{border-color:var(--red);color:#fff;background:#7f1d1d66}
+
+/* RESULT BOXES */
+.result-grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
+.result-grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:18px}
+@media(max-width:600px){.result-grid-4{grid-template-columns:repeat(2,1fr)}}
+.rbox{background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;transition:border-color .3s}
+.rbox:hover{border-color:var(--primary)}
+.rbox-label{font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px}
+.rbox-value{font-size:1.4rem;font-weight:800;color:var(--primary)}
+.rbox-unit{font-size:.7rem;color:var(--muted);margin-top:1px}
+.rbox-green .rbox-value{color:var(--green)}
+.rbox-blue .rbox-value{color:var(--blue)}
+.rbox-purple .rbox-value{color:var(--purple)}
+
+/* STATUS */
+.status-msg{text-align:center;padding:11px;border-radius:8px;font-size:.85rem;font-weight:600;margin-bottom:16px}
+.s-safe{background:var(--green-bg);border:1px solid var(--green-border);color:var(--green-text)}
+.s-warn{background:var(--yellow-bg);border:1px solid var(--yellow-border);color:var(--yellow-text)}
+.s-danger{background:var(--red-bg);border:1px solid var(--red-border);color:var(--red-text)}
+
+/* LOAD BAR */
+.lb-wrap{margin-bottom:18px}
+.lb-header{display:flex;justify-content:space-between;font-size:.78rem;color:var(--muted);margin-bottom:5px}
+.lb-track{height:14px;background:var(--input-bg);border-radius:7px;overflow:hidden;border:1px solid var(--border)}
+.lb-fill{height:100%;border-radius:7px;transition:width .8s cubic-bezier(.4,2,.6,1),background .4s;position:relative}
+
+/* SEGMENT BARS */
+.seg-bar-wrap{margin-bottom:8px}
+.seg-bar-label{display:flex;justify-content:space-between;font-size:.75rem;margin-bottom:3px}
+.seg-bar-track{height:8px;background:var(--input-bg);border-radius:4px;overflow:hidden}
+.seg-bar-fill{height:100%;border-radius:4px;transition:width .7s}
+
+/* RECO ITEMS */
+.reco-list{list-style:none}
+.reco-item{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;margin-bottom:9px;transition:border-color .2s}
+.reco-item:hover{border-color:var(--border);border-color:#4a5e78}
+.ri-icon{font-size:19px;flex-shrink:0;margin-top:1px}
+.ri-title{font-size:.85rem;font-weight:700;margin-bottom:3px}
+.ri-detail{font-size:.78rem;color:var(--muted);line-height:1.5}
+
+/* CIRCUIT TABLE */
+.circuit-table{width:100%;border-collapse:collapse;font-size:.8rem;margin-top:10px}
+.circuit-table th{text-align:left;color:var(--muted);font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;padding:0 8px 8px;border-bottom:1px solid var(--border)}
+.circuit-table td{padding:8px;border-bottom:1px solid #1e293b}
+.circuit-table tr:last-child td{border-bottom:none}
+.circuit-table .td-r{text-align:right;color:var(--primary);font-weight:700}
+
+/* DONUT CHART */
+.donut-wrap{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.donut-svg{flex-shrink:0}
+.donut-legend{flex:1;min-width:140px}
+.legend-item{display:flex;align-items:center;gap:8px;margin-bottom:7px;font-size:.8rem}
+.legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+
+/* TIPS */
+.tip-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:600px){.tip-grid{grid-template-columns:1fr}}
+.tip-card{background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:12px}
+.tip-card .tc-icon{font-size:22px;margin-bottom:6px}
+.tip-card .tc-title{font-size:.82rem;font-weight:700;margin-bottom:4px;color:var(--primary)}
+.tip-card .tc-body{font-size:.76rem;color:var(--muted);line-height:1.5}
+
+/* PRINT */
+.print-btn{padding:8px 16px;border-radius:8px;font-size:.82rem;font-weight:600;cursor:pointer;border:1px solid #3b82f6;background:#1e40af22;color:#93c5fd;display:inline-flex;align-items:center;gap:5px;transition:all .15s}
+.print-btn:hover{background:#1e40af44}
+
+/* MISC */
+.divider{height:1px;background:var(--border);margin:16px 0}
+.flex-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+footer{text-align:center;padding:20px;color:var(--muted);font-size:.75rem;border-top:1px solid var(--border)}
+.badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:.68rem;font-weight:700}
+.badge-green{background:#064e3b;color:#6ee7b7}
+.badge-red{background:#7f1d1d;color:#fca5a5}
+.badge-yellow{background:#451a03;color:#fde68a}
+.tooltip{position:relative;cursor:help}
+.tooltip::after{content:attr(data-tip);position:absolute;bottom:110%;left:50%;transform:translateX(-50%);background:#1e293b;border:1px solid var(--border);color:var(--text);font-size:.72rem;padding:5px 8px;border-radius:6px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .2s;z-index:99}
+.tooltip:hover::after{opacity:1}
+.highlight-yellow{color:var(--primary);font-weight:700}
+.section-actions{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+
+/* CUSTOM APPLIANCE */
+.add-custom{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.add-custom input{flex:1;min-width:80px;padding:8px 10px;background:var(--input-bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.85rem}
+.add-custom input:focus{outline:none;border-color:var(--primary)}
+.add-custom-btn{padding:8px 14px;background:var(--primary);border:none;border-radius:8px;color:#000;font-weight:700;cursor:pointer;font-size:.85rem;white-space:nowrap}
+.add-custom-btn:hover{opacity:.85}
+.remove-app{width:20px;height:20px;border-radius:50%;border:none;background:#450a0a;color:var(--red-text);font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;opacity:.7;transition:opacity .15s}
+.remove-app:hover{opacity:1}
+
+/* SOLAR SECTION */
+.solar-result{background:linear-gradient(135deg,#064e3b22,#065f4622);border:1px solid #10b981;border-radius:10px;padding:16px;margin-top:10px}
+.solar-result h3{color:var(--green);font-size:.88rem;font-weight:700;margin-bottom:10px}
+
+/* TARIFF SLAB */
+.slab-table{width:100%;border-collapse:collapse;font-size:.8rem;margin-top:10px}
+.slab-table th{color:var(--muted);font-size:.7rem;text-transform:uppercase;padding:0 8px 8px;border-bottom:1px solid var(--border);text-align:left}
+.slab-table td{padding:7px 8px;border-bottom:1px solid #1e293b}
+.slab-active{background:var(--primary-glow);border-radius:4px}
+
+@media print {
+  .tab-bar,.header-badges,.section-actions,.calc-btn,.sec-btn,.reset-btn,.print-btn,.add-custom,.cat-filter{display:none!important}
+  .results-panel{display:block!important}
+  body{background:#fff;color:#000}
+  .card{border:1px solid #ccc;background:#fff}
+}
+
+/* Scroll to top */
+#scroll-top{position:fixed;bottom:24px;right:24px;width:40px;height:40px;border-radius:50%;background:var(--primary);border:none;color:#000;font-size:18px;cursor:pointer;display:none;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,.4);z-index:999;transition:opacity .2s}
+#scroll-top.visible{display:flex}
+#scroll-top:hover{opacity:.85}
+
+/* Room grid responsive */
+@media(max-width:700px){
+  #room-grid{grid-template-columns:1fr 1fr!important}
+  #gen-app-grid{grid-template-columns:1fr!important}
+}
+</style>
+</head>
+<body>
+
+<div class="copyright-bar" id="copyright-bar">⚡ SMART LOAD CALCULATOR PRO V3 &nbsp;·&nbsp; © 2025 VEDANT.PATEL &nbsp;·&nbsp; ALL RIGHTS RESERVED</div>
+
+<header>
+  <div class="header-left">
+    <div class="header-icon">⚡</div>
+    <div>
+      <h1>Smart Load Calculator <span style="color:var(--primary);font-size:.9rem">Pro V3</span></h1>
+      <p>Load · MCB · Wire · Bill · Solar · Circuits · Generator · Faults · Schedule · Report</p>
+      <p style="font-size:.72rem;color:var(--primary);margin-top:3px;font-weight:600">© Vedant.Patel — All Rights Reserved</p>
+    </div>
+  </div>
+  <div class="header-badges">
+    <span class="hbadge hbadge-gold">⚡ IS 732 Guidelines</span>
+    <span class="hbadge hbadge-blue">13 Powerful Tools</span>
+    <span class="hbadge hbadge-gold">📄 Print Reports</span>
+  </div>
+</header>
+
+<!-- TABS -->
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="switchTab('input',this)">🏠 Load Input</button>
+  <button class="tab-btn" onclick="switchTab('results',this)">📋 Results</button>
+  <button class="tab-btn" onclick="switchTab('circuits',this)">🔌 Circuit Planner</button>
+  <button class="tab-btn" onclick="switchTab('solar',this)">☀️ Solar Advisor</button>
+  <button class="tab-btn" onclick="switchTab('tips',this)">💡 Energy Tips</button>
+  <button class="tab-btn" onclick="switchTab('reference',this)">📖 Reference</button>
+  <button class="tab-btn" onclick="switchTab('generator',this)">🔋 Generator</button>
+  <button class="tab-btn" onclick="switchTab('wirecost',this)">💰 Wiring Cost</button>
+  <button class="tab-btn" onclick="switchTab('compare',this)">📊 Compare</button>
+  <button class="tab-btn" onclick="switchTab('schedule',this)">📅 Load Schedule</button>
+  <button class="tab-btn" onclick="switchTab('fault',this)">🔍 Fault Finder</button>
+  <button class="tab-btn" onclick="switchTab('converter',this)">🔢 Unit Converter</button>
+  <button class="tab-btn" onclick="switchTab('report',this)">📄 Export Report</button>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ TAB: INPUT -->
+<div class="tab-content active" id="tab-input">
+<div class="container">
+
+  <!-- APPLIANCES CARD -->
+  <div class="card">
+    <div class="card-title">🏠 Appliances</div>
+
+    <div class="cat-filter" id="cat-filter">
+      <button class="cat-btn active" onclick="filterCat('all',this)">All</button>
+      <button class="cat-btn" onclick="filterCat('comfort',this)">Comfort</button>
+      <button class="cat-btn" onclick="filterCat('kitchen',this)">Kitchen</button>
+      <button class="cat-btn" onclick="filterCat('entertainment',this)">Entertainment</button>
+      <button class="cat-btn" onclick="filterCat('utility',this)">Utility</button>
+      <button class="cat-btn" onclick="filterCat('custom',this)">⭐ Custom</button>
+    </div>
+
+    <div class="section-actions">
+      <button class="sec-btn" onclick="presetHome('1bhk')">🏠 1BHK Preset</button>
+      <button class="sec-btn" onclick="presetHome('2bhk')">🏘 2BHK Preset</button>
+      <button class="sec-btn" onclick="presetHome('3bhk')">🏰 3BHK Preset</button>
+      <button class="sec-btn reset-btn" onclick="resetAll()">🗑 Reset All</button>
+    </div>
+
+    <div id="appliances-container"></div>
+
+    <!-- ADD CUSTOM APPLIANCE -->
+    <div class="divider"></div>
+    <div class="card-title" style="margin-bottom:10px">➕ Add Custom Appliance</div>
+    <div class="add-custom">
+      <input type="text" id="custom-name" placeholder="Name (e.g. Water Heater)">
+      <input type="number" id="custom-watt" placeholder="Watts" min="1">
+      <button class="add-custom-btn" onclick="addCustom()">+ Add</button>
+    </div>
+  </div>
+
+  <!-- RIGHT COLUMN -->
+  <div style="display:flex;flex-direction:column;gap:20px">
+
+    <!-- SETTINGS -->
+    <div class="card">
+      <div class="card-title">⚙️ Settings</div>
+      <div class="settings-grid">
+        <div class="sg">
+          <label>Supply Voltage</label>
+          <select id="voltage">
+            <option value="230">230 V — India / EU</option>
+            <option value="240">240 V — UK / AU</option>
+            <option value="120">120 V — USA</option>
+          </select>
+        </div>
+        <div class="sg">
+          <label>Daily Usage (hrs)</label>
+          <input type="number" id="daily-hours" value="8" min="1" max="24">
+        </div>
+        <div class="sg">
+          <label>Tariff (₹ / kWh)</label>
+          <input type="number" id="tariff" value="7" min="1" max="50" step="0.5">
+        </div>
+        <div class="sg">
+          <label>Days per Month</label>
+          <input type="number" id="days-month" value="30" min="1" max="31">
+        </div>
+        <div class="sg">
+          <label>Safety Factor</label>
+          <select id="safety-factor">
+            <option value="1.25">1.25× Standard</option>
+            <option value="1.5" selected>1.5× Recommended</option>
+            <option value="2.0">2.0× Heavy Duty</option>
+          </select>
+        </div>
+        <div class="sg">
+          <label>Phase Supply</label>
+          <select id="phase">
+            <option value="single">Single Phase</option>
+            <option value="three">Three Phase</option>
+          </select>
+        </div>
+        <div class="sg">
+          <label>Power Factor</label>
+          <select id="pf">
+            <option value="0.8">0.80 (Motor loads)</option>
+            <option value="0.9" selected>0.90 (Mixed)</option>
+            <option value="0.95">0.95 (Resistive)</option>
+            <option value="1.0">1.00 (Pure resistive)</option>
+          </select>
+        </div>
+        <div class="sg">
+          <label>State (Tariff Slab)</label>
+          <select id="state-slab">
+            <option value="gujarat">Gujarat</option>
+            <option value="maharashtra">Maharashtra</option>
+            <option value="delhi">Delhi</option>
+            <option value="karnataka">Karnataka</option>
+            <option value="custom">Custom (manual)</option>
+          </select>
+        </div>
+      </div>
+      <button class="calc-btn" onclick="calculate()">⚡ CALCULATE LOAD</button>
+    </div>
+
+    <!-- LIVE PANEL -->
+    <div class="card">
+      <div class="card-title">📊 Live Summary</div>
+      <div class="result-grid-4" style="grid-template-columns:1fr 1fr">
+        <div class="rbox">
+          <div class="rbox-label">Appliances</div>
+          <div class="rbox-value" id="live-count">0</div>
+          <div class="rbox-unit">units</div>
+        </div>
+        <div class="rbox">
+          <div class="rbox-label">Connected Load</div>
+          <div class="rbox-value" id="live-load">0</div>
+          <div class="rbox-unit">Watts</div>
+        </div>
+      </div>
+      <div class="lb-wrap" style="margin-bottom:0">
+        <div class="lb-header"><span>Live Load Level</span><span id="live-pct">0%</span></div>
+        <div class="lb-track"><div class="lb-fill" id="live-bar" style="width:0%;background:var(--green)"></div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div><!-- /tab-input -->
+
+<!-- ══════════════════════════════════════════════════════ TAB: RESULTS -->
+<div class="tab-content" id="tab-results">
+<div class="container">
+  <div class="card full-col results-panel" id="results-panel">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:16px">
+      <div class="card-title" style="margin-bottom:0">📋 Calculation Results</div>
+      <div style="display:flex;gap:8px">
+        <button class="print-btn" onclick="window.print()">🖨 Print Report</button>
+        <button class="sec-btn" onclick="switchTab('input',document.querySelector('.tab-btn'))">← Back to Input</button>
+      </div>
+    </div>
+
+    <div id="status-msg" class="status-msg"></div>
+
+    <!-- 6 key metrics -->
+    <div class="result-grid-4" style="grid-template-columns:repeat(3,1fr)">
+      <div class="rbox"><div class="rbox-label">Total Load</div><div class="rbox-value" id="res-load">—</div><div class="rbox-unit">Watts</div></div>
+      <div class="rbox"><div class="rbox-label">Design Load</div><div class="rbox-value" id="res-design">—</div><div class="rbox-unit">W (with safety)</div></div>
+      <div class="rbox rbox-blue"><div class="rbox-label">Apparent Power</div><div class="rbox-value" id="res-kva">—</div><div class="rbox-unit">kVA</div></div>
+      <div class="rbox"><div class="rbox-label">Full Load Current</div><div class="rbox-value" id="res-current">—</div><div class="rbox-unit">Amperes</div></div>
+      <div class="rbox rbox-green"><div class="rbox-label">Monthly Units</div><div class="rbox-value" id="res-units">—</div><div class="rbox-unit">kWh</div></div>
+      <div class="rbox rbox-purple"><div class="rbox-label">Monthly Bill</div><div class="rbox-value" id="res-bill">—</div><div class="rbox-unit">₹ approx.</div></div>
+    </div>
+
+    <!-- Load bar -->
+    <div class="lb-wrap">
+      <div class="lb-header"><span>Design Load Level (5kW reference)</span><span id="load-pct-label">0%</span></div>
+      <div class="lb-track"><div class="lb-fill" id="load-bar" style="width:0%"></div></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Electrical Recommendations -->
+    <div class="card-title" style="margin-bottom:14px">🔧 Electrical Recommendations</div>
+    <ul class="reco-list" id="reco-list"></ul>
+
+    <div class="divider"></div>
+
+    <!-- Donut chart + per-appliance bars -->
+    <div class="card-title" style="margin-bottom:14px">📊 Load Distribution</div>
+    <div class="donut-wrap" id="donut-wrap">
+      <svg class="donut-svg" id="donut-svg" width="160" height="160" viewBox="0 0 160 160"></svg>
+      <div class="donut-legend" id="donut-legend"></div>
+    </div>
+
+    <div id="seg-bars" style="margin-top:18px"></div>
+
+    <div class="divider"></div>
+
+    <!-- Per-bill breakdown slab -->
+    <div class="card-title" style="margin-bottom:10px">💰 Tariff Slab Bill Breakdown</div>
+    <table class="slab-table" id="slab-table">
+      <thead><tr><th>Slab</th><th>Units (kWh)</th><th>Rate (₹)</th><th>Amount</th></tr></thead>
+      <tbody id="slab-body"></tbody>
+    </table>
+
+    <div class="divider"></div>
+
+    <!-- Appliance breakdown table -->
+    <div class="card-title" style="margin-bottom:10px">📦 Appliance Breakdown</div>
+    <table class="circuit-table">
+      <thead><tr><th>Appliance</th><th>Qty</th><th>W each</th><th>Total W</th><th>kWh/mo</th><th class="td-r">% Load</th></tr></thead>
+      <tbody id="breakdown-body"></tbody>
+    </table>
+
+    <div class="divider"></div>
+    <!-- CO2 -->
+    <div class="card-title" style="margin-bottom:10px">🌱 Carbon Footprint</div>
+    <div class="result-grid-2">
+      <div class="rbox"><div class="rbox-label">CO₂ per Month</div><div class="rbox-value" id="res-co2">—</div><div class="rbox-unit">kg CO₂ approx.</div></div>
+      <div class="rbox rbox-green"><div class="rbox-label">Trees to Offset</div><div class="rbox-value" id="res-trees">—</div><div class="rbox-unit">trees / year</div></div>
+    </div>
+
+  </div>
+  <div class="card full-col" id="no-results-msg" style="text-align:center;padding:48px">
+    <div style="font-size:3rem;margin-bottom:12px">⚡</div>
+    <div style="font-weight:700;font-size:1.1rem;margin-bottom:8px">No results yet</div>
+    <div style="color:var(--muted);font-size:.88rem">Go to <strong>Load Input</strong>, add your appliances, and click <strong>Calculate Load</strong>.</div>
+  </div>
+</div>
+</div><!-- /tab-results -->
+
+<!-- ══════════════════════════════════════════════════════ TAB: CIRCUITS -->
+<div class="tab-content" id="tab-circuits">
+<div class="container">
+  <div class="card full-col">
+    <div class="card-title">🔌 Circuit Planner</div>
+    <p style="color:var(--muted);font-size:.85rem;margin-bottom:18px">Standard residential circuit distribution as per IS 732. Run calculation first to populate actual values.</p>
+
+    <table class="circuit-table" id="circuit-table">
+      <thead>
+        <tr>
+          <th>Circuit</th><th>Typical Appliances</th><th>Load (W)</th><th>Current (A)</th><th>MCB</th><th>Wire Size</th><th>Notes</th>
+        </tr>
+      </thead>
+      <tbody id="circuit-body">
+        <tr><td colspan="7" style="text-align:center;color:var(--muted);padding:20px">Run the calculation first to see circuit recommendations.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="divider"></div>
+    <div class="card-title" style="margin-bottom:12px">📐 DB Board Layout</div>
+    <div id="db-layout" style="color:var(--muted);font-size:.85rem">Run the calculation to generate DB layout.</div>
+  </div>
+</div>
+</div><!-- /tab-circuits -->
+
+<!-- ══════════════════════════════════════════════════════ TAB: SOLAR -->
+<div class="tab-content" id="tab-solar">
+<div class="container">
+  <div class="card full-col">
+    <div class="card-title">☀️ Solar Power Advisor</div>
+    <p style="color:var(--muted);font-size:.85rem;margin-bottom:18px">Estimate solar panel requirement to offset your electricity consumption.</p>
+
+    <div class="settings-grid" style="margin-bottom:18px">
+      <div class="sg">
+        <label>City / Peak Sun Hours</label>
+        <select id="solar-city">
+          <option value="5.5">Ahmedabad / Gujarat (5.5 hrs)</option>
+          <option value="5.0">Mumbai / Maharashtra (5.0 hrs)</option>
+          <option value="4.5">Delhi / NCR (4.5 hrs)</option>
+          <option value="5.8">Rajasthan / Jodhpur (5.8 hrs)</option>
+          <option value="4.8">Bengaluru / Karnataka (4.8 hrs)</option>
+          <option value="4.2">Chennai / Tamil Nadu (4.2 hrs)</option>
+          <option value="4.0">Kolkata / WB (4.0 hrs)</option>
+          <option value="5.2">Hyderabad / Telangana (5.2 hrs)</option>
+        </select>
+      </div>
+      <div class="sg">
+        <label>System Type</label>
+        <select id="solar-type">
+          <option value="grid">Grid-Tied (Net Metering)</option>
+          <option value="offgrid">Off-Grid (with Battery)</option>
+          <option value="hybrid">Hybrid</option>
+        </select>
+      </div>
+      <div class="sg">
+        <label>Solar Panel Efficiency</label>
+        <select id="solar-eff">
+          <option value="0.75">Standard Poly (75%)</option>
+          <option value="0.80" selected>Mono PERC (80%)</option>
+          <option value="0.85">Premium Mono (85%)</option>
+        </select>
+      </div>
+      <div class="sg">
+        <label>% Load to Offset</label>
+        <input type="number" id="solar-pct" value="80" min="10" max="100">
+      </div>
+    </div>
+
+    <button class="calc-btn" style="width:auto;padding:11px 28px" onclick="calcSolar()">☀️ Calculate Solar Requirement</button>
+
+    <div class="solar-result" id="solar-result" style="display:none">
+      <h3>☀️ Solar Recommendation</h3>
+      <div class="result-grid-4">
+        <div class="rbox rbox-green"><div class="rbox-label">Panel Capacity</div><div class="rbox-value" id="sol-kw">—</div><div class="rbox-unit">kW (peak)</div></div>
+        <div class="rbox"><div class="rbox-label">No. of Panels</div><div class="rbox-value" id="sol-panels">—</div><div class="rbox-unit">× 400W panels</div></div>
+        <div class="rbox rbox-blue"><div class="rbox-label">Roof Area Needed</div><div class="rbox-value" id="sol-area">—</div><div class="rbox-unit">sq. meters</div></div>
+        <div class="rbox rbox-purple"><div class="rbox-label">Est. System Cost</div><div class="rbox-value" id="sol-cost">—</div><div class="rbox-unit">₹ (approx.)</div></div>
+      </div>
+      <div class="result-grid-2" style="margin-top:10px">
+        <div class="rbox rbox-green"><div class="rbox-label">Monthly Savings</div><div class="rbox-value" id="sol-save">—</div><div class="rbox-unit">₹ / month</div></div>
+        <div class="rbox"><div class="rbox-label">Payback Period</div><div class="rbox-value" id="sol-payback">—</div><div class="rbox-unit">years</div></div>
+      </div>
+      <div id="sol-battery-row" style="display:none;margin-top:10px">
+        <div class="result-grid-2">
+          <div class="rbox"><div class="rbox-label">Battery Bank</div><div class="rbox-value" id="sol-bat">—</div><div class="rbox-unit">kWh storage</div></div>
+          <div class="rbox rbox-blue"><div class="rbox-label">Inverter Size</div><div class="rbox-value" id="sol-inv">—</div><div class="rbox-unit">kVA</div></div>
+        </div>
+      </div>
+      <p style="color:var(--muted);font-size:.75rem;margin-top:12px">* Estimates only. Actual solar generation varies by shading, orientation, temperature & maintenance. Get multiple quotes from MNRE-empaneled installers.</p>
+    </div>
+  </div>
+</div>
+</div><!-- /tab-solar -->
+
+<!-- ══════════════════════════════════════════════════════ TAB: TIPS -->
+<div class="tab-content" id="tab-tips">
+<div class="container">
+  <div class="card full-col">
+    <div class="card-title">💡 Energy Saving Tips for Electricians & Homeowners</div>
+    <div class="tip-grid" id="tip-grid"></div>
+  </div>
+  <div class="card full-col">
+    <div class="card-title">⚠️ Common Wiring Mistakes to Avoid</div>
+    <div id="mistakes-list"></div>
+  </div>
+</div>
+</div><!-- /tab-tips -->
+
+<!-- ══════════════════════════════════════════════════════ TAB: REFERENCE -->
+<div class="tab-content" id="tab-reference">
+<div class="container">
+  <div class="card">
+    <div class="card-title">📊 MCB Selection Chart</div>
+    <table class="circuit-table">
+      <thead><tr><th>Current (A)</th><th>MCB Rating</th><th>Type</th><th>Application</th></tr></thead>
+      <tbody>
+        <tr><td>Up to 6A</td><td class="highlight-yellow">6A</td><td>Type B</td><td>Small lighting circuits</td></tr>
+        <tr><td>7–10A</td><td class="highlight-yellow">10A</td><td>Type B</td><td>Lighting + fans</td></tr>
+        <tr><td>11–16A</td><td class="highlight-yellow">16A</td><td>Type B/C</td><td>Power sockets, 1-ton AC</td></tr>
+        <tr><td>17–20A</td><td class="highlight-yellow">20A</td><td>Type C</td><td>1.5-ton AC, geyser</td></tr>
+        <tr><td>21–25A</td><td class="highlight-yellow">25A</td><td>Type C</td><td>2-ton AC, pump motors</td></tr>
+        <tr><td>26–32A</td><td class="highlight-yellow">32A</td><td>Type C</td><td>Sub-main, heavy AC</td></tr>
+        <tr><td>33–40A</td><td class="highlight-yellow">40A</td><td>Type C/D</td><td>Industrial, main incomer</td></tr>
+        <tr><td>41–63A</td><td class="highlight-yellow">63A</td><td>Type C/D</td><td>3-phase sub-main</td></tr>
+        <tr><td>64–100A</td><td class="highlight-yellow">100A</td><td>Type D</td><td>Main LT panel</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <div class="card-title">🔶 Wire Size Reference (IS 694)</div>
+    <table class="circuit-table">
+      <thead><tr><th>Size</th><th>Current Cap.</th><th>Application</th><th>Earth Wire</th></tr></thead>
+      <tbody>
+        <tr><td>1.0 mm²</td><td>10–12A</td><td>Lighting</td><td>1.0 mm²</td></tr>
+        <tr><td>1.5 mm²</td><td>14–16A</td><td>Lighting + fans</td><td>1.5 mm²</td></tr>
+        <tr><td>2.5 mm²</td><td>20–23A</td><td>Power sockets</td><td>1.5 mm²</td></tr>
+        <tr><td>4.0 mm²</td><td>27–30A</td><td>AC, geyser</td><td>2.5 mm²</td></tr>
+        <tr><td>6.0 mm²</td><td>34–38A</td><td>Sub-main</td><td>2.5 mm²</td></tr>
+        <tr><td>10 mm²</td><td>46–52A</td><td>Main feed</td><td>4.0 mm²</td></tr>
+        <tr><td>16 mm²</td><td>61–70A</td><td>Commercial main</td><td>6.0 mm²</td></tr>
+        <tr><td>25 mm²</td><td>82–90A</td><td>Industrial</td><td>10 mm²</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <div class="card-title">🔋 Standard Appliance Wattages</div>
+    <table class="circuit-table">
+      <thead><tr><th>Appliance</th><th>Min W</th><th>Typical W</th><th>Max W</th></tr></thead>
+      <tbody>
+        <tr><td>🌀 Ceiling Fan</td><td>40</td><td>75</td><td>100</td></tr>
+        <tr><td>💡 LED Bulb</td><td>5</td><td>10</td><td>22</td></tr>
+        <tr><td>❄️ 1-ton AC</td><td>800</td><td>1000</td><td>1200</td></tr>
+        <tr><td>❄️ 1.5-ton AC</td><td>1100</td><td>1500</td><td>1800</td></tr>
+        <tr><td>❄️ 2-ton AC</td><td>1500</td><td>2000</td><td>2500</td></tr>
+        <tr><td>🧊 Refrigerator (200L)</td><td>100</td><td>150</td><td>200</td></tr>
+        <tr><td>📺 LED TV 40"</td><td>60</td><td>100</td><td>150</td></tr>
+        <tr><td>🫧 Washing Machine</td><td>300</td><td>500</td><td>2000</td></tr>
+        <tr><td>🚿 Geyser 15L</td><td>1500</td><td>2000</td><td>3000</td></tr>
+        <tr><td>💧 Water Pump 0.5HP</td><td>350</td><td>375</td><td>500</td></tr>
+        <tr><td>🍳 Microwave</td><td>600</td><td>900</td><td>1200</td></tr>
+        <tr><td>🧺 Electric Iron</td><td>750</td><td>1000</td><td>2000</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <div class="card-title">🌍 India State Tariff Slabs (Approx.)</div>
+    <table class="circuit-table">
+      <thead><tr><th>State</th><th>0–100 kWh</th><th>101–300</th><th>301–500</th><th>>500</th></tr></thead>
+      <tbody>
+        <tr><td>Gujarat</td><td>₹3.25</td><td>₹4.35</td><td>₹5.20</td><td>₹6.10</td></tr>
+        <tr><td>Maharashtra</td><td>₹3.46</td><td>₹5.47</td><td>₹7.49</td><td>₹9.27</td></tr>
+        <tr><td>Delhi</td><td>₹3.00</td><td>₹4.50</td><td>₹6.50</td><td>₹8.00</td></tr>
+        <tr><td>Karnataka</td><td>₹4.35</td><td>₹6.25</td><td>₹7.85</td><td>₹9.00</td></tr>
+        <tr><td>Tamil Nadu</td><td>₹2.00</td><td>₹3.50</td><td>₹5.75</td><td>₹7.50</td></tr>
+      </tbody>
+    </table>
+    <p style="color:var(--muted);font-size:.73rem;margin-top:8px">* Indicative rates only. Check your DISCOM for current approved tariffs.</p>
+  </div>
+</div>
+</div><!-- /tab-reference -->
+
+<!-- ══════════════════════════════════════════════════════ TAB: GENERATOR -->
+<div class="tab-content" id="tab-generator">
+<div class="container">
+  <div class="card full-col">
+    <div class="card-title">🔋 Generator / Inverter Sizing</div>
+    <p style="color:var(--muted);font-size:.85rem;margin-bottom:18px">Find the right generator or inverter+battery backup for your home load. Select which appliances run during power cut.</p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px" id="gen-app-grid"></div>
+
+    <div class="settings-grid" style="margin-bottom:18px">
+      <div class="sg"><label>Backup Duration Required</label>
+        <select id="gen-backup-hrs">
+          <option value="1">1 hour</option>
+          <option value="2">2 hours</option>
+          <option value="4" selected>4 hours</option>
+          <option value="6">6 hours</option>
+          <option value="8">8 hours</option>
+          <option value="12">12 hours</option>
+        </select>
+      </div>
+      <div class="sg"><label>Power Factor</label>
+        <select id="gen-pf">
+          <option value="0.8" selected>0.8 (Standard)</option>
+          <option value="0.9">0.9 (Good)</option>
+          <option value="1.0">1.0 (Unity)</option>
+        </select>
+      </div>
+      <div class="sg"><label>Battery Voltage</label>
+        <select id="gen-bat-v">
+          <option value="12">12V (Small inverter)</option>
+          <option value="24" selected>24V (Medium inverter)</option>
+          <option value="48">48V (Large inverter)</option>
+        </select>
+      </div>
+      <div class="sg"><label>Battery Depth of Discharge</label>
+        <select id="gen-dod">
+          <option value="0.5">50% (Lead Acid)</option>
+          <option value="0.7">70% (Lithium)</option>
+          <option value="0.8" selected>80% (LiFePO4)</option>
+        </select>
+      </div>
+    </div>
+    <button class="calc-btn" style="width:auto;padding:11px 28px" onclick="calcGenerator()">🔋 Size My Backup System</button>
+
+    <div id="gen-result" style="display:none;margin-top:18px">
+      <div class="result-grid-4" style="grid-template-columns:repeat(4,1fr)">
+        <div class="rbox"><div class="rbox-label">Backup Load</div><div class="rbox-value" id="gen-load">—</div><div class="rbox-unit">Watts</div></div>
+        <div class="rbox rbox-green"><div class="rbox-label">Inverter / UPS Size</div><div class="rbox-value" id="gen-kva">—</div><div class="rbox-unit">kVA</div></div>
+        <div class="rbox rbox-blue"><div class="rbox-label">Battery Capacity</div><div class="rbox-value" id="gen-bat-ah">—</div><div class="rbox-unit">Ah required</div></div>
+        <div class="rbox rbox-purple"><div class="rbox-label">No. of Batteries</div><div class="rbox-value" id="gen-bat-count">—</div><div class="rbox-unit">× 150Ah batteries</div></div>
+      </div>
+      <div class="result-grid-2" style="margin-top:10px;grid-template-columns:1fr 1fr">
+        <div class="rbox"><div class="rbox-label">Generator (DG Set) Size</div><div class="rbox-value" id="gen-dg">—</div><div class="rbox-unit">kVA DG Set</div></div>
+        <div class="rbox rbox-green"><div class="rbox-label">Approx. System Cost</div><div class="rbox-value" id="gen-cost">—</div><div class="rbox-unit">₹ (inverter+batteries)</div></div>
+      </div>
+      <div id="gen-recos" style="margin-top:14px"></div>
+      <p style="color:var(--muted);font-size:.74rem;margin-top:10px">* Inverter/UPS sizes are standard commercial ratings. Add 25–30% buffer for motor starting surge current. Costs are indicative.</p>
+    </div>
+  </div>
+</div>
+</div><!-- /tab-generator -->
+
+<!-- ══════════════════════════════════════════════════════ TAB: WIRING COST -->
+<div class="tab-content" id="tab-wirecost">
+<div class="container">
+  <div class="card full-col">
+    <div class="card-title">💰 Wiring Material Cost Estimator</div>
+    <p style="color:var(--muted);font-size:.85rem;margin-bottom:18px">Estimate material cost for house wiring. Enter room/area details to get cable lengths, conduit, and switches/sockets required.</p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:18px" id="room-grid">
+      <!-- rooms injected by JS -->
+    </div>
+    <button class="sec-btn" onclick="addRoom()" style="margin-bottom:18px">➕ Add Room</button>
+
+    <div class="settings-grid" style="margin-bottom:18px">
+      <div class="sg"><label>Wire Brand / Quality</label>
+        <select id="wire-brand">
+          <option value="economy">Economy (₹18–22/m)</option>
+          <option value="standard" selected>Standard (₹28–35/m)</option>
+          <option value="premium">Premium (₹45–55/m)</option>
+        </select>
+      </div>
+      <div class="sg"><label>Conduit Type</label>
+        <select id="conduit-type">
+          <option value="pvc">PVC Conduit (₹15/m)</option>
+          <option value="gi" selected>GI Conduit (₹40/m)</option>
+          <option value="flexible">Flexible Conduit (₹25/m)</option>
+        </select>
+      </div>
+      <div class="sg"><label>Switch/Socket Brand</label>
+        <select id="sw-brand">
+          <option value="economy">Economy (₹25/pt)</option>
+          <option value="standard" selected>Standard (₹60/pt)</option>
+          <option value="premium">Premium Modular (₹150/pt)</option>
+        </select>
+      </div>
+      <div class="sg"><label>Labour Rate (₹/point)</label>
+        <input type="number" id="labour-rate" value="350" min="100">
+      </div>
+    </div>
+
+    <button class="calc-btn" style="width:auto;padding:11px 28px" onclick="calcWiringCost()">💰 Estimate Wiring Cost</button>
+
+    <div id="wiring-result" style="display:none;margin-top:18px">
+      <div class="result-grid-4" style="grid-template-columns:repeat(4,1fr)">
+        <div class="rbox"><div class="rbox-label">Total Wire</div><div class="rbox-value" id="wc-wire">—</div><div class="rbox-unit">meters</div></div>
+        <div class="rbox rbox-blue"><div class="rbox-label">Conduit</div><div class="rbox-value" id="wc-conduit">—</div><div class="rbox-unit">meters</div></div>
+        <div class="rbox rbox-green"><div class="rbox-label">Switch Points</div><div class="rbox-value" id="wc-points">—</div><div class="rbox-unit">points</div></div>
+        <div class="rbox rbox-purple"><div class="rbox-label">MCBs Required</div><div class="rbox-value" id="wc-mcbs">—</div><div class="rbox-unit">nos.</div></div>
+      </div>
+      <div style="background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:16px;margin-top:14px">
+        <div class="card-title" style="margin-bottom:12px">📦 Cost Breakdown</div>
+        <table class="circuit-table" id="wc-table">
+          <thead><tr><th>Item</th><th>Qty</th><th>Unit Rate</th><th class="td-r">Amount (₹)</th></tr></thead>
+          <tbody id="wc-tbody"></tbody>
+        </table>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)">
+          <span style="font-weight:700;font-size:.9rem">Total Estimated Cost</span>
+          <span style="font-size:1.4rem;font-weight:800;color:var(--primary)" id="wc-total">—</span>
+        </div>
+      </div>
+      <p style="color:var(--muted);font-size:.74rem;margin-top:10px">* Material rates are approximate market prices (2025). Actual costs vary by city and vendor. Get 2–3 quotes before finalizing.</p>
+    </div>
+  </div>
+</div>
+</div><!-- /tab-wirecost -->
+
+<!-- ══════════════════════════════════════════════════════ TAB: COMPARE -->
+<div class="tab-content" id="tab-compare">
+<div class="container">
+  <div class="card full-col">
+    <div class="card-title">📊 Before vs After Comparison</div>
+    <p style="color:var(--muted);font-size:.85rem;margin-bottom:16px">Compare current (old) appliances vs new energy-efficient upgrades. See savings in units, bill, and CO₂.</p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px">
+      <div>
+        <div style="color:var(--red-text);font-weight:700;font-size:.85rem;margin-bottom:10px;display:flex;align-items:center;gap:6px">🔴 OLD / Current Setup</div>
+        <div id="compare-old-grid"></div>
+      </div>
+      <div>
+        <div style="color:var(--green-text);font-weight:700;font-size:.85rem;margin-bottom:10px;display:flex;align-items:center;gap:6px">🟢 NEW / Upgraded Setup</div>
+        <div id="compare-new-grid"></div>
+      </div>
+    </div>
+
+    <div class="settings-grid" style="margin-bottom:16px;grid-template-columns:1fr 1fr 1fr">
+      <div class="sg"><label>Daily Hours</label><input type="number" id="cmp-hours" value="8" min="1" max="24"></div>
+      <div class="sg"><label>Days/Month</label><input type="number" id="cmp-days" value="30" min="1" max="31"></div>
+      <div class="sg"><label>Tariff ₹/kWh</label><input type="number" id="cmp-tariff" value="7" min="1" step="0.5"></div>
+    </div>
+
+    <button class="calc-btn" style="width:auto;padding:11px 28px" onclick="calcCompare()">📊 Compare Now</button>
+
+    <div id="compare-result" style="display:none;margin-top:18px">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px">
+        <div class="rbox" style="border-color:var(--red-border);background:var(--red-bg)">
+          <div class="rbox-label">Old Monthly Bill</div>
+          <div class="rbox-value" id="cmp-old-bill" style="color:var(--red-text)">—</div>
+          <div class="rbox-unit">₹ / month</div>
+        </div>
+        <div class="rbox" style="border-color:var(--green-border);background:var(--green-bg)">
+          <div class="rbox-label">New Monthly Bill</div>
+          <div class="rbox-value" id="cmp-new-bill" style="color:var(--green-text)">—</div>
+          <div class="rbox-unit">₹ / month</div>
+        </div>
+        <div class="rbox rbox-purple" style="border-color:#8b5cf6;background:#4c1d9522">
+          <div class="rbox-label">Monthly Savings</div>
+          <div class="rbox-value" id="cmp-savings" style="color:#c4b5fd">—</div>
+          <div class="rbox-unit">₹ saved</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px">
+        <div class="rbox"><div class="rbox-label">Old Load</div><div class="rbox-value" id="cmp-old-w" style="color:var(--red-text)">—</div><div class="rbox-unit">Watts</div></div>
+        <div class="rbox"><div class="rbox-label">New Load</div><div class="rbox-value" id="cmp-new-w" style="color:var(--green-text)">—</div><div class="rbox-unit">Watts</div></div>
+        <div class="rbox"><div class="rbox-label">Load Reduced By</div><div class="rbox-value" id="cmp-pct-w" style="color:#c4b5fd">—</div><div class="rbox-unit">%</div></div>
+        <div class="rbox rbox-green"><div class="rbox-label">Annual Savings</div><div class="rbox-value" id="cmp-annual">—</div><div class="rbox-unit">₹ / year</div></div>
+      </div>
+      <!-- Savings bar -->
+      <div style="background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:16px">
+        <div style="font-size:.82rem;color:var(--muted);margin-bottom:10px;font-weight:600">Load Comparison</div>
+        <div style="margin-bottom:8px">
+          <div style="display:flex;justify-content:space-between;font-size:.75rem;margin-bottom:4px"><span style="color:var(--red-text)">🔴 Old</span><span id="cmp-old-w2"></span></div>
+          <div style="height:10px;background:var(--input-bg);border-radius:5px;border:1px solid var(--border);overflow:hidden"><div id="cmp-bar-old" style="height:100%;background:#ef4444;border-radius:5px;transition:width .7s"></div></div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;font-size:.75rem;margin-bottom:4px"><span style="color:var(--green-text)">🟢 New</span><span id="cmp-new-w2"></span></div>
+          <div style="height:10px;background:var(--input-bg);border-radius:5px;border:1px solid var(--border);overflow:hidden"><div id="cmp-bar-new" style="height:100%;background:#10b981;border-radius:5px;transition:width .7s"></div></div>
+        </div>
+        <div id="cmp-co2-saved" style="margin-top:12px;padding:10px;background:var(--green-bg);border:1px solid var(--green-border);border-radius:8px;font-size:.8rem;color:var(--green-text)"></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div><!-- /tab-compare -->
+
+<!-- ══════════════════════════════════════════ TAB: LOAD SCHEDULE -->
+<div class="tab-content" id="tab-schedule">
+<div class="container">
+  <div class="card full-col">
+    <div class="card-title">📅 24-Hour Load Schedule</div>
+    <p style="color:var(--muted);font-size:.84rem;margin-bottom:16px">Visualize when your appliances run through the day. Mark usage hours to get peak load, off-peak load and the cheapest time to run heavy appliances.</p>
+
+    <div style="overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;font-size:.76rem;min-width:800px" id="schedule-table">
+        <thead>
+          <tr>
+            <th style="text-align:left;padding:6px 8px;color:var(--muted);font-size:.7rem;width:140px;border-bottom:1px solid var(--border)">Appliance</th>
+            <th style="text-align:center;padding:4px 2px;color:var(--muted);font-size:.65rem;border-bottom:1px solid var(--border)" colspan="6">Morning (6–12)</th>
+            <th style="text-align:center;padding:4px 2px;color:var(--muted);font-size:.65rem;border-bottom:1px solid var(--border)" colspan="6">Afternoon (12–18)</th>
+            <th style="text-align:center;padding:4px 2px;color:var(--muted);font-size:.65rem;border-bottom:1px solid var(--border)" colspan="6">Evening (18–24)</th>
+            <th style="text-align:center;padding:4px 2px;color:var(--muted);font-size:.65rem;border-bottom:1px solid var(--border)" colspan="6">Night (0–6)</th>
+            <th style="text-align:right;padding:6px 8px;color:var(--muted);font-size:.7rem;border-bottom:1px solid var(--border)">Hrs/day</th>
+          </tr>
+        </thead>
+        <tbody id="schedule-body"></tbody>
+      </table>
+    </div>
+
+    <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+      <button class="sec-btn" onclick="calcSchedule()">📅 Analyse Schedule</button>
+      <button class="sec-btn" onclick="clearSchedule()">🗑 Clear All</button>
+      <span style="font-size:.75rem;color:var(--muted);align-self:center">Click cells to mark usage hours (orange = ON)</span>
+    </div>
+
+    <div id="schedule-result" style="display:none;margin-top:18px">
+      <div class="result-grid-4" style="grid-template-columns:repeat(4,1fr);margin-bottom:14px">
+        <div class="rbox"><div class="rbox-label">Total Daily Units</div><div class="rbox-value" id="sch-kwh">—</div><div class="rbox-unit">kWh</div></div>
+        <div class="rbox rbox-blue"><div class="rbox-label">Peak Load Hour</div><div class="rbox-value" id="sch-peak-hr">—</div><div class="rbox-unit">highest demand</div></div>
+        <div class="rbox rbox-green"><div class="rbox-label">Avg Hourly Load</div><div class="rbox-value" id="sch-avg">—</div><div class="rbox-unit">Watts</div></div>
+        <div class="rbox rbox-purple"><div class="rbox-label">Off-Peak Window</div><div class="rbox-value" id="sch-offpeak">—</div><div class="rbox-unit">best to run heavy load</div></div>
+      </div>
+      <!-- Hour-by-hour bar chart -->
+      <div style="background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:16px">
+        <div style="font-size:.8rem;color:var(--muted);margin-bottom:10px;font-weight:600">Hourly Load Profile (Watts)</div>
+        <div id="sch-bar-chart" style="display:flex;align-items:flex-end;gap:3px;height:120px"></div>
+        <div style="display:flex;justify-content:space-between;margin-top:4px;font-size:.65rem;color:var(--muted)">
+          <span>12AM</span><span>3AM</span><span>6AM</span><span>9AM</span><span>12PM</span><span>3PM</span><span>6PM</span><span>9PM</span><span>11PM</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div><!-- /tab-schedule -->
+
+<!-- ══════════════════════════════════════════ TAB: FAULT FINDER -->
+<div class="tab-content" id="tab-fault">
+<div class="container">
+  <div class="card full-col">
+    <div class="card-title">🔍 Electrical Fault Finder & Troubleshooter</div>
+    <p style="color:var(--muted);font-size:.84rem;margin-bottom:18px">Describe the problem you're facing and get step-by-step diagnosis guidance.</p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px" id="fault-categories">
+      <!-- injected by JS -->
+    </div>
+    <div id="fault-detail" style="display:none"></div>
+  </div>
+</div>
+</div><!-- /tab-fault -->
+
+<!-- ══════════════════════════════════════════ TAB: UNIT CONVERTER -->
+<div class="tab-content" id="tab-converter">
+<div class="container">
+  <div class="card">
+    <div class="card-title">🔢 Electrical Unit Converter</div>
+    <div id="conv-blocks"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">📐 Ohm's Law Calculator</div>
+    <p style="color:var(--muted);font-size:.8rem;margin-bottom:14px">Enter any two values — the other two are calculated automatically.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+      <div class="sg"><label>Voltage V (Volts)</label><input type="number" id="ohm-v" placeholder="e.g. 230" oninput="ohmsLaw('v')" style="width:100%;padding:8px 10px;background:var(--input-bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.9rem"></div>
+      <div class="sg"><label>Current I (Amps)</label><input type="number" id="ohm-i" placeholder="e.g. 10" oninput="ohmsLaw('i')" style="width:100%;padding:8px 10px;background:var(--input-bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.9rem"></div>
+      <div class="sg"><label>Resistance R (Ohms)</label><input type="number" id="ohm-r" placeholder="e.g. 23" oninput="ohmsLaw('r')" style="width:100%;padding:8px 10px;background:var(--input-bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.9rem"></div>
+      <div class="sg"><label>Power P (Watts)</label><input type="number" id="ohm-p" placeholder="e.g. 2300" oninput="ohmsLaw('p')" style="width:100%;padding:8px 10px;background:var(--input-bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.9rem"></div>
+    </div>
+    <div id="ohm-result" style="background:var(--input-bg);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:.8rem;color:var(--muted);display:none"></div>
+    <button class="sec-btn" style="margin-top:10px" onclick="clearOhm()">Clear</button>
+    <div style="margin-top:16px;padding:12px;background:var(--primary-glow);border:1px solid var(--primary);border-radius:8px;font-size:.78rem;color:var(--muted)">
+      <strong style="color:var(--primary)">Ohm's Law Formulas:</strong><br>
+      V = I × R &nbsp;|&nbsp; I = V / R &nbsp;|&nbsp; R = V / I &nbsp;|&nbsp; P = V × I &nbsp;|&nbsp; P = I² × R &nbsp;|&nbsp; P = V² / R
+    </div>
+  </div>
+  <div class="card full-col">
+    <div class="card-title">🌡️ Cable Derating Calculator</div>
+    <p style="color:var(--muted);font-size:.8rem;margin-bottom:14px">Calculate effective cable current capacity after applying derating factors.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px">
+      <div class="sg"><label>Base Cable Size</label>
+        <select id="derate-size" style="width:100%;padding:8px 10px;background:var(--input-bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.9rem">
+          <option value="10">1.0 mm² — 10A base</option>
+          <option value="14">1.5 mm² — 14A base</option>
+          <option value="20" selected>2.5 mm² — 20A base</option>
+          <option value="27">4.0 mm² — 27A base</option>
+          <option value="34">6.0 mm² — 34A base</option>
+          <option value="46">10 mm² — 46A base</option>
+          <option value="61">16 mm² — 61A base</option>
+          <option value="82">25 mm² — 82A base</option>
+        </select>
+      </div>
+      <div class="sg"><label>Ambient Temp (°C)</label>
+        <select id="derate-temp" style="width:100%;padding:8px 10px;background:var(--input-bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.9rem">
+          <option value="1.0">25°C — 1.0×</option>
+          <option value="0.94" selected>30°C — 0.94×</option>
+          <option value="0.87">35°C — 0.87×</option>
+          <option value="0.79">40°C — 0.79×</option>
+          <option value="0.71">45°C — 0.71×</option>
+          <option value="0.61">50°C — 0.61×</option>
+        </select>
+      </div>
+      <div class="sg"><label>Cables Grouped</label>
+        <select id="derate-group" style="width:100%;padding:8px 10px;background:var(--input-bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.9rem">
+          <option value="1.0">1 cable — 1.0×</option>
+          <option value="0.8" selected>2–3 cables — 0.8×</option>
+          <option value="0.7">4–6 cables — 0.70×</option>
+          <option value="0.65">7–9 cables — 0.65×</option>
+          <option value="0.6">10+ cables — 0.60×</option>
+        </select>
+      </div>
+    </div>
+    <button class="sec-btn" onclick="calcDerate()">Calculate Derated Capacity</button>
+    <div id="derate-result" style="display:none;margin-top:12px;padding:12px;background:var(--input-bg);border:1px solid var(--border);border-radius:8px;font-size:.85rem"></div>
+  </div>
+</div>
+</div><!-- /tab-converter -->
+
+<!-- ══════════════════════════════════════════ TAB: EXPORT REPORT -->
+<div class="tab-content" id="tab-report">
+<div class="container">
+  <div class="card full-col">
+    <div class="card-title">📄 Export Full Electrical Report</div>
+    <p style="color:var(--muted);font-size:.84rem;margin-bottom:18px">Generate a professional printable report with all your calculation results, recommendations and circuit plan.</p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px">
+      <div class="sg"><label>Client / Site Name</label><input type="text" id="rpt-client" placeholder="e.g. Mr. Patel's Residence" style="width:100%;padding:8px 10px;background:var(--input-bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.88rem"></div>
+      <div class="sg"><label>Site Address</label><input type="text" id="rpt-address" placeholder="e.g. 42, Navrangpura, Ahmedabad" style="width:100%;padding:8px 10px;background:var(--input-bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.88rem"></div>
+      <div class="sg"><label>Electrician / Engineer Name</label><input type="text" id="rpt-eng" placeholder="Your name" style="width:100%;padding:8px 10px;background:var(--input-bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.88rem"></div>
+      <div class="sg"><label>License / REG No.</label><input type="text" id="rpt-lic" placeholder="e.g. GUJ-EL-XXXXX" style="width:100%;padding:8px 10px;background:var(--input-bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.88rem"></div>
+      <div class="sg"><label>Report Date</label><input type="date" id="rpt-date" style="width:100%;padding:8px 10px;background:var(--input-bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.88rem"></div>
+      <div class="sg"><label>Building Type</label>
+        <select id="rpt-type" style="width:100%;padding:8px 10px;background:var(--input-bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.88rem">
+          <option>Residential</option><option>Commercial</option><option>Industrial</option><option>Mixed Use</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px">
+      <button class="calc-btn" style="width:auto;padding:11px 24px" onclick="generateReport()">📄 Preview Report</button>
+      <button class="print-btn" onclick="window.print()">🖨️ Print / Save PDF</button>
+    </div>
+
+    <div id="report-preview" style="display:none;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:24px;font-size:.83rem;line-height:1.7"></div>
+  </div>
+</div>
+</div><!-- /tab-report -->
+
+<footer>⚡ Smart Load Calculator Pro V3 &nbsp;|&nbsp; © 2025 <strong>Vedant.Patel</strong>. All Rights Reserved. &nbsp;|&nbsp; For guidance only — Always consult a licensed electrician. &nbsp;|&nbsp; Standards: IS 732, IS 694, IE Rules 1956.</footer>
+<button id="scroll-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">↑</button>
+
+<script>
+window.addEventListener('scroll',()=>{
+  document.getElementById('scroll-top').classList.toggle('visible', window.scrollY>400);
+});
+// ──────────────────────────────────────────────────────────────
+// DATA
+// ──────────────────────────────────────────────────────────────
+const APPLIANCES = [
+  { id:'fan',    icon:'🌀', name:'Ceiling Fan',       defaultW:75,   cat:'comfort' },
+  { id:'light',  icon:'💡', name:'LED Light',          defaultW:10,   cat:'comfort' },
+  { id:'cfl',    icon:'🔆', name:'CFL / Tubelight',    defaultW:40,   cat:'comfort' },
+  { id:'ac1',    icon:'❄️',  name:'AC 1 Ton',           defaultW:1000, cat:'comfort' },
+  { id:'ac15',   icon:'❄️',  name:'AC 1.5 Ton',         defaultW:1500, cat:'comfort' },
+  { id:'ac2',    icon:'❄️',  name:'AC 2 Ton',           defaultW:2000, cat:'comfort' },
+  { id:'fridge', icon:'🧊', name:'Refrigerator',       defaultW:150,  cat:'kitchen'  },
+  { id:'micro',  icon:'🍳', name:'Microwave Oven',     defaultW:900,  cat:'kitchen'  },
+  { id:'mixie',  icon:'🌀', name:'Mixer / Grinder',    defaultW:500,  cat:'kitchen'  },
+  { id:'induct', icon:'🔥', name:'Induction Cooktop',  defaultW:1500, cat:'kitchen'  },
+  { id:'toaster',icon:'🍞', name:'Toaster / OTG',      defaultW:800,  cat:'kitchen'  },
+  { id:'tv',     icon:'📺', name:'Television',         defaultW:100,  cat:'entertainment' },
+  { id:'comp',   icon:'💻', name:'Computer / Laptop',  defaultW:200,  cat:'entertainment' },
+  { id:'dth',    icon:'📡', name:'DTH / Set-Top Box',  defaultW:25,   cat:'entertainment' },
+  { id:'speaker',icon:'🔊', name:'Speaker / Soundbar', defaultW:80,   cat:'entertainment' },
+  { id:'washing',icon:'🫧', name:'Washing Machine',    defaultW:500,  cat:'utility'  },
+  { id:'motor',  icon:'💧', name:'Water Pump 0.5HP',   defaultW:375,  cat:'utility'  },
+  { id:'motor1', icon:'💧', name:'Water Pump 1HP',     defaultW:750,  cat:'utility'  },
+  { id:'geyser', icon:'🚿', name:'Geyser / Heater',    defaultW:2000, cat:'utility'  },
+  { id:'iron',   icon:'🧺', name:'Electric Iron',      defaultW:1000, cat:'utility'  },
+  { id:'vacuum', icon:'🧹', name:'Vacuum Cleaner',     defaultW:600,  cat:'utility'  },
+  { id:'drill',  icon:'🔧', name:'Power Drill',        defaultW:800,  cat:'utility'  },
+];
+
+let customAppliances = [];
+const COLORS = ['#f59e0b','#3b82f6','#10b981','#8b5cf6','#ef4444','#ec4899','#06b6d4','#84cc16','#f97316','#a78bfa','#34d399','#fb923c'];
+
+const STATE_SLABS = {
+  gujarat:     [{upto:100,rate:3.25},{upto:300,rate:4.35},{upto:500,rate:5.20},{upto:Infinity,rate:6.10}],
+  maharashtra: [{upto:100,rate:3.46},{upto:300,rate:5.47},{upto:500,rate:7.49},{upto:Infinity,rate:9.27}],
+  delhi:       [{upto:100,rate:3.00},{upto:300,rate:4.50},{upto:500,rate:6.50},{upto:Infinity,rate:8.00}],
+  karnataka:   [{upto:100,rate:4.35},{upto:300,rate:6.25},{upto:500,rate:7.85},{upto:Infinity,rate:9.00}],
+  custom:      null,
+};
+
+const TIPS = [
+  {icon:'❄️',title:'Use 5-Star Rated ACs',body:'A 5-star split AC uses 30–40% less power than a 2-star unit. For a 1.5T AC running 8 hrs/day, this saves ₹3,000–5,000/year.'},
+  {icon:'💡',title:'Switch to LED Everywhere',body:'Replace all CFL/tube lights with LED. A 10W LED replaces a 40W CFL with the same brightness, saving 75% energy on lighting.'},
+  {icon:'🌀',title:'BLDC Fans Save Energy',body:'BLDC (Brushless DC) fans use only 28–35W vs 75W for conventional fans — a 55% saving. Great for rooms running fans 10+ hrs daily.'},
+  {icon:'🚿',title:'Solar Water Heater',body:'A solar water heater can replace a 2000W electric geyser. With 4–5 sunny hrs/day it generates free hot water, saving ₹1,500–3,000/month.'},
+  {icon:'⏰',title:'Use Timer Switches',body:'Install programmable timers for geysers. Turning on 30 mins before use instead of keeping it on standby saves 30–40% geyser energy.'},
+  {icon:'🔌',title:'Eliminate Phantom Loads',body:'Devices on standby (TV, chargers, set-top box) consume 5–15W each. Switching off at the socket can save 50–100 kWh/year.'},
+  {icon:'🧺',title:'Full-Load Washing',body:'Run washing machines and dishwashers only with full loads. Each cycle uses the same water/electricity regardless of load size.'},
+  {icon:'🌡️',title:'AC Temperature Setting',body:'Setting AC to 24°C instead of 20°C reduces power consumption by ~6% per degree. 24–26°C is the ideal range per BEE guidelines.'},
+  {icon:'☀️',title:'Go Solar with Net Metering',body:'Grid-tied solar with net metering allows you to sell surplus power back to the grid. Payback period is now 4–6 years in India.'},
+  {icon:'📊',title:'Install Energy Meters',body:'Sub-meters on AC, geyser, and kitchen circuits help identify energy hogs. Smart plugs with monitoring show real-time consumption.'},
+  {icon:'🔋',title:'Capacitor Bank for PF',body:'Low power factor increases current draw and bills. Installing a capacitor bank improves PF from 0.7 to 0.95, reducing KVA charges.'},
+  {icon:'🏠',title:'Thermal Insulation',body:'Ceiling insulation reduces AC load by 20–30%. White or reflective roofing and window films reduce radiant heat gain significantly.'},
+];
+
+const MISTAKES = [
+  {icon:'❌',text:'<strong>Undersized wires:</strong> Using 1.5mm² wire on circuits with 20A+ current causes overheating and fire risk. Always size wire for at least 125% of max current.'},
+  {icon:'❌',text:'<strong>No earthing:</strong> Skipping earth connections in wet areas (bathroom, kitchen) is extremely dangerous. Use 2.5mm² earth wire on all socket circuits.'},
+  {icon:'❌',text:'<strong>Single MCB for all loads:</strong> Connecting heavy loads (AC, geyser, pump) to a common MCB with lights causes nuisance tripping and overloading.'},
+  {icon:'❌',text:'<strong>No RCCB:</strong> RCCB (30mA) is mandatory for human shock protection. An MCB alone will NOT trip fast enough in a shock scenario.'},
+  {icon:'❌',text:'<strong>Loose connections:</strong> Loose terminals cause arcing, heat, and fire. Always use proper crimping lugs and torque terminals to spec.'},
+  {icon:'❌',text:'<strong>Aluminium wire for house wiring:</strong> Aluminium expands/contracts and loosens over time. Use copper conductors for all fixed wiring inside buildings.'},
+  {icon:'❌',text:'<strong>No neutral link:</strong> Connecting neutral wire directly to earth creates dangerous touch potentials. Keep earth and neutral separate after the main incomer.'},
+  {icon:'❌',text:'<strong>Overloading extension cords:</strong> Plugging AC, geyser, iron into a single multi-socket extension cord rated for 6A is a major fire hazard.'},
+];
+
+// ──────────────────────────────────────────────────────────────
+// BUILD UI
+// ──────────────────────────────────────────────────────────────
+function buildAppliances() {
+  const cont = document.getElementById('appliances-container');
+  cont.innerHTML = '';
+  const allApps = [...APPLIANCES, ...customAppliances];
+  allApps.forEach(a => {
+    const div = document.createElement('div');
+    div.className = 'appliance-row';
+    div.id = 'row_' + a.id;
+    div.dataset.cat = a.cat || 'custom';
+    div.innerHTML = `
+      <div class="app-icon">${a.icon}</div>
+      <div class="app-info">
+        <div class="app-name">${a.name}</div>
+        <div class="app-sub">${a.defaultW}W default · <span class="tooltip" data-tip="Enter custom wattage for this specific appliance">custom W ⓘ</span></div>
+      </div>
+      <div class="app-controls">
+        <input class="watt-input" type="number" id="w_${a.id}" value="${a.defaultW}" min="1" title="Custom Wattage (W)">
+        <button class="qty-btn" onclick="chg('${a.id}',-1)">−</button>
+        <input class="qty-display" type="number" id="q_${a.id}" value="0" min="0" max="99" onchange="liveUpdate()">
+        <button class="qty-btn" onclick="chg('${a.id}',1)">+</button>
+        ${a.cat==='custom'?`<button class="remove-app" onclick="removeCustom('${a.id}')" title="Remove">✕</button>`:''}
+      </div>`;
+    cont.appendChild(div);
+  });
+}
+
+function buildTips() {
+  document.getElementById('tip-grid').innerHTML = TIPS.map(t=>`
+    <div class="tip-card"><div class="tc-icon">${t.icon}</div><div class="tc-title">${t.title}</div><div class="tc-body">${t.body}</div></div>`).join('');
+  document.getElementById('mistakes-list').innerHTML = MISTAKES.map(m=>`
+    <div class="reco-item"><span class="ri-icon">${m.icon}</span><div class="ri-detail">${m.text}</div></div>`).join('');
+}
+
+// ──────────────────────────────────────────────────────────────
+// CATEGORY FILTER
+// ──────────────────────────────────────────────────────────────
+function filterCat(cat, btn) {
+  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.appliance-row').forEach(row=>{
+    row.style.display = (cat==='all'||row.dataset.cat===cat)?'flex':'none';
+  });
+}
+
+// ──────────────────────────────────────────────────────────────
+// PRESETS
+// ──────────────────────────────────────────────────────────────
+const PRESETS = {
+  '1bhk': {fan:2,light:4,cfl:2,ac15:1,fridge:1,tv:1,washing:1,geyser:1,motor:1},
+  '2bhk': {fan:4,light:6,cfl:3,ac15:2,fridge:1,tv:2,washing:1,geyser:1,motor:1,comp:1},
+  '3bhk': {fan:6,light:8,cfl:4,ac15:2,ac2:1,fridge:1,tv:3,washing:1,geyser:1,motor:1,comp:2,micro:1},
+};
+
+function presetHome(type) {
+  resetAll(true);
+  const p = PRESETS[type];
+  Object.entries(p).forEach(([id,qty])=>{
+    const el = document.getElementById('q_'+id);
+    if(el) el.value = qty;
+  });
+  liveUpdate();
+}
+
+function resetAll(silent) {
+  const allApps = [...APPLIANCES, ...customAppliances];
+  allApps.forEach(a=>{
+    const q = document.getElementById('q_'+a.id);
+    const w = document.getElementById('w_'+a.id);
+    if(q) q.value=0;
+    if(w) w.value=a.defaultW;
+  });
+  liveUpdate();
+  if(!silent) {
+    document.getElementById('results-panel').classList.remove('visible');
+    document.getElementById('no-results-msg').style.display='block';
+    document.getElementById('results-panel').style.display='none';
+  }
+}
+
+// ──────────────────────────────────────────────────────────────
+// CUSTOM APPLIANCE
+// ──────────────────────────────────────────────────────────────
+function addCustom() {
+  const name = document.getElementById('custom-name').value.trim();
+  const watt = +document.getElementById('custom-watt').value;
+  if(!name||!watt||watt<1){alert('Please enter a valid name and wattage.');return;}
+  const id = 'cust_' + Date.now();
+  customAppliances.push({id,icon:'⭐',name,defaultW:watt,cat:'custom'});
+  buildAppliances();
+  document.getElementById('custom-name').value='';
+  document.getElementById('custom-watt').value='';
+  liveUpdate();
+}
+
+function removeCustom(id) {
+  customAppliances = customAppliances.filter(a=>a.id!==id);
+  buildAppliances();
+  liveUpdate();
+}
+
+// ──────────────────────────────────────────────────────────────
+// QTY & LIVE UPDATE
+// ──────────────────────────────────────────────────────────────
+function chg(id, d) {
+  const el = document.getElementById('q_'+id);
+  el.value = Math.max(0, +el.value + d);
+  liveUpdate();
+}
+
+function allApps() { return [...APPLIANCES,...customAppliances]; }
+
+function getLoad() {
+  let total=0, count=0;
+  allApps().forEach(a=>{
+    const q = +document.getElementById('q_'+a.id)?.value||0;
+    const w = +document.getElementById('w_'+a.id)?.value||a.defaultW;
+    total+=q*w; count+=q;
+  });
+  return {total,count};
+}
+
+function liveUpdate() {
+  const {total,count} = getLoad();
+  document.getElementById('live-count').textContent=count;
+  document.getElementById('live-load').textContent=total.toLocaleString();
+  const pct=Math.min(100,Math.round((total/5000)*100));
+  const bar=document.getElementById('live-bar');
+  bar.style.width=pct+'%';
+  bar.style.background=pct<50?'#10b981':pct<80?'#f59e0b':'#ef4444';
+  document.getElementById('live-pct').textContent=pct+'%';
+  // highlight active rows
+  allApps().forEach(a=>{
+    const row=document.getElementById('row_'+a.id);
+    if(row){
+      const q=+document.getElementById('q_'+a.id)?.value||0;
+      row.classList.toggle('active-row',q>0);
+    }
+  });
+}
+
+// ──────────────────────────────────────────────────────────────
+// WIRE & MCB HELPERS
+// ──────────────────────────────────────────────────────────────
+function wireSize(amps) {
+  if(amps<=6)  return {size:'1.0 mm²',earth:'1.0 mm²',note:'Lighting circuits.'};
+  if(amps<=10) return {size:'1.5 mm²',earth:'1.5 mm²',note:'Lighting & small sockets.'};
+  if(amps<=16) return {size:'2.5 mm²',earth:'1.5 mm²',note:'Power sockets & small ACs.'};
+  if(amps<=25) return {size:'4.0 mm²',earth:'2.5 mm²',note:'AC, geyser, heavy circuits.'};
+  if(amps<=32) return {size:'6.0 mm²',earth:'2.5 mm²',note:'Sub-main distribution.'};
+  if(amps<=40) return {size:'10 mm²', earth:'4.0 mm²',note:'Main incoming, large motors.'};
+  if(amps<=63) return {size:'16 mm²', earth:'6.0 mm²',note:'Main incomer, commercial.'};
+  return             {size:'25 mm²+',earth:'10 mm²', note:'Heavy duty. Consult electrician.'};
+}
+
+function nextMCB(amps) {
+  return [6,10,16,20,25,32,40,50,63,80,100,125].find(s=>s>=amps)||Math.ceil(amps+10);
+}
+
+function dbWays(mcb) {
+  if(mcb<=20)return 4; if(mcb<=40)return 8; if(mcb<=63)return 12; return 16;
+}
+
+// ──────────────────────────────────────────────────────────────
+// TARIFF SLAB BILL
+// ──────────────────────────────────────────────────────────────
+function calcSlabBill(kwhMo, state, manualTariff) {
+  const slabs = STATE_SLABS[state];
+  if(!slabs) return {total:kwhMo*manualTariff, rows:[]};
+  let remaining=kwhMo, total=0, rows=[], prev=0;
+  slabs.forEach(s=>{
+    const slabSize=s.upto===Infinity?remaining:Math.min(remaining,s.upto-prev);
+    const used=Math.max(0,Math.min(remaining,slabSize));
+    if(used>0){
+      const amt=used*s.rate;
+      rows.push({label:`${prev}–${s.upto===Infinity?'above':s.upto} kWh`,units:used.toFixed(1),rate:s.rate,amt:amt.toFixed(2),active:used===remaining||s.upto===Infinity});
+      total+=amt;
+    }
+    remaining-=used;
+    prev=s.upto;
+    if(remaining<=0)return;
+  });
+  return {total,rows};
+}
+
+// ──────────────────────────────────────────────────────────────
+// MAIN CALCULATE
+// ──────────────────────────────────────────────────────────────
+function calculate() {
+  const {total,count} = getLoad();
+  if(!total){alert('Please add at least one appliance!');return;}
+
+  const voltage = +document.getElementById('voltage').value;
+  const hours   = +document.getElementById('daily-hours').value;
+  const tariff  = +document.getElementById('tariff').value;
+  const days    = +document.getElementById('days-month').value;
+  const sf      = +document.getElementById('safety-factor').value;
+  const phase   = document.getElementById('phase').value;
+  const pf      = +document.getElementById('pf').value;
+  const state   = document.getElementById('state-slab').value;
+
+  const design  = total * sf;
+  const current = phase==='three' ? design/(Math.sqrt(3)*voltage*pf) : design/(voltage*pf);
+  const kva     = design/pf/1000;
+  const kwhDay  = (total/1000)*hours;
+  const kwhMo   = kwhDay*days;
+  const {total:bill,rows:slabRows} = calcSlabBill(kwhMo,state,tariff);
+  const mcb     = nextMCB(current);
+  const wire    = wireSize(current);
+  const co2     = kwhMo*0.82; // India grid emission factor ~0.82 kg/kWh
+  const trees   = Math.ceil(co2/20); // 1 tree absorbs ~20kg CO2/year
+
+  // Fill result boxes
+  document.getElementById('res-load').textContent    = total.toLocaleString();
+  document.getElementById('res-design').textContent  = Math.round(design).toLocaleString();
+  document.getElementById('res-kva').textContent     = kva.toFixed(2);
+  document.getElementById('res-current').textContent = current.toFixed(1)+'A';
+  document.getElementById('res-units').textContent   = kwhMo.toFixed(1);
+  document.getElementById('res-bill').textContent    = '₹'+Math.round(bill).toLocaleString();
+  document.getElementById('res-co2').textContent     = co2.toFixed(1);
+  document.getElementById('res-trees').textContent   = trees;
+
+  // Load bar
+  const pct = Math.min(100,Math.round((design/5000)*100));
+  const bar = document.getElementById('load-bar');
+  bar.style.width=pct+'%';
+  bar.style.background=pct<50?'#10b981':pct<80?'#f59e0b':'#ef4444';
+  document.getElementById('load-pct-label').textContent=pct+'% of 5kW reference';
+
+  // Status
+  const sm=document.getElementById('status-msg');
+  if(design<2000){sm.textContent='✅ Low Load — Standard single-phase wiring is suitable.';sm.className='status-msg s-safe';}
+  else if(design<4000){sm.textContent='⚠️ Moderate Load — Ensure proper MCB & wire sizing. Periodic inspection required.';sm.className='status-msg s-warn';}
+  else{sm.textContent='🚨 High Load — Consider load balancing and three-phase supply. Consult a licensed electrician.';sm.className='status-msg s-danger';}
+
+  // Recommendations
+  const recos = [
+    {icon:'🔌',title:`Main MCB: <strong>${mcb}A ${phase==='three'?'(3-pole)':'(1-pole)'}</strong>`,
+     detail:`Design current = ${current.toFixed(1)}A. Next standard MCB = ${mcb}A. Type-C recommended for mixed loads (motors + resistive). Type-B for lighting-only circuits.`},
+    {icon:'🔶',title:`Main Cable: <strong>${wire.size} copper</strong>`,
+     detail:`${wire.note} Carry current capacity adequate for ${current.toFixed(1)}A with safety margin. Use PVC insulated, IS 694 compliant. Earth conductor: ${wire.earth}.`},
+    {icon:'🔒',title:`RCCB: <strong>30mA, ${mcb}A</strong> — Mandatory`,
+     detail:`A 30mA residual current device provides life-saving shock protection in ≤30ms. An MCB alone trips on overload/short circuit — NOT on leakage current to earth.`},
+    {icon:'📐',title:`Distribution Board: <strong>${dbWays(mcb)}-way SPN DB</strong>`,
+     detail:`Install a ${dbWays(mcb)}-way double-door metal/plastic DB with individual MCBs for: Lighting (10A), Power sockets (16A), AC (20–25A), Geyser (20A), and spares.`},
+    {icon:'🌍',title:`Earthing: <strong>Plate/Pipe earth — R &lt; 1Ω</strong>`,
+     detail:`IS 3043 compliant earthing. Use ${wire.earth} copper earth wire. Measure earth resistance with earth tester after installation. Water earth pits in dry season.`},
+    {icon:'⚡',title:`Apparent Power: <strong>${kva.toFixed(2)} kVA @ PF ${pf}</strong>`,
+     detail:`Power factor ${pf} means your supply authority may charge KVA-based tariff. Installing capacitor banks can improve PF and reduce electricity charges for commercial connections.`},
+  ];
+  if(phase==='three'){
+    recos.push({icon:'⚖️',title:'Three-Phase Load Balancing',
+      detail:`Distribute ~${Math.round(design/3)}W per phase (R, Y, B). Unbalanced loading causes excess neutral current and motor heating. Check phase balance with a clamp meter.`});
+  }
+  if(design>3000){
+    recos.push({icon:'🔋',title:'Consider a Servo Stabilizer',
+      detail:`For loads above 3kW, voltage fluctuations can damage sensitive appliances (AC compressors, refrigerators). Install a servo stabilizer or online UPS for critical equipment.`});
+  }
+
+  document.getElementById('reco-list').innerHTML=recos.map(r=>`
+    <li class="reco-item"><span class="ri-icon">${r.icon}</span>
+    <div><div class="ri-title">${r.title}</div><div class="ri-detail">${r.detail}</div></div></li>`).join('');
+
+  // Donut chart
+  const activeApps = allApps().filter(a=>(+document.getElementById('q_'+a.id)?.value||0)>0);
+  drawDonut(activeApps, total);
+
+  // Segment bars
+  const sbDiv = document.getElementById('seg-bars');
+  sbDiv.innerHTML = activeApps.map((a,i)=>{
+    const q=+document.getElementById('q_'+a.id).value;
+    const w=+document.getElementById('w_'+a.id).value||a.defaultW;
+    const tw=q*w; const pct=((tw/total)*100).toFixed(1);
+    return `<div class="seg-bar-wrap">
+      <div class="seg-bar-label"><span>${a.icon} ${a.name} (${q}×${w}W)</span><span style="color:${COLORS[i%COLORS.length]}">${pct}%</span></div>
+      <div class="seg-bar-track"><div class="seg-bar-fill" style="width:${pct}%;background:${COLORS[i%COLORS.length]}"></div></div>
+    </div>`;
+  }).join('');
+
+  // Tariff slab table
+  const slabBody=document.getElementById('slab-body');
+  if(slabRows.length){
+    slabBody.innerHTML=slabRows.map(r=>`<tr class="${r.active?'slab-active':''}">
+      <td>${r.label}</td><td>${r.units} kWh</td><td>₹${r.rate}</td><td><strong>₹${r.amt}</strong></td></tr>`).join('');
+    slabBody.innerHTML+=`<tr><td colspan="3" style="font-weight:700;color:var(--primary)">Total Bill</td><td style="font-weight:800;color:var(--primary)">₹${Math.round(bill)}</td></tr>`;
+  } else {
+    slabBody.innerHTML=`<tr><td colspan="4" style="color:var(--muted)">Using manual tariff ₹${tariff}/kWh → ₹${Math.round(bill)}</td></tr>`;
+  }
+
+  // Breakdown table
+  const tbody=document.getElementById('breakdown-body');
+  tbody.innerHTML='';
+  activeApps.forEach(a=>{
+    const q=+document.getElementById('q_'+a.id).value;
+    const w=+document.getElementById('w_'+a.id).value||a.defaultW;
+    const tw=q*w; const kwhA=(tw/1000)*hours*days;
+    tbody.innerHTML+=`<tr>
+      <td>${a.icon} ${a.name}</td><td>${q}</td><td>${w}W</td>
+      <td>${tw.toLocaleString()}W</td>
+      <td>${kwhA.toFixed(1)}</td>
+      <td class="td-r">${((tw/total)*100).toFixed(1)}%</td></tr>`;
+  });
+  tbody.innerHTML+=`<tr style="border-top:2px solid var(--primary)">
+    <td colspan="3" style="font-weight:700;color:var(--primary)">TOTAL</td>
+    <td style="font-weight:700;color:var(--primary)">${total.toLocaleString()}W</td>
+    <td style="font-weight:700;color:var(--primary)">${kwhMo.toFixed(1)}</td>
+    <td class="td-r" style="color:var(--primary)">100%</td></tr>`;
+
+  // Circuit Planner
+  buildCircuitPlan(activeApps, voltage, hours, days);
+
+  // Show results
+  document.getElementById('results-panel').style.display='block';
+  document.getElementById('results-panel').classList.add('visible');
+  document.getElementById('no-results-msg').style.display='none';
+  switchTab('results', document.querySelectorAll('.tab-btn')[1]);
+}
+
+// ──────────────────────────────────────────────────────────────
+// DONUT CHART (SVG)
+// ──────────────────────────────────────────────────────────────
+function drawDonut(apps, total) {
+  const svg = document.getElementById('donut-svg');
+  const legend = document.getElementById('donut-legend');
+  svg.innerHTML=''; legend.innerHTML='';
+  if(!apps.length)return;
+
+  const cx=80,cy=80,R=65,r=38;
+  let startAngle=-Math.PI/2;
+
+  apps.forEach((a,i)=>{
+    const q=+document.getElementById('q_'+a.id).value;
+    const w=+document.getElementById('w_'+a.id).value||a.defaultW;
+    const tw=q*w; const frac=tw/total;
+    const angle=frac*2*Math.PI;
+    const x1=cx+R*Math.cos(startAngle), y1=cy+R*Math.sin(startAngle);
+    const x2=cx+R*Math.cos(startAngle+angle), y2=cy+R*Math.sin(startAngle+angle);
+    const xi1=cx+r*Math.cos(startAngle), yi1=cy+r*Math.sin(startAngle);
+    const xi2=cx+r*Math.cos(startAngle+angle), yi2=cy+r*Math.sin(startAngle+angle);
+    const large=angle>Math.PI?1:0;
+    const col=COLORS[i%COLORS.length];
+    const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+    path.setAttribute('d',`M${x1},${y1} A${R},${R} 0 ${large},1 ${x2},${y2} L${xi2},${yi2} A${r},${r} 0 ${large},0 ${xi1},${yi1} Z`);
+    path.setAttribute('fill',col);
+    path.setAttribute('stroke','#0f172a');
+    path.setAttribute('stroke-width','1.5');
+    svg.appendChild(path);
+    legend.innerHTML+=`<div class="legend-item"><div class="legend-dot" style="background:${col}"></div><span>${a.icon} ${a.name}: <strong>${((tw/total)*100).toFixed(0)}%</strong></span></div>`;
+    startAngle+=angle;
+  });
+
+  // Center text
+  const txt=document.createElementNS('http://www.w3.org/2000/svg','text');
+  txt.setAttribute('x','80'); txt.setAttribute('y','75'); txt.setAttribute('text-anchor','middle');
+  txt.setAttribute('font-size','13'); txt.setAttribute('fill','#f1f5f9'); txt.setAttribute('font-weight','700');
+  txt.textContent=total>=1000?(total/1000).toFixed(1)+'kW':total+'W';
+  svg.appendChild(txt);
+  const sub=document.createElementNS('http://www.w3.org/2000/svg','text');
+  sub.setAttribute('x','80'); sub.setAttribute('y','92'); sub.setAttribute('text-anchor','middle');
+  sub.setAttribute('font-size','9'); sub.setAttribute('fill','#94a3b8');
+  sub.textContent='Total Load';
+  svg.appendChild(sub);
+}
+
+// ──────────────────────────────────────────────────────────────
+// CIRCUIT PLANNER
+// ──────────────────────────────────────────────────────────────
+function buildCircuitPlan(activeApps, voltage, hours, days) {
+  const circuits = [
+    {name:'Lighting Circuit',  apps:['light','cfl'],           fallback:300,  mcbBase:10, wire:'1.5 mm²'},
+    {name:'Fan Circuit',       apps:['fan'],                   fallback:300,  mcbBase:10, wire:'1.5 mm²'},
+    {name:'Power Sockets',     apps:['tv','comp','dth','speaker','vacuum','iron','mixie','toaster'],fallback:500,mcbBase:16,wire:'2.5 mm²'},
+    {name:'AC Circuit 1',      apps:['ac1','ac15'],            fallback:1500, mcbBase:20, wire:'4.0 mm²'},
+    {name:'AC Circuit 2',      apps:['ac2'],                   fallback:2000, mcbBase:25, wire:'4.0 mm²'},
+    {name:'Geyser / Heater',   apps:['geyser'],                fallback:2000, mcbBase:20, wire:'4.0 mm²'},
+    {name:'Kitchen Circuit',   apps:['fridge','micro','induct'],fallback:1000,mcbBase:20, wire:'4.0 mm²'},
+    {name:'Motor / Pump',      apps:['motor','motor1'],        fallback:750,  mcbBase:16, wire:'2.5 mm²'},
+    {name:'Washing Machine',   apps:['washing'],               fallback:500,  mcbBase:16, wire:'2.5 mm²'},
+  ];
+
+  let rows='';
+  circuits.forEach(c=>{
+    let load=0;
+    c.apps.forEach(id=>{
+      const qEl=document.getElementById('q_'+id);
+      const wEl=document.getElementById('w_'+id);
+      if(qEl){load+=(+qEl.value)*(+wEl?.value||0);}
+    });
+    if(load===0) load=c.fallback;
+    const curr=(load/(voltage*0.9)).toFixed(1);
+    const mcb=nextMCB(+curr);
+    rows+=`<tr>
+      <td><strong>${c.name}</strong></td>
+      <td style="color:var(--muted);font-size:.75rem">${c.apps.join(', ')}</td>
+      <td>${load}W</td>
+      <td>${curr}A</td>
+      <td class="highlight-yellow">${mcb}A MCB</td>
+      <td>${c.wire}</td>
+      <td style="color:var(--muted);font-size:.75rem">RCCB + MCB + ${c.wire} PVC copper</td>
+    </tr>`;
+  });
+  document.getElementById('circuit-body').innerHTML=rows;
+
+  // DB layout
+  let dbHtml=`<div style="background:var(--input-bg);border:2px solid var(--border);border-radius:10px;padding:16px;font-family:monospace;font-size:.8rem">
+  <div style="text-align:center;color:var(--primary);font-weight:700;margin-bottom:12px;font-family:'Segoe UI'">⬛ Distribution Board Layout</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">`;
+  circuits.forEach((c,i)=>{
+    let load=0;
+    c.apps.forEach(id=>{const q=document.getElementById('q_'+id);const w=document.getElementById('w_'+id);if(q)load+=(+q.value)*(+w?.value||0);});
+    if(!load)load=c.fallback;
+    const mcb=nextMCB(load/(voltage*0.9));
+    dbHtml+=`<div style="background:var(--card2);border:1px solid var(--border);border-radius:6px;padding:8px">
+      <div style="color:var(--muted);font-size:.65rem;margin-bottom:2px">MCB ${i+1}</div>
+      <div style="font-weight:700;color:var(--primary)">${mcb}A</div>
+      <div style="font-size:.72rem;color:var(--text)">${c.name}</div>
+    </div>`;
+  });
+  dbHtml+='</div></div>';
+  document.getElementById('db-layout').innerHTML=dbHtml;
+}
+
+// ──────────────────────────────────────────────────────────────
+// SOLAR ADVISOR
+// ──────────────────────────────────────────────────────────────
+function calcSolar() {
+  const {total} = getLoad();
+  const hours   = +document.getElementById('daily-hours').value;
+  const tariff  = +document.getElementById('tariff').value;
+  const days    = +document.getElementById('days-month').value;
+  const sunHrs  = +document.getElementById('solar-city').value;
+  const eff     = +document.getElementById('solar-eff').value;
+  const pct     = +document.getElementById('solar-pct').value/100;
+  const type    = document.getElementById('solar-type').value;
+
+  const kwhDay   = (total/1000)*hours;
+  const kwhTarget= kwhDay * pct;
+  const panelKW  = kwhTarget / (sunHrs * eff);
+  const panels   = Math.ceil(panelKW / 0.4);
+  const area     = Math.ceil(panels * 2.2);
+  const costPkw  = type==='offgrid'?85000:type==='hybrid'?75000:55000;
+  const sysCost  = Math.round(panelKW * costPkw / 1000)*1000;
+  const kwhMo    = kwhDay * days * pct;
+  const savings  = kwhMo * tariff;
+  const payback  = (sysCost / (savings*12)).toFixed(1);
+  const batKwh   = (kwhTarget * 1.5).toFixed(1);
+  const invKva   = (total * pct / 1000 / 0.9).toFixed(1);
+
+  document.getElementById('sol-kw').textContent    = panelKW.toFixed(2);
+  document.getElementById('sol-panels').textContent= panels;
+  document.getElementById('sol-area').textContent  = area;
+  document.getElementById('sol-cost').textContent  = '₹'+sysCost.toLocaleString();
+  document.getElementById('sol-save').textContent  = '₹'+Math.round(savings).toLocaleString();
+  document.getElementById('sol-payback').textContent= payback;
+  document.getElementById('sol-bat').textContent   = batKwh;
+  document.getElementById('sol-inv').textContent   = invKva;
+
+  const batRow=document.getElementById('sol-battery-row');
+  batRow.style.display=(type==='offgrid'||type==='hybrid')?'block':'none';
+  document.getElementById('solar-result').style.display='block';
+}
+
+// ──────────────────────────────────────────────────────────────
+// TAB SWITCHING
+// ──────────────────────────────────────────────────────────────
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  if(btn) btn.classList.add('active');
+}
+
+// ──────────────────────────────────────────────────────────────
+// GENERATOR / INVERTER SIZING
+// ──────────────────────────────────────────────────────────────
+const GEN_APPS = [
+  {id:'fan',icon:'🌀',name:'Fan',w:75},
+  {id:'light',icon:'💡',name:'LED Light',w:10},
+  {id:'cfl',icon:'🔆',name:'Tubelight',w:40},
+  {id:'tv',icon:'📺',name:'TV',w:100},
+  {id:'fridge',icon:'🧊',name:'Fridge',w:150},
+  {id:'comp',icon:'💻',name:'Computer',w:200},
+  {id:'ac1',icon:'❄️',name:'1T AC',w:1000},
+  {id:'ac15',icon:'❄️',name:'1.5T AC',w:1500},
+  {id:'motor',icon:'💧',name:'Water Pump',w:375},
+  {id:'geyser',icon:'🚿',name:'Geyser',w:2000},
+  {id:'micro',icon:'🍳',name:'Microwave',w:900},
+  {id:'washing',icon:'🫧',name:'Washing M/C',w:500},
+];
+
+function buildGenApps(){
+  const grid = document.getElementById('gen-app-grid');
+  if(!grid) return;
+  grid.innerHTML = GEN_APPS.map(a=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:9px;background:var(--input-bg);border:1px solid var(--border)">
+      <span style="font-size:18px">${a.icon}</span>
+      <span style="flex:1;font-size:.82rem;font-weight:600">${a.name}</span>
+      <span style="font-size:.72rem;color:var(--muted)">${a.w}W</span>
+      <input type="checkbox" id="gen_${a.id}" style="width:16px;height:16px;accent-color:var(--primary)">
+    </div>`).join('');
+}
+
+function calcGenerator(){
+  const backupHrs = +document.getElementById('gen-backup-hrs').value;
+  const pf        = +document.getElementById('gen-pf').value;
+  const batV      = +document.getElementById('gen-bat-v').value;
+  const dod       = +document.getElementById('gen-dod').value;
+
+  let load = 0;
+  GEN_APPS.forEach(a=>{
+    const cb = document.getElementById('gen_'+a.id);
+    if(cb && cb.checked) load += a.w;
+  });
+
+  if(!load){ alert('Please select at least one appliance for backup.'); return; }
+
+  const kva       = (load / pf / 1000);
+  const invKva    = [0.5,0.75,1,1.5,2,3,4,5,7.5,10].find(v=>v>=kva) || Math.ceil(kva);
+  const kwhNeeded = (load/1000) * backupHrs;
+  const batAh     = Math.ceil((kwhNeeded * 1000) / (batV * dod));
+  const batCount  = Math.ceil(batAh / 150);
+  const dgKva     = [3,5,7.5,10,15,20].find(v=>v>=(load/800)) || Math.ceil(load/800+2);
+  const invCost   = invKva * 8000;
+  const batCost   = batCount * 8500;
+  const totalCost = invCost + batCost;
+
+  document.getElementById('gen-load').textContent    = load.toLocaleString();
+  document.getElementById('gen-kva').textContent     = invKva + ' kVA';
+  document.getElementById('gen-bat-ah').textContent  = batAh;
+  document.getElementById('gen-bat-count').textContent = batCount;
+  document.getElementById('gen-dg').textContent      = dgKva + ' kVA';
+  document.getElementById('gen-cost').textContent    = '₹'+totalCost.toLocaleString();
+
+  const recoHtml = `
+    <ul class="reco-list">
+      <li class="reco-item"><span class="ri-icon">🔋</span><div>
+        <div class="ri-title">Inverter: ${invKva} kVA / ${Math.ceil(invKva*1000)} VA</div>
+        <div class="ri-detail">Suitable for ${load}W backup load at PF ${pf}. Recommended brands: Luminous, Microtek, Su-Kam, Exide.</div>
+      </li>
+      <li class="reco-item"><span class="ri-icon">🪫</span><div>
+        <div class="ri-title">Battery Bank: ${batCount} × 150Ah (${batV}V system)</div>
+        <div class="ri-detail">Series/parallel combination for ${batV}V at ${batAh}Ah. Use tubular batteries for better cycle life. Recharge time: ~8–10 hrs.</div>
+      </li>
+      <li class="reco-item"><span class="ri-icon">⚙️</span><div>
+        <div class="ri-title">Diesel Generator Alternative: ${dgKva} kVA DG Set</div>
+        <div class="ri-detail">For extended outages. Fuel consumption ~0.3 L/kVA/hr. For ${dgKva} kVA: ~${(dgKva*0.3).toFixed(1)} L/hr. Approx. cost ₹${(dgKva*12000).toLocaleString()}–₹${(dgKva*18000).toLocaleString()}.</div>
+      </li>
+      <li class="reco-item"><span class="ri-icon">🔌</span><div>
+        <div class="ri-title">Changeover Switch: ${Math.ceil(load/voltage_or_230()*1.5)}A DP MCB + Manual Changeover</div>
+        <div class="ri-detail">Install a lockable manual changeover switch to safely switch between grid and generator/inverter. Never parallel both sources.</div>
+      </li>
+    </ul>`;
+  document.getElementById('gen-recos').innerHTML = recoHtml;
+  document.getElementById('gen-result').style.display = 'block';
+}
+
+function voltage_or_230(){ return +(document.getElementById('voltage')?.value||230); }
+
+// ──────────────────────────────────────────────────────────────
+// WIRING COST ESTIMATOR
+// ──────────────────────────────────────────────────────────────
+let rooms = [
+  {name:'Bedroom 1',  area:150, points:6},
+  {name:'Living Room',area:200, points:8},
+  {name:'Kitchen',    area:100, points:6},
+  {name:'Bathroom',   area:50,  points:3},
+];
+
+function buildRooms(){
+  const grid = document.getElementById('room-grid');
+  if(!grid) return;
+  grid.innerHTML = rooms.map((r,i)=>`
+    <div style="background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <input value="${r.name}" onchange="rooms[${i}].name=this.value" style="background:none;border:none;color:var(--text);font-weight:700;font-size:.85rem;width:calc(100% - 24px)">
+        <button onclick="removeRoom(${i})" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px" title="Remove">✕</button>
+      </div>
+      <div class="sg" style="margin-bottom:8px"><label>Floor Area (sq.ft)</label>
+        <input type="number" value="${r.area}" onchange="rooms[${i}].area=+this.value" style="width:100%;padding:6px 10px;background:var(--card2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:.85rem">
+      </div>
+      <div class="sg"><label>Switch / Socket Points</label>
+        <input type="number" value="${r.points}" onchange="rooms[${i}].points=+this.value" style="width:100%;padding:6px 10px;background:var(--card2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:.85rem">
+      </div>
+    </div>`).join('');
+}
+
+function addRoom(){
+  rooms.push({name:'New Room', area:100, points:4});
+  buildRooms();
+}
+
+function removeRoom(i){
+  rooms.splice(i,1);
+  buildRooms();
+}
+
+function calcWiringCost(){
+  const brand     = document.getElementById('wire-brand').value;
+  const conduit   = document.getElementById('conduit-type').value;
+  const swBrand   = document.getElementById('sw-brand').value;
+  const labour    = +document.getElementById('labour-rate').value;
+
+  const wireRate  = {economy:20,standard:32,premium:50}[brand];
+  const condRate  = {pvc:15,gi:40,flexible:25}[conduit];
+  const swRate    = {economy:25,standard:60,premium:150}[swBrand];
+
+  const totalArea   = rooms.reduce((s,r)=>s+r.area,0);
+  const totalPoints = rooms.reduce((s,r)=>s+r.points,0);
+  // Rule of thumb: 3× run per sq.ft area for wire (3 conductors: L,N,E), conduit = 1.2× wire length
+  const wireM   = Math.ceil(totalArea * 0.3 * 3); // ~0.3m per sq.ft × 3 conductors
+  const conduitM= Math.ceil(wireM / 3 * 1.2);
+  const mcbs    = Math.ceil(totalPoints / 4) + 2; // ~1 MCB per 4 points + main + RCCB
+
+  const wireCost    = wireM * wireRate;
+  const condCost    = conduitM * condRate;
+  const swCost      = totalPoints * swRate;
+  const mcbCost     = mcbs * 180;
+  const labourCost  = totalPoints * labour;
+  const dbCost      = 800 + mcbs * 120;
+  const misc        = Math.ceil((wireCost+condCost+swCost+mcbCost+labourCost+dbCost)*0.05);
+  const grandTotal  = wireCost+condCost+swCost+mcbCost+labourCost+dbCost+misc;
+
+  document.getElementById('wc-wire').textContent    = wireM;
+  document.getElementById('wc-conduit').textContent = conduitM;
+  document.getElementById('wc-points').textContent  = totalPoints;
+  document.getElementById('wc-mcbs').textContent    = mcbs;
+
+  const rows = [
+    ['Copper PVC Wire ('+brand+')', wireM+' m', '₹'+wireRate+'/m', wireCost],
+    ['Conduit ('+conduit+')', conduitM+' m', '₹'+condRate+'/m', condCost],
+    ['Switches & Sockets ('+swBrand+')', totalPoints+' pts', '₹'+swRate+'/pt', swCost],
+    ['MCBs & RCCB', mcbs+' nos.', '₹180/no.', mcbCost],
+    ['Distribution Board', '1 no.', '₹'+(dbCost), dbCost],
+    ['Labour (wiring)', totalPoints+' pts', '₹'+labour+'/pt', labourCost],
+    ['Misc. (clamps, tape, lugs)', '—', '5%', misc],
+  ];
+
+  document.getElementById('wc-tbody').innerHTML = rows.map(r=>`
+    <tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td class="td-r">₹${r[3].toLocaleString()}</td></tr>`).join('');
+  document.getElementById('wc-total').textContent = '₹'+grandTotal.toLocaleString();
+  document.getElementById('wiring-result').style.display = 'block';
+}
+
+// ──────────────────────────────────────────────────────────────
+// BEFORE vs AFTER COMPARISON
+// ──────────────────────────────────────────────────────────────
+const CMP_APPS = [
+  {id:'fan',   icon:'🌀', name:'Fan',         oldW:75,   newW:28,  label:'BLDC Fan'},
+  {id:'light', icon:'💡', name:'Light',        oldW:40,  newW:9,   label:'LED Bulb'},
+  {id:'ac',    icon:'❄️',  name:'AC',           oldW:1800, newW:1000,label:'5★ Inverter AC'},
+  {id:'fridge',icon:'🧊', name:'Fridge',       oldW:250,  newW:120, label:'5★ BEE Fridge'},
+  {id:'tv',    icon:'📺', name:'TV',           oldW:200,  newW:80,  label:'LED Smart TV'},
+  {id:'geyser',icon:'🚿', name:'Geyser',       oldW:2000, newW:0,   label:'Solar Heater (0W)'},
+  {id:'motor', icon:'💧', name:'Water Pump',   oldW:750,  newW:375, label:'Energy-eff. Pump'},
+  {id:'washing',icon:'🫧',name:'Washing M/C',  oldW:2000, newW:500, label:'Front Load (5★)'},
+];
+
+function buildCompareApps(){
+  const oldGrid = document.getElementById('compare-old-grid');
+  const newGrid = document.getElementById('compare-new-grid');
+  if(!oldGrid||!newGrid) return;
+
+  oldGrid.innerHTML = CMP_APPS.map(a=>`
+    <div style="display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:9px;background:var(--input-bg);border:1px solid var(--border);margin-bottom:8px">
+      <span>${a.icon}</span>
+      <span style="flex:1;font-size:.82rem;font-weight:600">${a.name}</span>
+      <span style="font-size:.72rem;color:var(--muted)">Qty:</span>
+      <input type="number" id="cmp_old_q_${a.id}" value="0" min="0" max="20" style="width:40px;height:26px;text-align:center;background:var(--card2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:.85rem">
+      <input type="number" id="cmp_old_w_${a.id}" value="${a.oldW}" style="width:60px;height:26px;text-align:center;background:var(--card2);border:1px solid var(--border);border-radius:6px;color:var(--muted);font-size:.75rem" title="Wattage">
+    </div>`).join('');
+
+  newGrid.innerHTML = CMP_APPS.map(a=>`
+    <div style="display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:9px;background:var(--input-bg);border:1px solid var(--green-border)44;margin-bottom:8px">
+      <span>${a.icon}</span>
+      <div style="flex:1"><div style="font-size:.82rem;font-weight:600">${a.name}</div><div style="font-size:.68rem;color:var(--green-text)">${a.label}</div></div>
+      <span style="font-size:.72rem;color:var(--muted)">Qty:</span>
+      <input type="number" id="cmp_new_q_${a.id}" value="0" min="0" max="20" style="width:40px;height:26px;text-align:center;background:var(--card2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:.85rem">
+      <input type="number" id="cmp_new_w_${a.id}" value="${a.newW}" style="width:60px;height:26px;text-align:center;background:var(--card2);border:1px solid var(--border);border-radius:6px;color:var(--muted);font-size:.75rem" title="Wattage">
+    </div>`).join('');
+}
+
+function calcCompare(){
+  const hours  = +document.getElementById('cmp-hours').value;
+  const days   = +document.getElementById('cmp-days').value;
+  const tariff = +document.getElementById('cmp-tariff').value;
+
+  let oldW=0, newW=0;
+  CMP_APPS.forEach(a=>{
+    const oq = +document.getElementById('cmp_old_q_'+a.id).value||0;
+    const ow = +document.getElementById('cmp_old_w_'+a.id).value||a.oldW;
+    const nq = +document.getElementById('cmp_new_q_'+a.id).value||0;
+    const nw = +document.getElementById('cmp_new_w_'+a.id).value||a.newW;
+    oldW += oq*ow;
+    newW += nq*nw;
+  });
+  if(!oldW && !newW){ alert('Please enter quantities for old and new appliances.'); return; }
+
+  const oldKwh  = (oldW/1000)*hours*days;
+  const newKwh  = (newW/1000)*hours*days;
+  const oldBill = oldKwh * tariff;
+  const newBill = newKwh * tariff;
+  const savings = oldBill - newBill;
+  const pctW    = oldW ? Math.round((1-newW/oldW)*100) : 0;
+  const co2Saved= (oldKwh-newKwh)*0.82*12;
+
+  document.getElementById('cmp-old-bill').textContent = '₹'+Math.round(oldBill).toLocaleString();
+  document.getElementById('cmp-new-bill').textContent = '₹'+Math.round(newBill).toLocaleString();
+  document.getElementById('cmp-savings').textContent  = '₹'+Math.round(Math.abs(savings)).toLocaleString();
+  document.getElementById('cmp-old-w').textContent    = oldW.toLocaleString();
+  document.getElementById('cmp-new-w').textContent    = newW.toLocaleString();
+  document.getElementById('cmp-pct-w').textContent    = pctW+'%';
+  document.getElementById('cmp-annual').textContent   = '₹'+Math.round(savings*12).toLocaleString();
+  document.getElementById('cmp-old-w2').textContent   = oldW+'W';
+  document.getElementById('cmp-new-w2').textContent   = newW+'W';
+
+  const maxW = Math.max(oldW,newW);
+  document.getElementById('cmp-bar-old').style.width = (oldW/maxW*100)+'%';
+  document.getElementById('cmp-bar-new').style.width = (newW/maxW*100)+'%';
+
+  const co2El = document.getElementById('cmp-co2-saved');
+  co2El.innerHTML = co2Saved>0
+    ? `🌱 Annual CO₂ savings: <strong>${co2Saved.toFixed(0)} kg</strong> — equivalent to planting ~${Math.ceil(co2Saved/20)} trees per year!`
+    : `⚠️ New setup consumes more energy. Consider further efficiency upgrades.`;
+
+  document.getElementById('compare-result').style.display='block';
+}
+
+// ══════════════════════════════════════════════════════════════
+// 📅 LOAD SCHEDULE
+// ══════════════════════════════════════════════════════════════
+const SCH_APPS = [
+  {id:'fan',   icon:'🌀',name:'Fan',         w:75},
+  {id:'light', icon:'💡',name:'Lights',       w:60},
+  {id:'ac',    icon:'❄️', name:'AC',           w:1500},
+  {id:'fridge',icon:'🧊',name:'Fridge',       w:150},
+  {id:'tv',    icon:'📺',name:'TV',           w:100},
+  {id:'geyser',icon:'🚿',name:'Geyser',       w:2000},
+  {id:'motor', icon:'💧',name:'Water Pump',   w:375},
+  {id:'micro', icon:'🍳',name:'Microwave',    w:900},
+  {id:'washing',icon:'🫧',name:'Wash.Machine',w:500},
+  {id:'comp',  icon:'💻',name:'Computer',     w:200},
+];
+// schedState[appId][hour 0..23] = true/false
+const schedState = {};
+SCH_APPS.forEach(a=>{schedState[a.id]=Array(24).fill(false);});
+
+function buildScheduleTable(){
+  const tbody = document.getElementById('schedule-body');
+  if(!tbody) return;
+  tbody.innerHTML = SCH_APPS.map(a=>{
+    const cells = Array.from({length:24},(_,h)=>{
+      const on = schedState[a.id][h];
+      return `<td onclick="toggleCell('${a.id}',${h},this)" style="cursor:pointer;width:32px;height:28px;text-align:center;border:1px solid #1e293b;background:${on?'#f59e0b':'var(--input-bg)'};border-radius:3px;transition:background .15s" title="Hour ${h}:00"></td>`;
+    }).join('');
+    const hrs = schedState[a.id].filter(Boolean).length;
+    return `<tr>
+      <td style="padding:6px 8px;font-size:.78rem;font-weight:600;white-space:nowrap;border-bottom:1px solid #1e293b">${a.icon} ${a.name}<br><span style="color:var(--muted);font-weight:400;font-size:.68rem">${a.w}W</span></td>
+      ${cells}
+      <td style="text-align:right;padding:6px 8px;font-weight:700;color:var(--primary);border-bottom:1px solid #1e293b">${hrs}</td>
+    </tr>`;
+  }).join('');
+}
+
+function toggleCell(id, hour, td){
+  schedState[id][hour] = !schedState[id][hour];
+  td.style.background = schedState[id][hour] ? '#f59e0b' : 'var(--input-bg)';
+  // update hrs column
+  const row = td.closest('tr');
+  const hrs = schedState[id].filter(Boolean).length;
+  row.querySelector('td:last-child').textContent = hrs;
+}
+
+function clearSchedule(){
+  SCH_APPS.forEach(a=>schedState[a.id].fill(false));
+  buildScheduleTable();
+  document.getElementById('schedule-result').style.display='none';
+}
+
+function calcSchedule(){
+  // build hourly load array
+  const hourly = Array(24).fill(0);
+  SCH_APPS.forEach(a=>{
+    schedState[a.id].forEach((on,h)=>{ if(on) hourly[h]+=a.w; });
+  });
+  const totalKwh = hourly.reduce((s,w)=>s+w/1000,0);
+  const peak = Math.max(...hourly);
+  const peakHr = hourly.indexOf(peak);
+  const avg = Math.round(hourly.reduce((s,w)=>s+w,0)/24);
+  // off-peak = cheapest 3-hr window with min load
+  let minWindow=Infinity, minStart=0;
+  for(let i=0;i<22;i++){
+    const sum=hourly[i]+hourly[i+1]+hourly[i+2];
+    if(sum<minWindow){minWindow=sum;minStart=i;}
+  }
+  const fmt = h=>`${String(h).padStart(2,'0')}:00`;
+
+  document.getElementById('sch-kwh').textContent    = totalKwh.toFixed(2);
+  document.getElementById('sch-peak-hr').textContent= fmt(peakHr);
+  document.getElementById('sch-avg').textContent    = avg;
+  document.getElementById('sch-offpeak').textContent= `${fmt(minStart)}–${fmt(minStart+3)}`;
+
+  // Bar chart
+  const maxH = peak||1;
+  const barChart = document.getElementById('sch-bar-chart');
+  barChart.style.cssText = 'display:flex;align-items:flex-end;gap:3px;height:120px;width:100%';
+  barChart.innerHTML = hourly.map((w,h)=>{
+    const pct = Math.max(0, Math.round((w/maxH)*100));
+    const col = w===peak?'#ef4444': w>avg?'#f59e0b':'#10b981';
+    return `<div style="flex:1;height:100%;display:flex;align-items:flex-end">
+      <div style="width:100%;background:${col};height:${pct}%;min-height:${w>0?2:0}px;border-radius:2px 2px 0 0" title="${h}:00–${h+1}:00  ${w}W"></div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('schedule-result').style.display='block';
+}
+
+// ══════════════════════════════════════════════════════════════
+// 🔍 FAULT FINDER
+// ══════════════════════════════════════════════════════════════
+const FAULTS = [
+  {
+    icon:'⚡', title:'MCB Keeps Tripping',
+    steps:[
+      'Switch OFF all loads on the affected circuit, then reset the MCB.',
+      'Turn loads ON one by one. The load that trips the MCB again is the culprit.',
+      'Check that load\'s plug, flex and appliance for signs of burning, damage or short circuit.',
+      'If MCB trips with NO load connected → suspect a wiring fault (short circuit or earth fault in cables).',
+      'If MCB trips repeatedly on same load → that appliance may be drawing excess current or developing a fault.',
+      'Check MCB rating vs total load: if load current exceeds MCB rating, upgrade MCB or split the circuit.',
+      'Replace MCB if it trips at low loads or fails to reset — MCBs can wear out after many trip cycles.',
+    ]
+  },
+  {
+    icon:'🔌', title:'No Power at Socket / Switch',
+    steps:[
+      'Check the MCB for that circuit in the distribution board — it may have tripped.',
+      'Check RCCB / ELCB — press TEST button to verify it\'s working, then reset.',
+      'Use a voltage tester or phase tester to check if Live wire is present at the socket terminal.',
+      'Check for loose wiring at the socket back-box — tighten terminal screws.',
+      'Check for broken wire in conduit — can happen due to over-tightening or rodent damage.',
+      'If only one socket in a ring is dead, check continuity of cable run.',
+      'If multiple sockets are dead, trace back to the junction box or DBsub-circuit.',
+    ]
+  },
+  {
+    icon:'💡', title:'Lights Flickering',
+    steps:[
+      'Check if flickering is on one circuit or house-wide — house-wide suggests a main supply issue.',
+      'Check neutral connections at the distribution board — loose neutrals are the #1 cause of flickering.',
+      'Check voltage between L and N at the affected socket: should be 220–240V stable.',
+      'If voltage fluctuates, contact your DISCOM (electricity board) — may be a transformer issue.',
+      'For LED lights only: LEDs are sensitive to voltage spikes. Check driver/ballast in the fitting.',
+      'Loose connections at light switch or junction box cause arcing → tighten all terminals.',
+      'If a single bulb flickers: check lamp contact and holder spring tension before replacing.',
+    ]
+  },
+  {
+    icon:'🌍', title:'Electric Shock / Tingle',
+    steps:[
+      '⚠️ SAFETY FIRST: Switch off main supply before investigating. Do not touch suspected live surfaces.',
+      'Test suspected surface with a non-contact voltage tester to confirm if it\'s live.',
+      'Check earthing continuity: measure resistance from Earth terminal at DB to earth pin of suspect socket (should be <1Ω).',
+      'Check if RCCB is present — a 30mA RCCB should trip in <40ms on touch current.',
+      'If no RCCB is installed, install one immediately — this is a life-safety device.',
+      'Check whether the fault is in the appliance itself (disconnect and retest) or in the fixed wiring.',
+      'Measure voltage between N and E — should be near 0V. If >5V, there\'s a wiring fault or a broken neutral.',
+    ]
+  },
+  {
+    icon:'🔥', title:'Overheating Wires / Burning Smell',
+    steps:[
+      '⚠️ SAFETY FIRST: If you smell burning, switch off the main immediately and investigate.',
+      'Identify the source: check all outlets, junction boxes, DB, and switch plates for heat or discolouration.',
+      'Overheating usually means overloaded cable, loose connection causing arcing, or undersized wire.',
+      'Measure current draw on suspect circuit with a clamp meter — compare to circuit breaker rating.',
+      'Loose terminal screws cause high resistance → heat. Tighten all terminals with correct torque.',
+      'Check insulation around wires in conduit: discoloured or brittle insulation must be replaced.',
+      'Aluminium wiring oxide causes heating at joints — if present, replace with copper or use bimetallic connectors.',
+    ]
+  },
+  {
+    icon:'🔋', title:'High Electricity Bill',
+    steps:[
+      'Check meter reading manually vs DISCOM bill — meter tampering or billing errors do occur.',
+      'Do an appliance audit: use a plug-in energy meter (Kill-A-Watt type) to measure each appliance.',
+      'Common culprits: old geysers (keep on all day), old ACs (non-inverter 5★), old fridges, halogen lamps.',
+      'Check for phantom loads: TV, set-top boxes, chargers on standby consume 5–20W each.',
+      'Check if your meter has a dirty power factor issue — capacitor bank correction can reduce KVA charges.',
+      'Check for any unauthorized connections or tampered meter seals.',
+      'Compare your kWh/day against national average: Indian household average is 3–5 kWh/day.',
+    ]
+  },
+  {
+    icon:'🌀', title:'Fan / Motor Running Slow',
+    steps:[
+      'Check supply voltage at the fan: low voltage (<200V) causes slow speed and overheating.',
+      'For capacitor-start fans: check/replace the running capacitor — a weak capacitor is the #1 cause.',
+      'Clean fan blades and motor housing — accumulated dust increases load and reduces airflow.',
+      'Check regulator: faulty or old resistor-type regulators can cause low speed and extra heating.',
+      'For motors: check all 3 phase voltages (3-phase motors) for balance — unbalance causes slow speed.',
+      'Lubricate motor bearings if the motor hums or vibrates — dry bearings increase friction.',
+      'If fan hums but doesn\'t start: likely a seized bearing or bad capacitor — replace before damage spreads.',
+    ]
+  },
+  {
+    icon:'🚿', title:'Geyser / Water Heater Issue',
+    steps:[
+      'No hot water: check MCB (20A dedicated circuit) and thermostat setting (usually 55–65°C for India).',
+      'Tripping MCB: the heating element may have developed an earth fault — test with insulation resistance meter.',
+      'Pressure relief valve dripping: normal when heating; if continuous, PRV may need replacement.',
+      'Anode rod in tank should be replaced every 3–5 years to prevent tank corrosion.',
+      'Overheating / steam: thermostat stuck ON — replace thermostat immediately (safety risk).',
+      'Leaking from bottom: tank corrosion — replace geyser; repair is not recommended for a corroded tank.',
+      'High running cost: old geysers have degraded insulation — upgrade to a 5★ BEE-rated model.',
+    ]
+  },
+];
+
+function buildFaultFinder(){
+  const grid = document.getElementById('fault-categories');
+  if(!grid) return;
+  grid.innerHTML = FAULTS.map((f,i)=>`
+    <div onclick="showFault(${i})" style="cursor:pointer;padding:14px;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;transition:border-color .2s,box-shadow .2s;display:flex;align-items:center;gap:12px" onmouseover="this.style.borderColor='#f59e0b'" onmouseout="this.style.borderColor='var(--border)'">
+      <span style="font-size:26px">${f.icon}</span>
+      <div>
+        <div style="font-size:.88rem;font-weight:700">${f.title}</div>
+        <div style="font-size:.73rem;color:var(--muted);margin-top:2px">${f.steps.length} diagnostic steps</div>
+      </div>
+      <span style="margin-left:auto;color:var(--primary);font-size:18px">›</span>
+    </div>`).join('');
+}
+
+function showFault(i){
+  const f = FAULTS[i];
+  const detail = document.getElementById('fault-detail');
+  detail.style.display='block';
+  detail.innerHTML=`
+    <div style="margin-top:4px;padding:20px;background:var(--input-bg);border:1px solid var(--primary);border-radius:12px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+        <span style="font-size:28px">${f.icon}</span>
+        <div style="font-size:1rem;font-weight:800">${f.title}</div>
+        <button onclick="document.getElementById('fault-detail').style.display='none'" style="margin-left:auto;background:none;border:none;color:var(--muted);cursor:pointer;font-size:20px" title="Close">✕</button>
+      </div>
+      <div style="font-size:.8rem;color:var(--primary);font-weight:600;text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px">Step-by-Step Diagnosis</div>
+      ${f.steps.map((s,n)=>`
+        <div style="display:flex;gap:12px;margin-bottom:10px;padding:10px 12px;background:var(--card);border-radius:8px;border-left:3px solid ${n===0&&s.startsWith('⚠️')?'#ef4444':'#f59e0b'}">
+          <div style="width:22px;height:22px;border-radius:50%;background:${n===0&&s.startsWith('⚠️')?'#ef444422':'#f59e0b22'};border:1px solid ${n===0&&s.startsWith('⚠️')?'#ef4444':'#f59e0b'};color:${n===0&&s.startsWith('⚠️')?'#ef4444':'#f59e0b'};display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;flex-shrink:0">${n+1}</div>
+          <div style="font-size:.82rem;line-height:1.6;color:var(--text)">${s}</div>
+        </div>`).join('')}
+      <div style="margin-top:12px;padding:10px;background:#064e3b44;border:1px solid #10b981;border-radius:8px;font-size:.78rem;color:#6ee7b7">
+        💬 If the issue persists after these steps, consult a licensed electrician. Never work on live circuits without proper PPE and testing equipment.
+      </div>
+    </div>`;
+  detail.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+// ══════════════════════════════════════════════════════════════
+// 🔢 UNIT CONVERTER
+// ══════════════════════════════════════════════════════════════
+const CONV_GROUPS = [
+  {
+    title:'Power',
+    rows:[
+      {label:'Watts → Kilowatts',   fn:v=>(v/1000).toFixed(4)+' kW'},
+      {label:'Kilowatts → Watts',   fn:v=>(v*1000).toFixed(1)+' W'},
+      {label:'Watts → Horsepower',  fn:v=>(v/746).toFixed(4)+' HP'},
+      {label:'Horsepower → Watts',  fn:v=>(v*746).toFixed(1)+' W'},
+      {label:'kW → kVA (PF=0.85)', fn:v=>(v/0.85).toFixed(3)+' kVA'},
+      {label:'kVA → kW (PF=0.85)', fn:v=>(v*0.85).toFixed(3)+' kW'},
+    ]
+  },
+  {
+    title:'Energy',
+    rows:[
+      {label:'kWh → MJ',     fn:v=>(v*3.6).toFixed(3)+' MJ'},
+      {label:'MJ → kWh',     fn:v=>(v/3.6).toFixed(4)+' kWh'},
+      {label:'kWh → kcal',   fn:v=>(v*860).toFixed(1)+' kcal'},
+      {label:'Units → CO₂ (India)', fn:v=>(v*0.82).toFixed(3)+' kg CO₂'},
+    ]
+  },
+  {
+    title:'Current & Resistance',
+    rows:[
+      {label:'mA → Amperes',        fn:v=>(v/1000).toFixed(4)+' A'},
+      {label:'Amperes → mA',        fn:v=>(v*1000).toFixed(1)+' mA'},
+      {label:'Ohms → kΩ',           fn:v=>(v/1000).toFixed(4)+' kΩ'},
+      {label:'kΩ → Ohms',           fn:v=>(v*1000).toFixed(1)+' Ω'},
+    ]
+  },
+];
+
+function buildConverters(){
+  const el = document.getElementById('conv-blocks');
+  if(!el) return;
+  window._convFns = {};
+  el.innerHTML = CONV_GROUPS.map(g=>{
+    const gKey = g.title.replace(/\s+/g,'_');
+    return `
+    <div style="margin-bottom:18px">
+      <div style="font-size:.78rem;color:var(--primary);font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">${g.title}</div>
+      ${g.rows.map((r,ri)=>{
+        const key=`conv_${gKey}_${ri}`;
+        window._convFns[key]=r.fn;
+        return `
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+          <span style="font-size:.78rem;color:var(--muted);width:200px;flex-shrink:0">${r.label}</span>
+          <input type="number" placeholder="Enter value" oninput="convertValue(this,'${key}')" style="width:110px;padding:6px 8px;background:var(--input-bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:.85rem">
+          <span style="font-size:.85rem;color:var(--primary);font-weight:700;min-width:120px" id="${key}">—</span>
+        </div>`;
+      }).join('')}
+    </div>`; 
+  }).join('');
+}
+
+function convertValue(input, outId){
+  const v = +input.value;
+  const el = document.getElementById(outId);
+  if(!v||isNaN(v)){el.textContent='—';return;}
+  el.textContent = window._convFns[outId]?window._convFns[outId](v):'—';
+}
+
+function ohmsLaw(changed){
+  const v=+document.getElementById('ohm-v').value||null;
+  const i=+document.getElementById('ohm-i').value||null;
+  const r=+document.getElementById('ohm-r').value||null;
+  const p=+document.getElementById('ohm-p').value||null;
+  let res={};
+  if(v&&i){res={R:(v/i).toFixed(3),P:(v*i).toFixed(2)};}
+  else if(v&&r){res={I:(v/r).toFixed(3),P:(v*v/r).toFixed(2)};}
+  else if(v&&p){res={I:(p/v).toFixed(3),R:(v*v/p).toFixed(3)};}
+  else if(i&&r){res={V:(i*r).toFixed(3),P:(i*i*r).toFixed(2)};}
+  else if(i&&p){res={V:(p/i).toFixed(3),R:(p/(i*i)).toFixed(3)};}
+  else if(r&&p){res={V:Math.sqrt(p*r).toFixed(3),I:Math.sqrt(p/r).toFixed(3)};}
+  const el=document.getElementById('ohm-result');
+  if(Object.keys(res).length){
+    el.style.display='block';
+    el.innerHTML='<strong style="color:var(--primary)">Calculated:</strong> '+
+      Object.entries(res).map(([k,v])=>`<span style="margin-right:16px"><strong>${k}</strong> = ${v} ${k==='V'?'V':k==='I'?'A':k==='R'?'Ω':'W'}</span>`).join('');
+    // fill calculated fields
+    if(res.V) document.getElementById('ohm-v').placeholder=res.V+' V (calc)';
+    if(res.I) document.getElementById('ohm-i').placeholder=res.I+' A (calc)';
+    if(res.R) document.getElementById('ohm-r').placeholder=res.R+' Ω (calc)';
+    if(res.P) document.getElementById('ohm-p').placeholder=res.P+' W (calc)';
+  } else { el.style.display='none'; }
+}
+
+function clearOhm(){
+  ['ohm-v','ohm-i','ohm-r','ohm-p'].forEach(id=>{
+    const el=document.getElementById(id);
+    el.value='';el.placeholder=id==='ohm-v'?'e.g. 230':id==='ohm-i'?'e.g. 10':id==='ohm-r'?'e.g. 23':'e.g. 2300';
+  });
+  document.getElementById('ohm-result').style.display='none';
+}
+
+function calcDerate(){
+  const base = +document.getElementById('derate-size').value;
+  const temp  = +document.getElementById('derate-temp').value;
+  const group = +document.getElementById('derate-group').value;
+  const derated = (base * temp * group).toFixed(1);
+  const nextMcb = [6,10,16,20,25,32,40,50,63].find(s=>s<=derated)||derated;
+  const el = document.getElementById('derate-result');
+  el.style.display='block';
+  el.innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px">
+      <div class="rbox"><div class="rbox-label">Base Capacity</div><div class="rbox-value">${base}A</div></div>
+      <div class="rbox" style="border-color:#f59e0b"><div class="rbox-label">Temp Factor</div><div class="rbox-value" style="color:#f59e0b">${temp}×</div></div>
+      <div class="rbox" style="border-color:#3b82f6"><div class="rbox-label">Grouping Factor</div><div class="rbox-value" style="color:#3b82f6">${group}×</div></div>
+      <div class="rbox rbox-green"><div class="rbox-label">Derated Capacity</div><div class="rbox-value">${derated}A</div></div>
+    </div>
+    <div style="margin-top:10px;font-size:.82rem;color:var(--muted)">
+      ✅ Maximum safe MCB for this cable in these conditions: <strong style="color:var(--primary)">${nextMcb}A</strong>.
+      ${derated<base*0.7?'⚠️ Significant derating — consider a larger cable size.':''}
+    </div>`;
+}
+
+// ══════════════════════════════════════════════════════════════
+// 📄 EXPORT REPORT
+// ══════════════════════════════════════════════════════════════
+function generateReport(){
+  const {total,count} = getLoad();
+  const client  = document.getElementById('rpt-client').value || 'N/A';
+  const address = document.getElementById('rpt-address').value || 'N/A';
+  const eng     = document.getElementById('rpt-eng').value || 'N/A';
+  const lic     = document.getElementById('rpt-lic').value || 'N/A';
+  const date    = document.getElementById('rpt-date').value || new Date().toISOString().slice(0,10);
+  const btype   = document.getElementById('rpt-type').value;
+
+  const voltage = +document.getElementById('voltage').value;
+  const hours   = +document.getElementById('daily-hours').value;
+  const tariff  = +document.getElementById('tariff').value;
+  const days    = +document.getElementById('days-month').value;
+  const sf      = +document.getElementById('safety-factor').value;
+  const phase   = document.getElementById('phase').value;
+  const pf      = +document.getElementById('pf').value;
+
+  const design  = total * sf;
+  const current = phase==='three'?design/(Math.sqrt(3)*voltage*pf):design/(voltage*pf);
+  const kva     = (design/pf/1000).toFixed(2);
+  const kwhMo   = ((total/1000)*hours*days).toFixed(1);
+  const bill    = (kwhMo * tariff).toFixed(0);
+  const MCB_STEPS=[6,10,16,20,25,32,40,50,63,80,100,125];
+  const mcb     = MCB_STEPS.find(s=>s>=current)||Math.ceil(current+10);
+  const wire    = wireSize(current);
+  const co2     = ((total/1000)*hours*days*0.82).toFixed(1);
+
+  const activeApps = allApps().filter(a=>(+document.getElementById('q_'+a.id)?.value||0)>0);
+  const appRows = activeApps.map(a=>{
+    const q=+document.getElementById('q_'+a.id).value;
+    const w=+document.getElementById('w_'+a.id).value||a.defaultW;
+    return `<tr style="border-bottom:1px solid #eee"><td style="padding:5px 8px">${a.icon} ${a.name}</td><td style="padding:5px 8px;text-align:center">${q}</td><td style="padding:5px 8px;text-align:center">${w}W</td><td style="padding:5px 8px;text-align:right;font-weight:700">${(q*w).toLocaleString()}W</td></tr>`;
+  }).join('');
+
+  const preview = document.getElementById('report-preview');
+  preview.style.display='block';
+  preview.innerHTML=`
+    <div style="max-width:780px;margin:0 auto;color:#1e293b;font-family:'Segoe UI',sans-serif" id="printable-report">
+      <!-- Header -->
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:14px;border-bottom:3px solid #f59e0b;margin-bottom:18px">
+        <div>
+          <div style="font-size:1.4rem;font-weight:800;color:#0f172a">⚡ Electrical Load Report</div>
+          <div style="font-size:.82rem;color:#64748b;margin-top:2px">${btype} Installation</div>
+        </div>
+        <div style="text-align:right;font-size:.78rem;color:#64748b">
+          <div><strong>Date:</strong> ${date}</div>
+          <div><strong>Ref:</strong> ELR-${Date.now().toString().slice(-6)}</div>
+        </div>
+      </div>
+
+      <!-- Site Info -->
+      <table style="width:100%;border-collapse:collapse;margin-bottom:18px;font-size:.82rem">
+        <tr>
+          <td style="padding:5px 10px;background:#f8fafc;border:1px solid #e2e8f0;font-weight:700;width:140px">Client / Site</td>
+          <td style="padding:5px 10px;border:1px solid #e2e8f0">${client}</td>
+          <td style="padding:5px 10px;background:#f8fafc;border:1px solid #e2e8f0;font-weight:700;width:140px">Address</td>
+          <td style="padding:5px 10px;border:1px solid #e2e8f0">${address}</td>
+        </tr>
+        <tr>
+          <td style="padding:5px 10px;background:#f8fafc;border:1px solid #e2e8f0;font-weight:700">Engineer</td>
+          <td style="padding:5px 10px;border:1px solid #e2e8f0">${eng}</td>
+          <td style="padding:5px 10px;background:#f8fafc;border:1px solid #e2e8f0;font-weight:700">Licence No.</td>
+          <td style="padding:5px 10px;border:1px solid #e2e8f0">${lic}</td>
+        </tr>
+      </table>
+
+      <!-- Summary boxes -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px">
+        ${[
+          ['Connected Load', total.toLocaleString()+'W', '#f59e0b'],
+          ['Design Load ('+sf+'×)', Math.round(design).toLocaleString()+'W', '#3b82f6'],
+          ['Monthly Units', kwhMo+' kWh', '#10b981'],
+          ['Est. Bill', '₹'+Number(bill).toLocaleString(), '#8b5cf6'],
+        ].map(([l,v,c])=>`<div style="border:2px solid ${c};border-radius:8px;padding:10px;text-align:center"><div style="font-size:.65rem;color:#64748b;text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">${l}</div><div style="font-size:1.1rem;font-weight:800;color:${c}">${v}</div></div>`).join('')}
+      </div>
+
+      <!-- Recommendations -->
+      <div style="margin-bottom:18px">
+        <div style="font-size:.85rem;font-weight:700;color:#0f172a;margin-bottom:10px;border-bottom:1px solid #e2e8f0;padding-bottom:6px">🔧 ELECTRICAL SPECIFICATIONS</div>
+        <table style="width:100%;border-collapse:collapse;font-size:.8rem">
+          ${[
+            ['Design Current','<strong>'+current.toFixed(1)+'A</strong> (with '+pf+' PF, '+phase+' phase)'],
+            ['Main MCB Rating','<strong>'+mcb+'A</strong> — '+( mcb<=25?'Type B/C, suitable for residential':'Type C/D, heavy duty')],
+            ['Cable Size','<strong>'+wire.size+'</strong> — '+wire.note],
+            ['Earth Wire','<strong>'+wire.earth+'</strong> copper, minimum'],
+            ['RCCB Required','<strong>'+mcb+'A, 30mA sensitivity</strong> — mandatory for shock protection'],
+            ['DB Size','<strong>'+dbWays(mcb)+'-way distribution board</strong>'],
+            ['Apparent Power','<strong>'+kva+' kVA</strong>'],
+            ['CO₂ Emission','<strong>'+co2+' kg/month</strong> (India grid: 0.82 kg/kWh)'],
+          ].map(([l,v])=>`<tr><td style="padding:6px 8px;background:#f8fafc;border:1px solid #e2e8f0;font-weight:600;width:200px">${l}</td><td style="padding:6px 8px;border:1px solid #e2e8f0">${v}</td></tr>`).join('')}
+        </table>
+      </div>
+
+      <!-- Appliance Table -->
+      <div style="margin-bottom:18px">
+        <div style="font-size:.85rem;font-weight:700;color:#0f172a;margin-bottom:10px;border-bottom:1px solid #e2e8f0;padding-bottom:6px">📦 CONNECTED APPLIANCES (${count} units)</div>
+        <table style="width:100%;border-collapse:collapse;font-size:.79rem">
+          <thead><tr style="background:#f8fafc"><th style="padding:6px 8px;text-align:left;border:1px solid #e2e8f0">Appliance</th><th style="padding:6px 8px;text-align:center;border:1px solid #e2e8f0">Qty</th><th style="padding:6px 8px;text-align:center;border:1px solid #e2e8f0">Watts</th><th style="padding:6px 8px;text-align:right;border:1px solid #e2e8f0">Total W</th></tr></thead>
+          <tbody>${appRows}</tbody>
+          <tfoot><tr style="background:#fff7ed"><td colspan="3" style="padding:6px 8px;border:1px solid #e2e8f0;font-weight:700">TOTAL CONNECTED LOAD</td><td style="padding:6px 8px;text-align:right;font-weight:800;color:#f59e0b;border:1px solid #e2e8f0">${total.toLocaleString()}W</td></tr></tfoot>
+        </table>
+      </div>
+
+      <!-- Footer disclaimer -->
+      <div style="font-size:.72rem;color:#94a3b8;border-top:1px solid #e2e8f0;padding-top:10px;margin-top:10px">
+        This report is prepared as a preliminary load assessment based on the appliance data provided. Actual installation must be designed and executed by a licensed electrician in compliance with IS 732, IS 694, and IE Rules 1956. The figures herein are estimates only. &nbsp;|&nbsp; <strong>© 2025 Vedant.Patel. All Rights Reserved.</strong> Smart Load Calculator Pro V3.
+      </div>
+    </div>`;
+  preview.scrollIntoView({behavior:'smooth',block:'start'});
+}
+// ──────────────────────────────────────────────────────────────
+// INIT — All builders called here after all data/functions defined
+// ──────────────────────────────────────────────────────────────
+buildAppliances();
+buildTips();
+buildGenApps();
+buildRooms();
+buildCompareApps();
+buildFaultFinder();
+buildScheduleTable();
+buildConverters();
+liveUpdate();
+
+// Hide results panel initially
+document.getElementById('results-panel').style.display='none';
+
+// Pre-fill report date
+const rdEl = document.getElementById('rpt-date');
+if(rdEl) rdEl.value = new Date().toISOString().slice(0,10);
+
+
+// ══════════════════════════════════════════════════════════════
+// © COPYRIGHT PROTECTION — Vedant.Patel
+// ══════════════════════════════════════════════════════════════
+(function(){
+  const OWNER = '© 2025 Vedant.Patel. All Rights Reserved.';
+  const BAR_TEXT = '⚡ SMART LOAD CALCULATOR PRO V3  ·  © 2025 VEDANT.PATEL  ·  ALL RIGHTS RESERVED';
+  // Restore copyright bar if tampered
+  const observer = new MutationObserver(()=>{
+    const bar = document.getElementById('copyright-bar');
+    if(bar && bar.textContent.trim() !== BAR_TEXT){
+      bar.textContent = BAR_TEXT;
+    }
+  });
+  document.addEventListener('DOMContentLoaded',()=>{
+    const bar = document.getElementById('copyright-bar');
+    if(bar) observer.observe(bar,{childList:true,characterData:true,subtree:true});
+  });
+  // Add to print header
+  window.addEventListener('beforeprint',()=>{
+    let pw = document.getElementById('print-watermark-bar');
+    if(!pw){
+      pw = document.createElement('div');
+      pw.id='print-watermark-bar';
+      pw.style.cssText='text-align:center;padding:8px;font-weight:700;font-size:.8rem;color:#f59e0b;border:2px solid #f59e0b;border-radius:6px;margin-bottom:12px';
+      pw.textContent = OWNER + ' — Smart Load Calculator Pro V3';
+      document.body.prepend(pw);
+    }
+  });
+})();
+</script>
+</body>
+</html>
  
