@@ -1,1 +1,1984 @@
-h
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Smart Electrical Troubleshooting & Learning Platform — AI-powered fault detection, voice assistance, live expert chat, and circuit education." />
+  <title>Smart Electrical Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%23080c12'/><polygon points='18,3 8,17 15,17 14,29 24,15 17,15' fill='%2300f0c8'/></svg>" />
+
+<!-- ============================================================
+     STYLES
+============================================================ -->
+<style>
+/* ── Reset & Base ─────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  background: #080c12;
+  color: #d8e2ed;
+  min-height: 100dvh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+img { display: block; max-width: 100%; }
+button { font-family: inherit; cursor: pointer; }
+input, textarea { font-family: inherit; }
+a { color: inherit; text-decoration: none; }
+
+/* ── CSS Variables ───────────────────────────────────────── */
+:root {
+  --volt:       #00f0c8;
+  --volt-dim:   rgba(0,240,200,.12);
+  --volt-glow:  rgba(0,240,200,.25);
+  --plasma:     #6d5aff;
+  --hazard:     #f5a623;
+  --fault:      #ff4e4e;
+  --safe:       #22d98a;
+  --warn:       #f59e0b;
+  --surf:       #0d1320;
+  --surf-card:  #111827;
+  --surf-raise: #16202e;
+  --surf-input: #0f1a27;
+  --border:     rgba(255,255,255,.08);
+  --border-h:   rgba(0,240,200,.3);
+  --text-1:     #e8f0f8;
+  --text-2:     #8aa4bd;
+  --text-3:     #3d5268;
+  --radius:     12px;
+  --radius-sm:  8px;
+  --trans:      200ms ease;
+}
+
+/* ── Scrollbar ───────────────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--surf); }
+::-webkit-scrollbar-thumb { background: #1e2d40; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #2a3d55; }
+
+/* ── Selection ───────────────────────────────────────────── */
+::selection { background: rgba(0,240,200,.18); color: var(--volt); }
+
+/* ── Focus ───────────────────────────────────────────────── */
+:focus-visible { outline: 2px solid var(--volt); outline-offset: 2px; border-radius: 4px; }
+
+/* ── Scanline overlay ────────────────────────────────────── */
+.scanlines {
+  pointer-events: none;
+  position: fixed; inset: 0; z-index: 9999;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,.03) 2px,
+    rgba(0,0,0,.03) 4px
+  );
+}
+
+/* ── Circuit grid bg ─────────────────────────────────────── */
+.circuit-bg {
+  background-image:
+    linear-gradient(rgba(0,240,200,.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,240,200,.025) 1px, transparent 1px);
+  background-size: 38px 38px;
+}
+
+/* ── Animations ──────────────────────────────────────────── */
+@keyframes fadeUp   { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:none} }
+@keyframes fadeIn   { from{opacity:0} to{opacity:1} }
+@keyframes blink    { 0%,100%{opacity:1} 50%{opacity:.25} }
+@keyframes spin     { to{transform:rotate(360deg)} }
+@keyframes pulse-r  { 0%,100%{box-shadow:0 0 0 0 rgba(255,78,78,.4)} 50%{box-shadow:0 0 0 14px rgba(255,78,78,0)} }
+@keyframes pulse-v  { 0%,100%{box-shadow:0 0 0 0 rgba(0,240,200,.3)} 50%{box-shadow:0 0 0 16px rgba(0,240,200,0)} }
+@keyframes scan-h   { 0%{transform:translateX(-100%)} 100%{transform:translateX(400%)} }
+@keyframes ring-out { 0%{transform:scale(.85);opacity:.7} 100%{transform:scale(1.6);opacity:0} }
+@keyframes wave     { 0%,100%{transform:scaleY(.2)} 50%{transform:scaleY(1)} }
+@keyframes typing   { 0%,60%,100%{transform:translateY(0);opacity:.4} 30%{transform:translateY(-6px);opacity:1} }
+@keyframes shimmer  { 0%{background-position:-200% 0} 100%{background-position:200% 0} }
+@keyframes glow-in  { from{opacity:0;filter:blur(4px)} to{opacity:1;filter:blur(0)} }
+
+.anim-fade-up   { animation: fadeUp .35s ease forwards; }
+.anim-fade-in   { animation: fadeIn .25s ease forwards; }
+.hidden         { display: none !important; }
+
+/* ═══════════════════════════════════════════════════════════
+   HEADER
+═══════════════════════════════════════════════════════════ */
+.site-header {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(8,12,18,.92);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+}
+.site-header::after {
+  content: '';
+  display: block; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--volt), transparent);
+}
+.header-inner {
+  max-width: 1160px; margin: 0 auto;
+  padding: 12px 20px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+.brand { display: flex; align-items: center; gap: 11px; flex-shrink: 0; }
+.brand-icon {
+  width: 38px; height: 38px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, rgba(0,240,200,.15), rgba(0,240,200,.06));
+  border: 1px solid rgba(0,240,200,.25);
+}
+.brand-name {
+  display: block;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 16px; font-weight: 800; letter-spacing: .06em;
+  color: var(--volt);
+  text-shadow: 0 0 18px rgba(0,240,200,.4);
+}
+.brand-sub { display: block; font-size: 11px; color: var(--text-2); margin-top: 1px; }
+.header-meta { display: flex; align-items: center; gap: 10px; }
+.status-pill {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 500;
+  padding: 5px 11px; border-radius: 20px;
+  background: rgba(34,217,138,.1); border: 1px solid rgba(34,217,138,.22);
+  color: var(--safe);
+}
+.pulse-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--safe);
+  animation: blink 2.2s ease-in-out infinite;
+}
+.version-badge {
+  font-size: 11px; color: var(--text-3);
+  font-family: 'DM Mono', monospace;
+  padding: 4px 8px; border-radius: 6px;
+  background: var(--surf-raise); border: 1px solid var(--border);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   HERO STRIP
+═══════════════════════════════════════════════════════════ */
+.hero-strip {
+  background: linear-gradient(180deg, rgba(0,240,200,.04) 0%, transparent 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 26px 20px;
+}
+.hero-inner {
+  max-width: 1160px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between; gap: 24px;
+  flex-wrap: wrap;
+}
+.hero-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-weight: 800; letter-spacing: .02em;
+  color: var(--text-1); line-height: 1.15;
+}
+.hero-title .accent { color: var(--volt); }
+.hero-desc { font-size: 13px; color: var(--text-2); margin-top: 5px; }
+.hero-stats { display: flex; align-items: center; gap: 0; flex-shrink: 0; }
+.stat-item { text-align: center; padding: 0 22px; }
+.stat-val {
+  display: block; font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.8rem; font-weight: 800; color: var(--volt);
+  line-height: 1;
+}
+.stat-label { display: block; font-size: 11px; color: var(--text-2); margin-top: 3px; }
+.stat-divider { width: 1px; height: 36px; background: var(--border); flex-shrink: 0; }
+
+/* ═══════════════════════════════════════════════════════════
+   MAIN CONTAINER
+═══════════════════════════════════════════════════════════ */
+.main-container {
+  max-width: 1160px; margin: 0 auto;
+  padding: 28px 20px 40px;
+  display: flex; flex-direction: column; gap: 24px;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   TAB NAV
+═══════════════════════════════════════════════════════════ */
+.tab-nav {
+  display: flex; gap: 3px; padding: 5px;
+  background: var(--surf-raise); border: 1px solid var(--border);
+  border-radius: var(--radius); overflow-x: auto;
+  scrollbar-width: none; position: relative;
+}
+.tab-nav::-webkit-scrollbar { display: none; }
+.tab-btn {
+  flex: 1; min-width: 110px;
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+  padding: 10px 16px; border-radius: 9px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 14px; font-weight: 700; letter-spacing: .04em;
+  color: var(--text-2); background: transparent; border: 1px solid transparent;
+  transition: all var(--trans); white-space: nowrap;
+}
+.tab-btn:hover:not(.active) { color: var(--text-1); background: rgba(255,255,255,.04); }
+.tab-btn.active {
+  color: #000;
+  background: linear-gradient(135deg, #00d4b0, #009e84);
+  border-color: transparent;
+  box-shadow: 0 2px 14px rgba(0,240,200,.3);
+}
+.tab-btn svg { flex-shrink: 0; }
+
+/* ═══════════════════════════════════════════════════════════
+   PANELS / CARDS (shared)
+═══════════════════════════════════════════════════════════ */
+.panel {
+  background: var(--surf-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 28px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.04);
+  overflow: hidden;
+}
+.panel-body { padding: 20px; }
+.panel-header {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 18px 20px 0;
+}
+.panel-icon {
+  width: 34px; height: 34px; border-radius: 9px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--volt-dim); border: 1px solid rgba(0,240,200,.2); color: var(--volt);
+}
+.panel-icon.warn  { background: rgba(245,158,11,.1); border-color: rgba(245,158,11,.2); color: var(--warn); }
+.panel-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.05rem; font-weight: 700; letter-spacing: .02em;
+  color: var(--text-1);
+}
+.panel-sub { font-size: 12px; color: var(--text-2); margin-top: 2px; }
+
+/* ── Shared Buttons ────────────────────────────────────── */
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 10px 20px; border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, #00d4b0, #009e84);
+  color: #000; font-family: 'Barlow Condensed', sans-serif;
+  font-size: 14px; font-weight: 700; letter-spacing: .04em;
+  border: none; transition: all var(--trans);
+}
+.btn-primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #00f0c8, #00c4a4);
+  box-shadow: 0 0 20px rgba(0,240,200,.35); transform: translateY(-1px);
+}
+.btn-primary:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+.btn-sm { padding: 8px 14px; font-size: 13px; }
+.btn-outline {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 10px 18px; border-radius: var(--radius-sm);
+  background: transparent; color: var(--volt);
+  border: 1px solid rgba(0,240,200,.28);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 14px; font-weight: 700; letter-spacing: .04em;
+  transition: all var(--trans);
+}
+.btn-outline:hover:not(:disabled) { background: rgba(0,240,200,.07); border-color: var(--volt); }
+.btn-outline:disabled { opacity: .4; cursor: not-allowed; }
+
+/* ── Alerts ────────────────────────────────────────────── */
+.alert {
+  display: flex; align-items: flex-start; gap: 9px;
+  padding: 11px 14px; border-radius: var(--radius-sm);
+  font-size: 13px; line-height: 1.5;
+}
+.alert-info { background: rgba(109,90,255,.1); border: 1px solid rgba(109,90,255,.22); color: #b4a8ff; }
+.alert-error { background: rgba(255,78,78,.1); border: 1px solid rgba(255,78,78,.22); color: #ff9090; }
+.alert svg { flex-shrink: 0; margin-top: 1px; }
+
+/* ── Section label ─────────────────────────────────────── */
+.sec-label {
+  display: flex; align-items: center; gap: 6px;
+  font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 500;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--text-2);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   DIAGNOSE TAB
+═══════════════════════════════════════════════════════════ */
+.diagnose-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 22px;
+}
+@media(max-width:780px) { .diagnose-grid { grid-template-columns: 1fr; } }
+
+/* Drop zone */
+.dropzone {
+  margin: 16px 20px 0;
+  border: 2px dashed var(--border); border-radius: var(--radius);
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; padding: 36px 20px; text-align: center;
+  cursor: pointer; transition: all var(--trans);
+  background: rgba(255,255,255,.01);
+}
+.dropzone:hover, .dropzone.dragging {
+  border-color: var(--volt-glow); background: rgba(0,240,200,.04);
+  box-shadow: 0 0 24px rgba(0,240,200,.08);
+}
+.dz-icon { color: var(--text-3); margin-bottom: 12px; }
+.dz-title { font-family: 'Barlow Condensed', sans-serif; font-size: 16px; font-weight: 700; color: var(--text-1); }
+.dz-sub { font-size: 12px; color: var(--text-2); margin-top: 4px 0 16px; }
+.dz-btns { display: flex; gap: 10px; margin-top: 16px; pointer-events: none; }
+
+/* Preview */
+.preview-wrap { margin: 16px 20px 0; }
+.preview-img-box {
+  position: relative; border-radius: var(--radius);
+  overflow: hidden; border: 1px solid rgba(0,240,200,.2);
+}
+.preview-img-box img { width: 100%; max-height: 300px; object-fit: contain; background: #07111c; }
+.preview-overlay {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 8px 12px; display: flex; justify-content: space-between; align-items: center;
+  background: rgba(8,12,18,.85); backdrop-filter: blur(4px);
+}
+.preview-fname { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-2); max-width: 70%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.preview-fsize { font-size: 11px; color: var(--text-3); }
+.preview-clear {
+  position: absolute; top: 9px; right: 9px;
+  width: 28px; height: 28px; border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(255,78,78,.2); border: 1px solid rgba(255,78,78,.3);
+  color: #ff9090; transition: all var(--trans);
+}
+.preview-clear:hover { background: rgba(255,78,78,.35); }
+.preview-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 12px; }
+
+/* Progress */
+.progress-wrap { margin: 10px 20px 0; }
+.progress-labels { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-2); margin-bottom: 5px; }
+.progress-track { height: 5px; background: var(--surf-raise); border-radius: 3px; overflow: hidden; }
+.progress-fill {
+  height: 100%; border-radius: 3px; width: 0%;
+  background: linear-gradient(90deg, #00d4b0, var(--plasma));
+  box-shadow: 0 0 8px rgba(0,240,200,.4);
+  transition: width .3s ease;
+}
+
+/* Fault Report */
+.fault-empty {
+  padding: 48px 20px; text-align: center;
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+}
+.fault-empty-icon { color: var(--text-3); opacity: .4; }
+.fault-empty-title { font-family: 'Barlow Condensed', sans-serif; font-size: 1rem; font-weight: 700; color: var(--text-2); }
+.fault-empty-sub { font-size: 13px; color: var(--text-3); max-width: 220px; }
+
+.fault-loading {
+  padding: 40px 20px; text-align: center;
+  display: flex; flex-direction: column; align-items: center; gap: 14px;
+}
+.scan-rings { position: relative; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; }
+.scan-ring {
+  position: absolute; border-radius: 50%;
+  border: 1.5px solid rgba(0,240,200,.5);
+  animation: ring-out 2s ease-in-out infinite;
+}
+.scan-ring:nth-child(1) { width: 40px; height: 40px; animation-delay: 0s; }
+.scan-ring:nth-child(2) { width: 60px; height: 60px; animation-delay: .4s; }
+.scan-ring:nth-child(3) { width: 80px; height: 80px; animation-delay: .8s; }
+.scan-core { position: relative; z-index: 2; }
+.fault-loading-title { font-family: 'Barlow Condensed', sans-serif; font-size: 15px; font-weight: 700; color: var(--text-1); }
+.fault-loading-sub { font-size: 12px; color: var(--text-2); }
+.scan-bar { width: 140px; height: 3px; background: var(--surf-raise); border-radius: 2px; overflow: hidden; }
+.scan-bar-fill { height: 100%; background: linear-gradient(90deg, transparent, var(--volt), transparent); animation: scan-h 1.3s linear infinite; width: 50%; }
+
+/* Result */
+.fault-result { display: flex; flex-direction: column; gap: 0; }
+.fault-result-head {
+  padding: 16px 20px;
+  display: flex; align-items: center; gap: 14px;
+  border-bottom: 1px solid var(--border);
+}
+.fault-head-icon { font-size: 24px; flex-shrink: 0; }
+.fault-detected-lbl { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: .1em; margin-bottom: 2px; }
+.fault-type-name { font-family: 'Barlow Condensed', sans-serif; font-size: 1.2rem; font-weight: 800; color: var(--text-1); }
+.fault-head-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.sev-badge {
+  font-family: 'Barlow Condensed', sans-serif; font-size: 11px; font-weight: 800; letter-spacing: .1em;
+  padding: 4px 10px; border-radius: 20px;
+}
+.sev-critical { background: rgba(255,78,78,.14); color: #ff8080; border: 1px solid rgba(255,78,78,.28); }
+.sev-high     { background: rgba(245,166,35,.12); color: #fbbf24; border: 1px solid rgba(245,166,35,.25); }
+.sev-medium   { background: rgba(234,179,8,.1);  color: #facc15; border: 1px solid rgba(234,179,8,.22); }
+.sev-low      { background: rgba(34,217,138,.1); color: #34d399; border: 1px solid rgba(34,217,138,.22); }
+.clear-result-btn {
+  width: 28px; height: 28px; border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,.05); border: 1px solid var(--border);
+  color: var(--text-2); transition: all var(--trans);
+}
+.clear-result-btn:hover { color: var(--fault); border-color: rgba(255,78,78,.3); }
+
+.fault-section { padding: 14px 20px; border-bottom: 1px solid var(--border); }
+.fault-section:last-child { border-bottom: none; }
+.confidence-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 7px; }
+.confidence-pct { font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 700; }
+.confidence-track { height: 5px; background: var(--surf-raise); border-radius: 3px; overflow: hidden; }
+.confidence-fill { height: 100%; border-radius: 3px; transition: width .7s ease; }
+
+.fault-desc { font-size: 13px; color: var(--text-1); line-height: 1.65; margin-top: 9px; }
+
+.safety-box { border-radius: var(--radius-sm); padding: 13px; margin-top: 0; }
+.safety-box-header { display: flex; align-items: center; gap: 7px; margin-bottom: 7px; }
+.safety-text { font-size: 13px; line-height: 1.65; }
+
+.rec-toggle {
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%; background: none; border: none; padding: 0; cursor: pointer;
+}
+.rec-arrow { color: var(--text-2); transition: transform .2s; }
+.rec-arrow.open { transform: rotate(180deg); }
+.rec-list { list-style: none; margin-top: 10px; display: flex; flex-direction: column; gap: 8px; }
+.rec-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 10px 12px; border-radius: var(--radius-sm);
+  background: var(--surf-raise); border: 1px solid var(--border);
+  font-size: 13px; color: var(--text-1);
+}
+.rec-num {
+  flex-shrink: 0; width: 20px; height: 20px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--volt-dim); border: 1px solid rgba(0,240,200,.2);
+  color: var(--volt); font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px; font-weight: 800; margin-top: 1px;
+}
+.fault-meta-bar {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 20px;
+  background: var(--surf-raise); border-top: 1px solid var(--border);
+}
+.fault-thumb { width: 44px; height: 44px; border-radius: 8px; object-fit: cover; border: 1px solid var(--border); flex-shrink: 0; }
+.fault-meta-label { font-size: 12px; font-weight: 600; color: var(--text-1); font-family: 'DM Mono', monospace; }
+.fault-meta-time { font-size: 11px; color: var(--text-3); }
+.fault-meta-check {
+  margin-left: auto; width: 26px; height: 26px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(34,217,138,.12); color: var(--safe);
+  border: 1px solid rgba(34,217,138,.22);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   VOICE TAB
+═══════════════════════════════════════════════════════════ */
+.voice-grid { display: grid; grid-template-columns: 1fr 340px; gap: 22px; }
+@media(max-width:860px) { .voice-grid { grid-template-columns: 1fr; } }
+
+.voice-main { padding: 28px 24px; display: flex; flex-direction: column; gap: 18px; }
+
+/* Mic button */
+.mic-area { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 20px 0; }
+.mic-rings { position: relative; display: flex; align-items: center; justify-content: center; width: 100px; height: 100px; }
+.mic-ring-pulse {
+  position: absolute; border-radius: 50%;
+  border: 1.5px solid rgba(255,78,78,.5);
+  animation: ring-out 1.6s ease-in-out infinite;
+}
+.mic-ring-pulse:nth-child(1) { width: 56px; height: 56px; animation-delay: 0s; }
+.mic-ring-pulse:nth-child(2) { width: 80px; height: 80px; animation-delay: .3s; }
+.mic-ring-pulse:nth-child(3) { width: 100px; height: 100px; animation-delay: .6s; }
+.mic-btn {
+  position: relative; z-index: 2;
+  width: 80px; height: 80px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  border: none; color: #fff; transition: all .25s;
+  background: linear-gradient(135deg, #009e84, #007a68);
+  box-shadow: 0 0 22px rgba(0,240,200,.22);
+}
+.mic-btn:hover:not(:disabled) { box-shadow: 0 0 32px rgba(0,240,200,.4); transform: scale(1.04); }
+.mic-btn.listening {
+  background: linear-gradient(135deg, #c72b2b, #921e1e);
+  box-shadow: 0 0 28px rgba(255,78,78,.45);
+  animation: pulse-r 1.6s ease-in-out infinite;
+}
+.mic-btn:disabled { opacity: .4; cursor: not-allowed; }
+.mic-status { font-family: 'Barlow Condensed', sans-serif; font-size: 17px; font-weight: 700; color: var(--text-1); }
+.mic-hint { font-size: 12px; color: var(--text-2); text-align: center; }
+
+/* Waveform */
+.waveform { display: flex; align-items: center; gap: 3px; height: 32px; }
+.wave-bar {
+  width: 3px; border-radius: 2px;
+  background: var(--volt); height: 100%;
+  animation: wave .7s ease-in-out infinite alternate;
+  animation-delay: var(--d, 0s);
+}
+
+/* Transcript box */
+.transcript-box {
+  background: var(--surf-raise); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 13px;
+}
+.transcript-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: .1em; color: var(--volt); display: flex; align-items: center; gap: 5px; margin-bottom: 7px; }
+.transcript-text { font-size: 14px; color: var(--text-1); }
+.transcript-actions { display: flex; gap: 8px; margin-top: 10px; }
+
+/* Typed input row */
+.type-row { display: flex; gap: 8px; }
+.type-input {
+  flex: 1; padding: 10px 14px; border-radius: var(--radius-sm);
+  background: var(--surf-input); border: 1px solid var(--border);
+  color: var(--text-1); font-size: 13px;
+  transition: border-color var(--trans); outline: none;
+}
+.type-input:focus { border-color: var(--border-h); }
+.type-input::placeholder { color: var(--text-3); }
+
+/* Processing dots */
+.processing {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 14px; border-radius: var(--radius-sm);
+  background: var(--surf-raise); border: 1px solid var(--border);
+  font-size: 13px; color: var(--text-2);
+}
+.typing-dots { display: flex; gap: 4px; }
+.t-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--text-2); animation: typing 1.2s infinite ease-in-out; }
+.t-dot:nth-child(2) { animation-delay: .2s; }
+.t-dot:nth-child(3) { animation-delay: .4s; }
+
+/* AI response */
+.ai-resp-box {
+  background: rgba(0,240,200,.05); border: 1px solid rgba(0,240,200,.18);
+  border-radius: var(--radius-sm); padding: 13px;
+  animation: glow-in .3s ease;
+}
+.ai-resp-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 9px; }
+.ai-label-chip {
+  display: flex; align-items: center; gap: 6px;
+  font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: .1em; color: var(--volt);
+}
+.speak-btn {
+  display: flex; align-items: center; gap: 5px;
+  padding: 5px 10px; border-radius: 6px; font-size: 12px;
+  background: rgba(255,255,255,.05); border: 1px solid var(--border);
+  color: var(--text-2); transition: all var(--trans);
+}
+.speak-btn:hover { color: var(--volt); border-color: var(--border-h); }
+.speak-btn.active { background: rgba(0,240,200,.1); border-color: rgba(0,240,200,.3); color: var(--volt); }
+.ai-resp-text { font-size: 13px; color: var(--text-1); line-height: 1.65; }
+
+/* Voice sidebar */
+.voice-sidebar { display: flex; flex-direction: column; gap: 14px; }
+.sidebar-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: .1em; color: var(--text-3); margin-bottom: 10px; }
+.topic-chips { display: flex; flex-wrap: wrap; gap: 7px; }
+.topic-chip {
+  padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 500;
+  background: rgba(0,240,200,.07); border: 1px solid rgba(0,240,200,.16);
+  color: var(--text-2); transition: all var(--trans);
+}
+.topic-chip:hover { background: rgba(0,240,200,.14); color: var(--text-1); border-color: rgba(0,240,200,.3); }
+
+.history-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.clear-hist-btn { font-size: 11px; padding: 4px 9px; border-radius: 6px; background: rgba(255,78,78,.1); border: 1px solid rgba(255,78,78,.2); color: #ff8080; }
+.history-empty { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 28px 0; opacity: .4; color: var(--text-2); font-size: 12px; }
+.history-items { display: flex; flex-direction: column; gap: 8px; max-height: 340px; overflow-y: auto; }
+.history-item {
+  padding: 10px 12px; border-radius: var(--radius-sm);
+  background: var(--surf-raise); border: 1px solid var(--border);
+  cursor: pointer; transition: all var(--trans);
+}
+.history-item:hover { border-color: var(--border-h); }
+.history-q { font-size: 12px; font-weight: 600; color: var(--volt); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-bottom: 4px; }
+.history-a { font-size: 11px; color: var(--text-2); overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.history-time { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-3); float: right; }
+
+/* ═══════════════════════════════════════════════════════════
+   CHAT TAB
+═══════════════════════════════════════════════════════════ */
+.chat-wrap { height: clamp(520px, 72vh, 740px); display: flex; flex-direction: column; }
+.chat-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 18px; border-bottom: 1px solid var(--border);
+  background: var(--surf-raise); flex-shrink: 0;
+}
+.chat-expert-info { display: flex; align-items: center; gap: 11px; }
+.expert-avi {
+  width: 38px; height: 38px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--volt-dim); border: 1px solid rgba(0,240,200,.22); color: var(--volt);
+}
+.chat-expert-name { font-family: 'Barlow Condensed', sans-serif; font-size: 15px; font-weight: 700; color: var(--text-1); }
+.chat-online { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--safe); margin-top: 2px; }
+.chat-live-badge {
+  font-family: 'Barlow Condensed', sans-serif; font-size: 10px; font-weight: 800; letter-spacing: .1em;
+  padding: 4px 9px; border-radius: 5px;
+  background: rgba(0,240,200,.12); border: 1px solid rgba(0,240,200,.25); color: var(--volt);
+}
+.chat-msgs { flex: 1; overflow-y: auto; padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+.msg-system {
+  text-align: center; font-size: 11px; color: var(--text-3);
+  padding: 6px 14px; border-radius: 20px;
+  background: var(--surf-raise); border: 1px solid var(--border);
+  align-self: center;
+}
+.msg-row { display: flex; align-items: flex-end; gap: 8px; }
+.msg-row.user { flex-direction: row-reverse; }
+.msg-avi-sm {
+  width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--volt-dim); border: 1px solid rgba(0,240,200,.18); color: var(--volt);
+}
+.msg-avi-sm.user-avi { background: rgba(109,90,255,.15); border-color: rgba(109,90,255,.25); color: var(--plasma); }
+.msg-bubble-wrap { display: flex; flex-direction: column; gap: 3px; max-width: 75%; }
+.msg-row.user .msg-bubble-wrap { align-items: flex-end; }
+.msg-name { font-size: 10px; color: var(--text-3); margin: 0 4px; }
+.bubble {
+  padding: 10px 14px; font-size: 13px; line-height: 1.6;
+  word-break: break-word;
+}
+.bubble.expert { background: var(--surf-raise); border: 1px solid var(--border); border-radius: 14px 14px 14px 4px; color: var(--text-1); }
+.bubble.user   { background: linear-gradient(135deg, #007a68, #005a4e); color: #fff; border-radius: 14px 14px 4px 14px; }
+.msg-time { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-3); margin: 0 4px; }
+.msg-row.user .msg-time { text-align: right; }
+
+.chat-typing-row { display: flex; align-items: flex-end; gap: 8px; padding: 0 18px 0; flex-shrink: 0; }
+.typing-bub { padding: 10px 14px; background: var(--surf-raise); border: 1px solid var(--border); border-radius: 14px 14px 14px 4px; }
+
+.chat-suggestions { display: flex; flex-wrap: wrap; gap: 7px; padding: 10px 18px; flex-shrink: 0; border-top: 1px solid var(--border); }
+.sugg-pill {
+  padding: 6px 12px; border-radius: 20px; font-size: 12px;
+  background: var(--surf-raise); border: 1px solid var(--border);
+  color: var(--text-2); transition: all var(--trans); cursor: pointer;
+}
+.sugg-pill:hover { border-color: var(--border-h); color: var(--text-1); }
+
+.chat-input-row {
+  display: flex; align-items: flex-end; gap: 10px;
+  padding: 12px 16px; border-top: 1px solid var(--border); flex-shrink: 0;
+  background: var(--surf-raise);
+}
+.chat-input {
+  flex: 1; padding: 10px 14px; border-radius: var(--radius-sm);
+  background: var(--surf-input); border: 1px solid var(--border);
+  color: var(--text-1); font-size: 13px; resize: none;
+  max-height: 120px; line-height: 1.5; outline: none;
+  transition: border-color var(--trans);
+}
+.chat-input:focus { border-color: var(--border-h); }
+.chat-input::placeholder { color: var(--text-3); }
+.chat-send-btn {
+  width: 44px; height: 44px; border-radius: var(--radius-sm); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid var(--border); background: var(--surf-raise);
+  color: var(--text-3); transition: all var(--trans);
+}
+.chat-send-btn.active { background: linear-gradient(135deg, #00d4b0, #009e84); border-color: transparent; color: #000; box-shadow: 0 0 14px rgba(0,240,200,.3); }
+.chat-send-btn.active:hover { transform: scale(1.06); }
+.chat-disclaimer { font-size: 11px; text-align: center; color: var(--text-3); padding: 6px 14px 10px; flex-shrink: 0; }
+
+/* ═══════════════════════════════════════════════════════════
+   LEARN TAB
+═══════════════════════════════════════════════════════════ */
+.learn-intro { font-size: 14px; color: var(--text-2); padding-bottom: 4px; }
+.learn-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+@media(max-width:900px) { .learn-grid { grid-template-columns: 1fr 1fr; } }
+@media(max-width:600px) { .learn-grid { grid-template-columns: 1fr; } }
+
+.learn-card {
+  background: var(--surf-card); border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden;
+  transition: border-color var(--trans), transform var(--trans), box-shadow var(--trans);
+  box-shadow: 0 4px 24px rgba(0,0,0,.3);
+  display: flex; flex-direction: column;
+}
+.learn-card:hover {
+  border-color: rgba(0,240,200,.25);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 36px rgba(0,0,0,.4), 0 0 20px rgba(0,240,200,.07);
+}
+.learn-card-head { padding: 18px 18px 0; display: flex; align-items: flex-start; gap: 12px; }
+.learn-num {
+  font-family: 'Barlow Condensed', sans-serif; font-size: 2.2rem; font-weight: 800;
+  color: var(--volt); opacity: .25; line-height: 1; flex-shrink: 0;
+}
+.learn-title { font-family: 'Barlow Condensed', sans-serif; font-size: 1rem; font-weight: 800; color: var(--text-1); }
+.learn-subtitle { font-size: 11px; color: var(--text-2); margin-top: 2px; }
+.diff-badge { margin-left: auto; flex-shrink: 0; padding: 4px 9px; border-radius: 20px; font-size: 10px; font-weight: 700; font-family: 'Barlow Condensed', sans-serif; letter-spacing: .06em; }
+.diff-easy   { background: rgba(34,217,138,.1); border: 1px solid rgba(34,217,138,.22); color: var(--safe); }
+.diff-medium { background: rgba(245,166,35,.1); border: 1px solid rgba(245,166,35,.2);  color: #fbbf24; }
+.diff-hard   { background: rgba(255,78,78,.1);  border: 1px solid rgba(255,78,78,.22);  color: #ff8080; }
+
+.circuit-wrap { margin: 14px 14px 0; border-radius: var(--radius-sm); overflow: hidden; border: 1px solid var(--border); background: #07111c; }
+.circuit-svg { width: 100%; height: auto; display: block; }
+
+.learn-desc { padding: 12px 18px; font-size: 13px; color: var(--text-2); line-height: 1.6; flex: 1; }
+
+.expand-btn {
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%; padding: 12px 18px; border-top: 1px solid var(--border);
+  background: none; border-left: none; border-right: none; border-bottom: none;
+  color: var(--text-2); font-size: 13px; font-weight: 600;
+  transition: all var(--trans); cursor: pointer;
+}
+.expand-btn:hover { background: rgba(0,240,200,.04); color: var(--volt); }
+.expand-btn svg { transition: transform .2s; }
+.expand-btn.open svg { transform: rotate(180deg); }
+.expand-content { border-top: 1px solid var(--border); padding: 16px 18px; background: var(--surf-raise); }
+.learn-steps { display: flex; flex-direction: column; gap: 10px; }
+.learn-step { display: flex; gap: 10px; font-size: 13px; color: var(--text-1); line-height: 1.6; }
+.step-num {
+  width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--volt-dim); border: 1px solid rgba(0,240,200,.2);
+  color: var(--volt); font-family: 'Barlow Condensed', sans-serif; font-size: 11px; font-weight: 800;
+  margin-top: 2px;
+}
+.learn-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+.learn-tag {
+  padding: 4px 9px; border-radius: 6px; font-size: 11px;
+  background: var(--surf-card); border: 1px solid var(--border); color: var(--text-2);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════════════════════ */
+.site-footer { border-top: 1px solid var(--border); background: rgba(8,12,18,.9); }
+.footer-inner {
+  max-width: 1160px; margin: 0 auto; padding: 14px 20px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  font-size: 12px; color: var(--text-3); flex-wrap: wrap;
+}
+.footer-infra { display: flex; align-items: center; gap: 6px; font-family: 'DM Mono', monospace; }
+.infra-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--safe); animation: blink 2.5s infinite; }
+
+/* ═══════════════════════════════════════════════════════════
+   RESPONSIVE HELPERS
+═══════════════════════════════════════════════════════════ */
+@media(max-width:540px) {
+  .hero-strip { padding: 18px 16px; }
+  .hero-stats { display: none; }
+  .stat-item  { padding: 0 14px; }
+  .main-container { padding: 18px 14px 32px; }
+  .tab-btn { min-width: 86px; padding: 9px 10px; font-size: 12px; }
+  .voice-main { padding: 20px 16px; }
+}
+</style>
+</head>
+
+<body class="circuit-bg">
+<div class="scanlines" aria-hidden="true"></div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     HEADER
+═══════════════════════════════════════════════════════════ -->
+<header class="site-header">
+  <div class="header-inner">
+    <div class="brand">
+      <div class="brand-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" fill="#00f0c8"/>
+        </svg>
+      </div>
+      <div>
+        <span class="brand-name">SMART ELECTRICAL</span>
+        <span class="brand-sub">Troubleshooting &amp; Learning Platform</span>
+      </div>
+    </div>
+    <div class="header-meta">
+      <div class="status-pill">
+        <span class="pulse-dot"></span>
+        System Online
+      </div>
+      <div class="version-badge">v1.0.0</div>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════════════════════
+     HERO STRIP
+═══════════════════════════════════════════════════════════ -->
+<div class="hero-strip">
+  <div class="hero-inner">
+    <div>
+      <h1 class="hero-title">Electrical Intelligence <span class="accent">at Your Fingertips</span></h1>
+      <p class="hero-desc">AI-powered fault detection · Voice assistance · Live expert support · Circuit education</p>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item"><span class="stat-val">5</span><span class="stat-label">Fault Types</span></div>
+      <div class="stat-divider"></div>
+      <div class="stat-item"><span class="stat-val">24/7</span><span class="stat-label">AI Assistance</span></div>
+      <div class="stat-divider"></div>
+      <div class="stat-item"><span class="stat-val">3</span><span class="stat-label">Learning Modules</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     MAIN
+═══════════════════════════════════════════════════════════ -->
+<main class="main-container">
+
+  <!-- TAB NAV -->
+  <nav class="tab-nav" role="tablist">
+    <button class="tab-btn active" data-tab="diagnose" role="tab">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      Diagnose
+    </button>
+    <button class="tab-btn" data-tab="voice" role="tab">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+      Voice Help
+    </button>
+    <button class="tab-btn" data-tab="chat" role="tab">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Expert Chat
+    </button>
+    <button class="tab-btn" data-tab="learn" role="tab">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      Learn
+    </button>
+  </nav>
+
+  <!-- ══════════════════════════════════════════════════════
+       TAB: DIAGNOSE
+  ══════════════════════════════════════════════════════ -->
+  <section class="tab-panel" id="tab-diagnose">
+    <div class="diagnose-grid">
+
+      <!-- Upload Panel -->
+      <div class="panel" id="uploadPanel">
+        <div class="panel-header">
+          <div class="panel-icon">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          </div>
+          <div>
+            <div class="panel-title">AI Fault Analyser</div>
+            <div class="panel-sub">Upload or capture a photo for instant AI diagnosis</div>
+          </div>
+        </div>
+
+        <!-- Drop zone -->
+        <div class="dropzone" id="dropzone" tabindex="0" role="button">
+          <div class="dz-icon">
+            <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+          </div>
+          <div class="dz-title">Drag &amp; drop an image here</div>
+          <div class="dz-sub" style="margin:6px 0 16px">JPEG · PNG · WEBP · GIF · BMP &nbsp;|&nbsp; Max 10 MB</div>
+          <div class="dz-btns">
+            <button class="btn-outline btn-sm" id="browseTrigger" type="button">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+              Browse Files
+            </button>
+            <button class="btn-outline btn-sm" id="cameraTrigger" type="button">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+              Camera
+            </button>
+          </div>
+        </div>
+        <input type="file" id="fileInput" accept="image/*" hidden />
+        <input type="file" id="cameraInput" accept="image/*" capture="environment" hidden />
+
+        <!-- Preview (hidden until image selected) -->
+        <div class="preview-wrap hidden" id="previewWrap">
+          <div class="preview-img-box">
+            <img id="previewImg" src="" alt="Preview" />
+            <div class="preview-overlay">
+              <span class="preview-fname" id="previewFname"></span>
+              <span class="preview-fsize" id="previewFsize"></span>
+            </div>
+            <button class="preview-clear" id="clearImgBtn" title="Remove">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+          <div class="preview-actions">
+            <button class="btn-outline btn-sm" id="changeTrigger" type="button">Change Image</button>
+            <button class="btn-primary" id="analyseBtn" type="button">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" fill="currentColor"/></svg>
+              Analyse Fault
+            </button>
+          </div>
+        </div>
+
+        <!-- Progress -->
+        <div class="progress-wrap hidden" id="progressWrap" style="padding:0 20px;">
+          <div style="height:12px"></div>
+          <div class="progress-labels"><span id="progressLabel">Processing…</span><span id="progressPct">0%</span></div>
+          <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+        </div>
+
+        <!-- Error -->
+        <div class="alert alert-error hidden" id="uploadError" style="margin:10px 20px 0;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+          <span id="uploadErrorText"></span>
+        </div>
+
+        <!-- Disclaimer -->
+        <div class="alert alert-info" style="margin:14px 20px 20px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:2px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span>AI analysis is for guidance only. Always engage a <strong>licensed electrician</strong> before working on any installation.</span>
+        </div>
+      </div>
+
+      <!-- Fault Report Panel -->
+      <div class="panel" id="faultPanel">
+        <div class="panel-header">
+          <div class="panel-icon warn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          </div>
+          <div>
+            <div class="panel-title">Fault Report</div>
+            <div class="panel-sub">Detailed AI analysis with safety recommendations</div>
+          </div>
+        </div>
+
+        <!-- Empty -->
+        <div class="fault-empty" id="faultEmpty">
+          <div class="fault-empty-icon"><svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="11" y1="16" x2="11.01" y2="16"/></svg></div>
+          <div class="fault-empty-title">No Analysis Yet</div>
+          <div class="fault-empty-sub">Upload an image and tap <strong>Analyse Fault</strong> to generate a detailed electrical fault report.</div>
+        </div>
+
+        <!-- Loading -->
+        <div class="fault-loading hidden" id="faultLoading">
+          <div class="scan-rings">
+            <div class="scan-ring"></div><div class="scan-ring"></div><div class="scan-ring"></div>
+            <div class="scan-core"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" fill="#00f0c8"/></svg></div>
+          </div>
+          <div class="fault-loading-title">Analysing Image…</div>
+          <div class="fault-loading-sub">AI fault detection in progress</div>
+          <div class="scan-bar"><div class="scan-bar-fill"></div></div>
+        </div>
+
+        <!-- Result (hidden until analysis) -->
+        <div class="fault-result hidden" id="faultResult">
+          <div class="fault-result-head" id="faultResultHead">
+            <div class="fault-head-icon" id="faultIcon"></div>
+            <div>
+              <div class="fault-detected-lbl" id="faultDetectedLbl">FAULT DETECTED</div>
+              <div class="fault-type-name" id="faultTypeName"></div>
+            </div>
+            <div class="fault-head-right">
+              <span class="sev-badge" id="sevBadge"></span>
+              <button class="clear-result-btn" id="clearResultBtn" title="Clear">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="fault-section">
+            <div class="confidence-row">
+              <div class="sec-label"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>AI CONFIDENCE</div>
+              <div class="confidence-pct" id="confPct"></div>
+            </div>
+            <div class="confidence-track"><div class="confidence-fill" id="confFill"></div></div>
+          </div>
+
+          <div class="fault-section">
+            <div class="sec-label" style="margin-bottom:8px">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+              FAULT DESCRIPTION
+            </div>
+            <div class="fault-desc" id="faultDesc"></div>
+          </div>
+
+          <div class="fault-section">
+            <div class="safety-box" id="safetyBox">
+              <div class="safety-box-header">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                <div class="sec-label">SAFETY WARNING</div>
+              </div>
+              <div class="safety-text" id="safetyText"></div>
+            </div>
+          </div>
+
+          <div class="fault-section">
+            <button class="rec-toggle" id="recToggle" type="button">
+              <div class="sec-label">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                RECOMMENDED ACTIONS
+              </div>
+              <svg class="rec-arrow" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <ol class="rec-list" id="recList"></ol>
+          </div>
+
+          <div class="fault-meta-bar">
+            <img class="fault-thumb" id="faultThumb" src="" alt="Analysed" />
+            <div>
+              <div class="fault-meta-label">Analysis Complete</div>
+              <div class="fault-meta-time" id="faultTime"></div>
+            </div>
+            <div class="fault-meta-check">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════
+       TAB: VOICE
+  ══════════════════════════════════════════════════════ -->
+  <section class="tab-panel hidden" id="tab-voice">
+    <div class="voice-grid">
+
+      <div class="panel voice-main">
+
+        <!-- Mic area -->
+        <div class="mic-area">
+          <div class="mic-rings" id="micRings">
+            <div class="mic-ring-pulse hidden" id="micRing1"></div>
+            <div class="mic-ring-pulse hidden" id="micRing2"></div>
+            <div class="mic-ring-pulse hidden" id="micRing3"></div>
+            <button class="mic-btn" id="micBtn" type="button" aria-label="Start listening">
+              <svg id="micIconSvg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+              <svg id="stopIconSvg" class="hidden" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
+            </button>
+          </div>
+          <div class="mic-status" id="micStatus">Tap to Speak</div>
+          <div class="mic-hint">Ask about faults, circuits, or electrical safety</div>
+          <div class="waveform hidden" id="waveform">
+            <div class="wave-bar" style="--d:0s"></div><div class="wave-bar" style="--d:.07s"></div>
+            <div class="wave-bar" style="--d:.14s"></div><div class="wave-bar" style="--d:.21s"></div>
+            <div class="wave-bar" style="--d:.09s"></div><div class="wave-bar" style="--d:.17s"></div>
+            <div class="wave-bar" style="--d:.25s"></div><div class="wave-bar" style="--d:.05s"></div>
+            <div class="wave-bar" style="--d:.12s"></div><div class="wave-bar" style="--d:.20s"></div>
+            <div class="wave-bar" style="--d:.03s"></div><div class="wave-bar" style="--d:.15s"></div>
+          </div>
+        </div>
+
+        <!-- Transcript -->
+        <div class="transcript-box hidden" id="transcriptBox">
+          <div class="transcript-label">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/></svg>
+            YOUR QUERY
+          </div>
+          <div class="transcript-text" id="transcriptText"></div>
+          <div class="transcript-actions">
+            <button class="btn-primary btn-sm" id="analyseVoiceBtn" type="button">Analyse Query</button>
+            <button class="btn-outline btn-sm" id="clearVoiceBtn" type="button">Clear</button>
+          </div>
+        </div>
+
+        <!-- Typed input -->
+        <div class="type-row">
+          <input type="text" class="type-input" id="voiceTypeInput" placeholder="Or type your query here…" />
+          <button class="btn-primary btn-sm" id="voiceTypeSubmit" type="button">Ask</button>
+        </div>
+
+        <!-- Processing -->
+        <div class="processing hidden" id="voiceProcessing">
+          <div class="typing-dots"><div class="t-dot"></div><div class="t-dot"></div><div class="t-dot"></div></div>
+          <span>AI is generating a response…</span>
+        </div>
+
+        <!-- AI Response -->
+        <div class="ai-resp-box hidden" id="aiRespBox">
+          <div class="ai-resp-header">
+            <div class="ai-label-chip">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" fill="#00f0c8"/></svg>
+              AI ASSISTANT
+            </div>
+            <button class="speak-btn" id="speakBtn" type="button">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+              <span id="speakLabel">Speak</span>
+            </button>
+          </div>
+          <div class="ai-resp-text" id="aiRespText"></div>
+        </div>
+
+        <!-- Voice error -->
+        <div class="alert alert-error hidden" id="voiceError">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+          <span id="voiceErrorText"></span>
+        </div>
+      </div>
+
+      <!-- Voice sidebar -->
+      <div class="voice-sidebar">
+        <div class="panel" style="padding:18px">
+          <div class="sidebar-label">TRY ASKING ABOUT</div>
+          <div class="topic-chips" id="topicChips">
+            <button class="topic-chip" data-q="Circuit Breakers">Circuit Breakers</button>
+            <button class="topic-chip" data-q="Short Circuits">Short Circuits</button>
+            <button class="topic-chip" data-q="Earth Leakage">Earth Leakage</button>
+            <button class="topic-chip" data-q="DOL Starters">DOL Starters</button>
+            <button class="topic-chip" data-q="Two-Way Switches">Two-Way Switches</button>
+            <button class="topic-chip" data-q="Electrical Safety">Electrical Safety</button>
+            <button class="topic-chip" data-q="Loose Wiring">Loose Wiring</button>
+            <button class="topic-chip" data-q="Overloaded Circuit">Overloaded Circuit</button>
+          </div>
+        </div>
+        <div class="panel" style="padding:18px;flex:1">
+          <div class="history-head">
+            <div class="sidebar-label" style="margin:0">QUERY HISTORY</div>
+            <button class="clear-hist-btn hidden" id="clearHistBtn" type="button">Clear All</button>
+          </div>
+          <div class="history-empty" id="histEmpty">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg>
+            <span>No queries yet</span>
+          </div>
+          <div class="history-items" id="histItems"></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════
+       TAB: CHAT
+  ══════════════════════════════════════════════════════ -->
+  <section class="tab-panel hidden" id="tab-chat">
+    <div class="panel chat-wrap">
+
+      <div class="chat-head">
+        <div class="chat-expert-info">
+          <div class="expert-avi">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+          <div>
+            <div class="chat-expert-name">Electrical Expert</div>
+            <div class="chat-online">
+              <span class="pulse-dot" style="background:var(--safe)"></span>
+              <span id="chatOnlineTxt">Online · Responds in ~2 seconds</span>
+            </div>
+          </div>
+        </div>
+        <div class="chat-live-badge">LIVE</div>
+      </div>
+
+      <div class="chat-msgs" id="chatMsgs"></div>
+
+      <div class="chat-typing-row hidden" id="chatTyping">
+        <div class="msg-avi-sm"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+        <div class="typing-bub"><div class="typing-dots"><div class="t-dot"></div><div class="t-dot"></div><div class="t-dot"></div></div></div>
+      </div>
+
+      <div class="chat-suggestions" id="chatSuggs">
+        <button class="sugg-pill" data-msg="My RCCB keeps tripping. What should I check?">RCCB tripping</button>
+        <button class="sugg-pill" data-msg="What causes a circuit breaker to trip repeatedly?">Breaker trips</button>
+        <button class="sugg-pill" data-msg="How do I test for earth leakage?">Earth leakage test</button>
+        <button class="sugg-pill" data-msg="Is it safe to reset a tripped MCB immediately?">Reset MCB safely</button>
+      </div>
+
+      <div class="chat-input-row">
+        <textarea class="chat-input" id="chatInput" placeholder="Describe your electrical issue…" rows="1" aria-label="Message"></textarea>
+        <button class="chat-send-btn" id="chatSendBtn" type="button" aria-label="Send">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+
+      <div class="chat-disclaimer">Responses are AI-generated for educational purposes only. For emergencies, contact a licensed electrician.</div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════
+       TAB: LEARN
+  ══════════════════════════════════════════════════════ -->
+  <section class="tab-panel hidden" id="tab-learn">
+    <p class="learn-intro">Explore common electrical circuits through interactive diagrams and step-by-step explanations.</p>
+    <div style="height:16px"></div>
+    <div class="learn-grid">
+
+      <!-- Card 1 -->
+      <div class="learn-card">
+        <div class="learn-card-head">
+          <div class="learn-num">01</div>
+          <div><div class="learn-title">Simple House Wiring</div><div class="learn-subtitle">Single-phase radial circuit</div></div>
+          <div class="diff-badge diff-easy">Beginner</div>
+        </div>
+        <div class="circuit-wrap">
+          <svg class="circuit-svg" viewBox="0 0 420 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs><pattern id="g0" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0L0 0 0 20" fill="none" stroke="rgba(0,240,200,.06)" stroke-width=".5"/></pattern></defs>
+            <rect width="420" height="180" fill="url(#g0)"/>
+            <!-- Supply -->
+            <rect x="20" y="70" width="56" height="40" rx="4" fill="#0d1f2d" stroke="#00f0c8" stroke-width="1.5"/>
+            <text x="48" y="86" text-anchor="middle" fill="#00f0c8" font-size="8" font-family="DM Mono">230V</text>
+            <text x="48" y="98" text-anchor="middle" fill="#8ab4c4" font-size="7" font-family="DM Mono">AC Supply</text>
+            <!-- Live conductor -->
+            <line x1="76" y1="80" x2="130" y2="80" stroke="#ef4444" stroke-width="2"/>
+            <line x1="130" y1="80" x2="130" y2="54" stroke="#ef4444" stroke-width="2"/>
+            <line x1="130" y1="54" x2="210" y2="54" stroke="#ef4444" stroke-width="2"/>
+            <!-- Neutral conductor -->
+            <line x1="76" y1="100" x2="130" y2="100" stroke="#94a3b8" stroke-width="2"/>
+            <line x1="130" y1="100" x2="130" y2="126" stroke="#94a3b8" stroke-width="2"/>
+            <line x1="130" y1="126" x2="342" y2="126" stroke="#94a3b8" stroke-width="2"/>
+            <line x1="342" y1="126" x2="342" y2="100" stroke="#94a3b8" stroke-width="2"/>
+            <!-- MCB -->
+            <rect x="148" y="41" width="40" height="26" rx="3" fill="#0d1f2d" stroke="#f59e0b" stroke-width="1.5"/>
+            <text x="168" y="52" text-anchor="middle" fill="#f59e0b" font-size="7.5" font-family="DM Mono">MCB</text>
+            <text x="168" y="62" text-anchor="middle" fill="#8ab4c4" font-size="6.5" font-family="DM Mono">16A</text>
+            <line x1="168" y1="41" x2="168" y2="54" stroke="#f59e0b" stroke-width="1" stroke-dasharray="2,2"/>
+            <line x1="188" y1="54" x2="210" y2="54" stroke="#ef4444" stroke-width="2"/>
+            <!-- Switch -->
+            <rect x="210" y="41" width="40" height="26" rx="3" fill="#0d1f2d" stroke="#00f0c8" stroke-width="1.5"/>
+            <text x="230" y="57" text-anchor="middle" fill="#00f0c8" font-size="8" font-family="DM Mono">SW</text>
+            <line x1="220" y1="54" x2="238" y2="46" stroke="#00f0c8" stroke-width="1.5"/>
+            <circle cx="250" cy="54" r="2" fill="#00f0c8"/>
+            <line x1="250" y1="54" x2="260" y2="54" stroke="#ef4444" stroke-width="2"/>
+            <!-- Light bulb -->
+            <circle cx="300" cy="54" r="20" fill="#0d1f2d" stroke="#22c55e" stroke-width="1.5"/>
+            <path d="M292 54 Q300 43 308 54" stroke="#f0c040" stroke-width="1.5" fill="none"/>
+            <line x1="294" y1="61" x2="306" y2="61" stroke="#8ab4c4" stroke-width="1"/>
+            <line x1="296" y1="65" x2="304" y2="65" stroke="#8ab4c4" stroke-width="1"/>
+            <circle cx="300" cy="54" r="24" fill="none" stroke="rgba(240,192,64,.12)" stroke-width="5"/>
+            <text x="300" y="86" text-anchor="middle" fill="#8ab4c4" font-size="7" font-family="DM Mono">LAMP</text>
+            <line x1="280" y1="54" x2="260" y2="54" stroke="#ef4444" stroke-width="2"/>
+            <line x1="320" y1="54" x2="342" y2="54" stroke="#94a3b8" stroke-width="2"/>
+            <line x1="342" y1="54" x2="342" y2="100" stroke="#94a3b8" stroke-width="2"/>
+            <!-- Earth -->
+            <line x1="48" y1="110" x2="48" y2="155" stroke="#22c55e" stroke-width="2"/>
+            <line x1="36" y1="155" x2="60" y2="155" stroke="#22c55e" stroke-width="2"/>
+            <line x1="40" y1="160" x2="56" y2="160" stroke="#22c55e" stroke-width="2"/>
+            <line x1="44" y1="165" x2="52" y2="165" stroke="#22c55e" stroke-width="2"/>
+            <text x="48" y="175" text-anchor="middle" fill="#22c55e" font-size="7" font-family="DM Mono">EARTH</text>
+            <!-- Labels -->
+            <text x="84" y="75" fill="#ef4444" font-size="7" font-family="DM Mono">L (Live)</text>
+            <text x="84" y="119" fill="#94a3b8" font-size="7" font-family="DM Mono">N (Neutral)</text>
+          </svg>
+        </div>
+        <div class="learn-desc">A basic residential circuit where 230V AC passes through an MCB for overcurrent protection, then a switch to control a lamp. The neutral returns directly to supply. An earth conductor provides safety fault-current path.</div>
+        <button class="expand-btn" data-target="exp0" type="button"><span>How It Works</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <div class="expand-content hidden" id="exp0">
+          <div class="learn-steps">
+            <div class="learn-step"><span class="step-num">1</span><div><strong>Supply Entry:</strong> 230V AC enters the distribution board. Live (L) is red/brown; Neutral (N) is black/blue.</div></div>
+            <div class="learn-step"><span class="step-num">2</span><div><strong>MCB Protection:</strong> The MCB monitors current. If it exceeds its rating (e.g. 16A) it trips, isolating the circuit automatically.</div></div>
+            <div class="learn-step"><span class="step-num">3</span><div><strong>Switch Control:</strong> The switch is always in the Live conductor — never Neutral — so the load is fully de-energised when switched off.</div></div>
+            <div class="learn-step"><span class="step-num">4</span><div><strong>Load (Lamp):</strong> Current flows through the lamp, completing the circuit back through the Neutral to the supply.</div></div>
+            <div class="learn-step"><span class="step-num">5</span><div><strong>Earth:</strong> The Earth wire connects all metallic enclosures. A live-to-metal fault sends current to earth, tripping the MCB or RCD.</div></div>
+          </div>
+          <div class="learn-tags">
+            <span class="learn-tag">230V AC</span><span class="learn-tag">MCB</span><span class="learn-tag">Radial Circuit</span><span class="learn-tag">Earth Protection</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="learn-card">
+        <div class="learn-card-head">
+          <div class="learn-num">02</div>
+          <div><div class="learn-title">DOL Starter Circuit</div><div class="learn-subtitle">Direct On Line motor starter</div></div>
+          <div class="diff-badge diff-medium">Intermediate</div>
+        </div>
+        <div class="circuit-wrap">
+          <svg class="circuit-svg" viewBox="0 0 420 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs><pattern id="g1" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0L0 0 0 20" fill="none" stroke="rgba(0,240,200,.06)" stroke-width=".5"/></pattern></defs>
+            <rect width="420" height="200" fill="url(#g1)"/>
+            <!-- 3-phase supply -->
+            <rect x="14" y="14" width="44" height="60" rx="4" fill="#0d1f2d" stroke="#a78bfa" stroke-width="1.5"/>
+            <text x="36" y="36" text-anchor="middle" fill="#a78bfa" font-size="7.5" font-family="DM Mono">3φ</text>
+            <text x="36" y="49" text-anchor="middle" fill="#a78bfa" font-size="7.5" font-family="DM Mono">415V</text>
+            <text x="36" y="62" text-anchor="middle" fill="#8ab4c4" font-size="6.5" font-family="DM Mono">Supply</text>
+            <line x1="58" y1="27" x2="100" y2="27" stroke="#ef4444" stroke-width="2"/>
+            <line x1="58" y1="44" x2="100" y2="44" stroke="#eab308" stroke-width="2"/>
+            <line x1="58" y1="61" x2="100" y2="61" stroke="#3b82f6" stroke-width="2"/>
+            <text x="64" y="24" fill="#ef4444" font-size="7" font-family="DM Mono">R</text>
+            <text x="64" y="41" fill="#eab308" font-size="7" font-family="DM Mono">Y</text>
+            <text x="64" y="58" fill="#3b82f6" font-size="7" font-family="DM Mono">B</text>
+            <!-- Contactor -->
+            <rect x="100" y="13" width="74" height="58" rx="4" fill="#0d1f2d" stroke="#00f0c8" stroke-width="1.5"/>
+            <text x="137" y="32" text-anchor="middle" fill="#00f0c8" font-size="8" font-family="DM Mono">CONTACTOR</text>
+            <text x="137" y="46" text-anchor="middle" fill="#00f0c8" font-size="8" font-family="DM Mono">(KM)</text>
+            <line x1="108" y1="56" x2="116" y2="50" stroke="#00f0c8" stroke-width="1.5"/>
+            <line x1="127" y1="56" x2="135" y2="50" stroke="#00f0c8" stroke-width="1.5"/>
+            <line x1="146" y1="56" x2="154" y2="50" stroke="#00f0c8" stroke-width="1.5"/>
+            <line x1="100" y1="27" x2="174" y2="27" stroke="#ef4444" stroke-width="2"/>
+            <line x1="100" y1="44" x2="174" y2="44" stroke="#eab308" stroke-width="2"/>
+            <line x1="100" y1="61" x2="174" y2="61" stroke="#3b82f6" stroke-width="2"/>
+            <!-- Overload Relay -->
+            <rect x="174" y="13" width="72" height="58" rx="4" fill="#0d1f2d" stroke="#f97316" stroke-width="1.5"/>
+            <text x="210" y="32" text-anchor="middle" fill="#f97316" font-size="7.5" font-family="DM Mono">OVERLOAD</text>
+            <text x="210" y="46" text-anchor="middle" fill="#f97316" font-size="7.5" font-family="DM Mono">RELAY (OL)</text>
+            <text x="210" y="60" text-anchor="middle" fill="#8ab4c4" font-size="6.5" font-family="DM Mono">Trip @ FLC</text>
+            <line x1="174" y1="27" x2="246" y2="27" stroke="#ef4444" stroke-width="2"/>
+            <line x1="174" y1="44" x2="246" y2="44" stroke="#eab308" stroke-width="2"/>
+            <line x1="174" y1="61" x2="246" y2="61" stroke="#3b82f6" stroke-width="2"/>
+            <!-- Motor -->
+            <circle cx="310" cy="43" r="32" fill="#0d1f2d" stroke="#22c55e" stroke-width="1.5"/>
+            <text x="310" y="38" text-anchor="middle" fill="#22c55e" font-size="11" font-family="DM Mono" font-weight="bold">M</text>
+            <text x="310" y="54" text-anchor="middle" fill="#8ab4c4" font-size="7" font-family="DM Mono">3φ Motor</text>
+            <line x1="246" y1="27" x2="280" y2="27" stroke="#ef4444" stroke-width="2"/>
+            <line x1="246" y1="44" x2="278" y2="44" stroke="#eab308" stroke-width="2"/>
+            <line x1="246" y1="61" x2="280" y2="61" stroke="#3b82f6" stroke-width="2"/>
+            <!-- Control divider -->
+            <line x1="14" y1="90" x2="406" y2="90" stroke="rgba(0,240,200,.2)" stroke-width="1" stroke-dasharray="4,4"/>
+            <text x="210" y="103" text-anchor="middle" fill="rgba(0,240,200,.4)" font-size="8" font-family="DM Mono">CONTROL CIRCUIT</text>
+            <!-- Control wires -->
+            <line x1="28" y1="114" x2="28" y2="174" stroke="#ef4444" stroke-width="1.5"/>
+            <line x1="392" y1="114" x2="392" y2="174" stroke="#94a3b8" stroke-width="1.5"/>
+            <line x1="28" y1="114" x2="78" y2="114" stroke="#ef4444" stroke-width="1.5"/>
+            <line x1="392" y1="114" x2="370" y2="114" stroke="#94a3b8" stroke-width="1.5"/>
+            <!-- STOP button -->
+            <rect x="78" y="106" width="46" height="18" rx="3" fill="#0d1f2d" stroke="#ef4444" stroke-width="1.5"/>
+            <text x="101" y="119" text-anchor="middle" fill="#ef4444" font-size="7.5" font-family="DM Mono">STOP</text>
+            <line x1="124" y1="114" x2="158" y2="114" stroke="#ef4444" stroke-width="1.5"/>
+            <!-- START button -->
+            <rect x="158" y="106" width="48" height="18" rx="3" fill="#0d1f2d" stroke="#22c55e" stroke-width="1.5"/>
+            <text x="182" y="119" text-anchor="middle" fill="#22c55e" font-size="7.5" font-family="DM Mono">START</text>
+            <line x1="206" y1="114" x2="242" y2="114" stroke="#22c55e" stroke-width="1.5"/>
+            <!-- KM Coil -->
+            <rect x="242" y="106" width="52" height="18" rx="3" fill="#0d1f2d" stroke="#00f0c8" stroke-width="1.5"/>
+            <text x="268" y="119" text-anchor="middle" fill="#00f0c8" font-size="7.5" font-family="DM Mono">KM COIL</text>
+            <line x1="294" y1="114" x2="322" y2="114" stroke="#00f0c8" stroke-width="1.5"/>
+            <!-- OL NC contact -->
+            <rect x="322" y="106" width="48" height="18" rx="3" fill="#0d1f2d" stroke="#f97316" stroke-width="1.5"/>
+            <text x="346" y="119" text-anchor="middle" fill="#f97316" font-size="7" font-family="DM Mono">OL (NC)</text>
+            <line x1="370" y1="114" x2="392" y2="114" stroke="#f97316" stroke-width="1.5"/>
+            <!-- Seal-in contact -->
+            <rect x="158" y="142" width="48" height="18" rx="3" fill="#0d1f2d" stroke="#00f0c8" stroke-width="1" stroke-dasharray="3,2"/>
+            <text x="182" y="155" text-anchor="middle" fill="#00f0c8" font-size="6.5" font-family="DM Mono">KM (Seal-in)</text>
+            <line x1="158" y1="151" x2="124" y2="151" stroke="rgba(0,240,200,.45)" stroke-width="1" stroke-dasharray="3,2"/>
+            <line x1="124" y1="114" x2="124" y2="151" stroke="rgba(0,240,200,.45)" stroke-width="1" stroke-dasharray="3,2"/>
+            <line x1="206" y1="151" x2="242" y2="151" stroke="rgba(0,240,200,.45)" stroke-width="1" stroke-dasharray="3,2"/>
+            <line x1="242" y1="114" x2="242" y2="151" stroke="rgba(0,240,200,.45)" stroke-width="1" stroke-dasharray="3,2"/>
+          </svg>
+        </div>
+        <div class="learn-desc">A DOL starter applies full 3-phase voltage directly to an induction motor. It uses a main power contactor, thermal overload relay, and a latching control circuit with START/STOP pushbuttons.</div>
+        <button class="expand-btn" data-target="exp1" type="button"><span>How It Works</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <div class="expand-content hidden" id="exp1">
+          <div class="learn-steps">
+            <div class="learn-step"><span class="step-num">1</span><div><strong>Start:</strong> Pressing START energises the KM coil. Main power contacts close, connecting full 3-phase supply to the motor.</div></div>
+            <div class="learn-step"><span class="step-num">2</span><div><strong>Seal-in:</strong> An auxiliary NO contact of KM wires in parallel with START, keeping the coil energised after the button is released.</div></div>
+            <div class="learn-step"><span class="step-num">3</span><div><strong>Stop:</strong> Pressing STOP breaks the control circuit. The coil de-energises, power contacts open, disconnecting the motor.</div></div>
+            <div class="learn-step"><span class="step-num">4</span><div><strong>Overload:</strong> The thermal OL relay monitors motor current. If it exceeds the FLC setting, the OL trips its NC contact, cutting the coil.</div></div>
+            <div class="learn-step"><span class="step-num">5</span><div><strong>Suitability:</strong> DOL is suitable for motors up to ~7.5 kW. Larger motors use star-delta or soft-starters to limit high starting currents (6–8× FLC).</div></div>
+          </div>
+          <div class="learn-tags">
+            <span class="learn-tag">3-Phase 415V</span><span class="learn-tag">Contactor</span><span class="learn-tag">Overload Relay</span><span class="learn-tag">Seal-in Circuit</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="learn-card">
+        <div class="learn-card-head">
+          <div class="learn-num">03</div>
+          <div><div class="learn-title">Two-Way Switch Wiring</div><div class="learn-subtitle">Staircase / hotel switch circuit</div></div>
+          <div class="diff-badge diff-medium">Intermediate</div>
+        </div>
+        <div class="circuit-wrap">
+          <svg class="circuit-svg" viewBox="0 0 420 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs><pattern id="g2" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0L0 0 0 20" fill="none" stroke="rgba(0,240,200,.06)" stroke-width=".5"/></pattern></defs>
+            <rect width="420" height="180" fill="url(#g2)"/>
+            <!-- Supply -->
+            <rect x="14" y="65" width="52" height="40" rx="4" fill="#0d1f2d" stroke="#00f0c8" stroke-width="1.5"/>
+            <text x="40" y="81" text-anchor="middle" fill="#00f0c8" font-size="7.5" font-family="DM Mono">230V</text>
+            <text x="40" y="93" text-anchor="middle" fill="#8ab4c4" font-size="6.5" font-family="DM Mono">Supply</text>
+            <!-- Live wire -->
+            <line x1="66" y1="75" x2="100" y2="75" stroke="#ef4444" stroke-width="2"/>
+            <!-- Neutral loop -->
+            <line x1="66" y1="95" x2="100" y2="95" stroke="#94a3b8" stroke-width="2"/>
+            <line x1="100" y1="95" x2="100" y2="146" stroke="#94a3b8" stroke-width="2"/>
+            <line x1="100" y1="146" x2="384" y2="146" stroke="#94a3b8" stroke-width="2"/>
+            <line x1="384" y1="146" x2="384" y2="116" stroke="#94a3b8" stroke-width="2"/>
+            <!-- Switch 1 -->
+            <rect x="100" y="55" width="76" height="50" rx="4" fill="#0d1f2d" stroke="#f59e0b" stroke-width="1.5"/>
+            <text x="138" y="72" text-anchor="middle" fill="#f59e0b" font-size="7.5" font-family="DM Mono">SWITCH 1</text>
+            <text x="138" y="84" text-anchor="middle" fill="#8ab4c4" font-size="6.5" font-family="DM Mono">(Bottom floor)</text>
+            <circle cx="114" cy="95" r="3" fill="#f59e0b"/>
+            <text x="114" y="104" text-anchor="middle" fill="#f59e0b" font-size="6" font-family="DM Mono">C</text>
+            <circle cx="154" cy="66" r="3" fill="#ef4444"/>
+            <text x="154" y="60" text-anchor="middle" fill="#ef4444" font-size="6" font-family="DM Mono">L1</text>
+            <circle cx="154" cy="95" r="3" fill="#a78bfa"/>
+            <text x="154" y="104" text-anchor="middle" fill="#a78bfa" font-size="6" font-family="DM Mono">L2</text>
+            <line x1="114" y1="95" x2="154" y2="66" stroke="#f59e0b" stroke-width="1.5"/>
+            <line x1="100" y1="75" x2="114" y2="75" stroke="#ef4444" stroke-width="2"/>
+            <line x1="114" y1="75" x2="114" y2="95" stroke="#f59e0b" stroke-width="1.5"/>
+            <!-- Travellers -->
+            <line x1="154" y1="66" x2="268" y2="66" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="5,3"/>
+            <line x1="154" y1="95" x2="268" y2="95" stroke="#a78bfa" stroke-width="1.5" stroke-dasharray="5,3"/>
+            <text x="211" y="60" text-anchor="middle" fill="#8ab4c4" font-size="6.5" font-family="DM Mono">Traveller 1</text>
+            <text x="211" y="106" text-anchor="middle" fill="#8ab4c4" font-size="6.5" font-family="DM Mono">Traveller 2</text>
+            <!-- Switch 2 -->
+            <rect x="244" y="55" width="76" height="50" rx="4" fill="#0d1f2d" stroke="#f59e0b" stroke-width="1.5"/>
+            <text x="282" y="72" text-anchor="middle" fill="#f59e0b" font-size="7.5" font-family="DM Mono">SWITCH 2</text>
+            <text x="282" y="84" text-anchor="middle" fill="#8ab4c4" font-size="6.5" font-family="DM Mono">(Top floor)</text>
+            <circle cx="312" cy="75" r="3" fill="#f59e0b"/>
+            <text x="312" y="69" text-anchor="middle" fill="#f59e0b" font-size="6" font-family="DM Mono">C</text>
+            <circle cx="268" cy="66" r="3" fill="#ef4444"/>
+            <circle cx="268" cy="95" r="3" fill="#a78bfa"/>
+            <line x1="268" y1="95" x2="312" y2="75" stroke="#a78bfa" stroke-width="1.5"/>
+            <line x1="312" y1="75" x2="312" y2="66" stroke="#f59e0b" stroke-width="1.5"/>
+            <!-- Wire to lamp -->
+            <line x1="312" y1="66" x2="350" y2="66" stroke="#22c55e" stroke-width="2"/>
+            <!-- Lamp -->
+            <circle cx="376" cy="66" r="20" fill="#0d1f2d" stroke="#22c55e" stroke-width="1.5"/>
+            <path d="M368 66 Q376 55 384 66" stroke="#f0c040" stroke-width="1.5" fill="none"/>
+            <line x1="370" y1="73" x2="382" y2="73" stroke="#8ab4c4" stroke-width="1"/>
+            <line x1="372" y1="77" x2="380" y2="77" stroke="#8ab4c4" stroke-width="1"/>
+            <text x="376" y="98" text-anchor="middle" fill="#8ab4c4" font-size="7" font-family="DM Mono">LAMP</text>
+            <line x1="356" y1="66" x2="350" y2="66" stroke="#22c55e" stroke-width="2"/>
+            <line x1="396" y1="66" x2="396" y2="116" stroke="#94a3b8" stroke-width="2"/>
+            <line x1="384" y1="116" x2="396" y2="116" stroke="#94a3b8" stroke-width="2"/>
+            <text x="376" y="126" text-anchor="middle" fill="#ef4444" font-size="7" font-family="DM Mono">OFF</text>
+            <!-- Position labels -->
+            <text x="40" y="162" text-anchor="middle" fill="#22c55e" font-size="7" font-family="DM Mono">SW1: C→L1</text>
+            <text x="282" y="162" text-anchor="middle" fill="#a78bfa" font-size="7" font-family="DM Mono">SW2: C→L2</text>
+          </svg>
+        </div>
+        <div class="learn-desc">Two-way switching uses two SPDT switches to control one light from two locations — the classic staircase circuit. Three wires run between them: one Common and two Traveller conductors.</div>
+        <button class="expand-btn" data-target="exp2" type="button"><span>How It Works</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <div class="expand-content hidden" id="exp2">
+          <div class="learn-steps">
+            <div class="learn-step"><span class="step-num">1</span><div><strong>Switch Anatomy:</strong> Each SPDT switch has three terminals — Common (C), L1, and L2. The common connects to either L1 or L2 depending on switch position.</div></div>
+            <div class="learn-step"><span class="step-num">2</span><div><strong>Traveller Wires:</strong> Two wires (T1 and T2) run between the L1 and L2 terminals of both switches, carrying current between them.</div></div>
+            <div class="learn-step"><span class="step-num">3</span><div><strong>Light ON:</strong> The circuit is complete when both switches connect to the same traveller — both on T1, or both on T2.</div></div>
+            <div class="learn-step"><span class="step-num">4</span><div><strong>Light OFF:</strong> When switches are on opposite travellers — one on T1, the other on T2 — the circuit is broken and the lamp is off.</div></div>
+            <div class="learn-step"><span class="step-num">5</span><div><strong>Fault Diagnosis:</strong> If the light won't switch from one location, check the traveller wires for continuity. If neither location works, check the Common wire and the lamp.</div></div>
+          </div>
+          <div class="learn-tags">
+            <span class="learn-tag">SPDT Switch</span><span class="learn-tag">Traveller Wires</span><span class="learn-tag">Staircase Wiring</span><span class="learn-tag">Two-Location Control</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>© 2026 Vedant Patel. All Rights Reserved.</span>
+    <div class="footer-infra"><span class="infra-dot"></span>Server Infrastructure by Ak</div>
+  </div>
+</footer>
+
+<!-- ============================================================
+     JAVASCRIPT
+============================================================ -->
+<script>
+'use strict';
+
+/* ══════════════════════════════════════════════════════════════
+   UTILITIES
+══════════════════════════════════════════════════════════════ */
+const $ = (sel, ctx = document) => ctx.querySelector(sel);
+const $$ = (sel, ctx = document) => [...ctx.querySelectorAll(sel)];
+const show = el => el && el.classList.remove('hidden');
+const hide = el => el && el.classList.add('hidden');
+const toggle = (el, cond) => cond ? show(el) : hide(el);
+const fmt = ts => new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+/* ══════════════════════════════════════════════════════════════
+   TAB NAVIGATION
+══════════════════════════════════════════════════════════════ */
+$$('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    $$('.tab-btn').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected', 'false'); });
+    $$('.tab-panel').forEach(p => hide(p));
+    btn.classList.add('active');
+    btn.setAttribute('aria-selected', 'true');
+    const panel = $(`#tab-${btn.dataset.tab}`);
+    if (panel) { show(panel); panel.classList.add('anim-fade-up'); setTimeout(() => panel.classList.remove('anim-fade-up'), 400); }
+  });
+});
+
+/* ══════════════════════════════════════════════════════════════
+   DIAGNOSE — IMAGE UPLOAD & MOCK AI FAULT ANALYSIS
+══════════════════════════════════════════════════════════════ */
+const MOCK_FAULTS = [
+  {
+    fault_type: 'Short Circuit', severity: 'critical', confidence: 94,
+    description: 'A direct low-resistance path has been detected between two live conductors. This generates excessive current flow that can cause immediate damage to insulation, tripping of circuit protection devices, and in severe cases, electrical fires. Visible burn marks or melted insulation are common indicators.',
+    safety_warning: 'IMMEDIATE ACTION REQUIRED: De-energise the affected circuit at the main distribution board. Do NOT restore power until a licensed electrician has physically inspected and replaced all damaged wiring. Keep a CO₂ fire extinguisher within reach. Evacuate the area if you detect burning smells or see smoke.',
+    recommendations: ['Switch off the main breaker immediately.', 'Visually inspect all junction boxes for burn marks.', 'Replace damaged cable sections with correctly-rated conductors.', 'Test circuit integrity with a continuity tester before re-energising.']
+  },
+  {
+    fault_type: 'Earth Leakage', severity: 'high', confidence: 87,
+    description: 'An unintended current path to earth has been detected, indicating insulation breakdown or accidental contact between a live conductor and an earthed metallic body. This condition is typically detected by RCCB/RCD devices tripping and poses a serious electrocution risk.',
+    safety_warning: 'WARNING: An earth fault current is flowing in this circuit. This is a serious electrocution hazard. Do not touch any metallic parts of the installation until the circuit is isolated. Have a licensed electrician perform an insulation resistance test (IR test) on all cables.',
+    recommendations: ['Isolate the circuit at the distribution board.', 'Perform an IR test (>1 MΩ acceptable for LV installations).', 'Inspect cable routes for physical damage, rodent chewing, or moisture ingress.', 'Verify RCCB trip sensitivity is within specification (typically 30 mA).']
+  },
+  {
+    fault_type: 'Loose Wiring', severity: 'medium', confidence: 81,
+    description: 'One or more conductor terminations appear loose or under-torqued. Poor termination creates high-resistance joints that generate localised heat, degrade insulation, cause arcing, and may result in intermittent circuit failures.',
+    safety_warning: 'CAUTION: Turn off and lock out the affected circuit before any inspection. Never tighten terminals on an energised system. Re-terminate conductors using approved cable lugs torqued to the manufacturer\'s specification.',
+    recommendations: ['De-energise and lock-out/tag-out before working.', 'Re-terminate using correctly-rated crimped lugs.', 'Apply correct torque (refer to terminal data sheet).', 'Conduct a thermal imaging scan under load to identify hot spots.']
+  },
+  {
+    fault_type: 'Overloaded Circuit', severity: 'high', confidence: 89,
+    description: 'The circuit appears to be carrying a load exceeding its rated current capacity. Sustained overloading causes progressive thermal degradation of cable insulation, increases the risk of nuisance tripping, and can permanently damage circuit protection devices.',
+    safety_warning: 'WARNING: Immediately redistribute loads across available circuits. Do not bypass or upsize circuit breakers without a full load calculation. Inspect cable insulation along the full route for signs of thermal damage.',
+    recommendations: ['Calculate total connected load and compare with circuit rating.', 'Redistribute high-consumption appliances to dedicated circuits.', 'Check breaker thermal-magnetic ratings match cable current capacity.', 'Consider installing additional circuits or upgrading the supply.']
+  },
+  {
+    fault_type: 'Corroded Connections', severity: 'medium', confidence: 76,
+    description: 'Significant corrosion is visible on conductor terminations or bus bars. Oxidation increases contact resistance, generates heat, and can lead to complete joint failure over time. This is especially common in coastal environments or areas with high humidity.',
+    safety_warning: 'CAUTION: Corroded connections must be cleaned or replaced while the circuit is fully de-energised. Use anti-oxidant compound on aluminium conductors. Re-inspect at 6-month intervals in corrosive environments.',
+    recommendations: ['Isolate the circuit and clean terminals with appropriate solvent.', 'Apply anti-corrosion compound or use tinned copper lugs.', 'Replace severely corroded components entirely.', 'Consider IP-rated enclosures in high-humidity environments.']
+  }
+];
+
+const SEV = {
+  critical: { color:'#ff4e4e', bg:'rgba(255,78,78,.1)',  border:'rgba(255,78,78,.25)',  cls:'sev-critical', icon:'🚨', barGrad:'#ff4e4e,#c72b2b' },
+  high:     { color:'#fbbf24', bg:'rgba(245,166,35,.1)', border:'rgba(245,166,35,.25)', cls:'sev-high',     icon:'⚠️', barGrad:'#f59e0b,#b45309' },
+  medium:   { color:'#facc15', bg:'rgba(234,179,8,.09)', border:'rgba(234,179,8,.2)',   cls:'sev-medium',   icon:'⚡', barGrad:'#eab308,#854d0e' },
+  low:      { color:'#34d399', bg:'rgba(34,217,138,.09)',border:'rgba(34,217,138,.22)', cls:'sev-low',      icon:'ℹ️', barGrad:'#22d98a,#065f46' }
+};
+
+let currentPreviewSrc = '';
+
+const fileIn    = $('#fileInput');
+const cameraIn  = $('#cameraInput');
+const dz        = $('#dropzone');
+const prevWrap  = $('#previewWrap');
+const prevImg   = $('#previewImg');
+const prevFname = $('#previewFname');
+const prevFsize = $('#previewFsize');
+const progWrap  = $('#progressWrap');
+const progFill  = $('#progressFill');
+const progLabel = $('#progressLabel');
+const progPct   = $('#progressPct');
+const errBox    = $('#uploadError');
+const errTxt    = $('#uploadErrorText');
+
+function showError(msg) {
+  errTxt.textContent = msg;
+  show(errBox);
+}
+function clearError() { hide(errBox); }
+
+function validateFile(f) {
+  const allowed = ['image/jpeg','image/png','image/webp','image/gif','image/bmp'];
+  if (!allowed.includes(f.type)) return 'Unsupported format. Please upload a JPEG, PNG, WEBP, GIF, or BMP image.';
+  if (f.size > 10 * 1024 * 1024) return 'File too large. Maximum size is 10 MB.';
+  return null;
+}
+
+function loadPreview(file) {
+  const err = validateFile(file);
+  if (err) { showError(err); return; }
+  clearError();
+  const reader = new FileReader();
+  reader.onload = e => {
+    currentPreviewSrc = e.target.result;
+    prevImg.src = currentPreviewSrc;
+    prevFname.textContent = file.name;
+    prevFsize.textContent = `${(file.size/1024).toFixed(0)} KB`;
+    hide(dz);
+    show(prevWrap);
+    prevWrap.classList.add('anim-fade-in');
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearPreview() {
+  hide(prevWrap); show(dz);
+  prevImg.src = ''; currentPreviewSrc = '';
+  fileIn.value = ''; cameraIn.value = '';
+  clearError();
+  hide(progWrap);
+}
+
+// Drop zone events
+dz.addEventListener('click', () => fileIn.click());
+dz.addEventListener('keydown', e => e.key === 'Enter' && fileIn.click());
+dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('dragging'); });
+dz.addEventListener('dragleave', () => dz.classList.remove('dragging'));
+dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('dragging'); const f = e.dataTransfer.files[0]; if(f) loadPreview(f); });
+
+$('#browseTrigger').addEventListener('click', e => { e.stopPropagation(); fileIn.click(); });
+$('#cameraTrigger').addEventListener('click', e => { e.stopPropagation(); cameraIn.click(); });
+$('#changeTrigger').addEventListener('click', () => fileIn.click());
+$('#clearImgBtn').addEventListener('click', clearPreview);
+fileIn.addEventListener('change', e => { if(e.target.files[0]) loadPreview(e.target.files[0]); e.target.value=''; });
+cameraIn.addEventListener('change', e => { if(e.target.files[0]) loadPreview(e.target.files[0]); e.target.value=''; });
+
+// Analyse button
+$('#analyseBtn').addEventListener('click', async () => {
+  if (!currentPreviewSrc) { showError('Please select or capture an image first.'); return; }
+  clearError();
+  hide(prevWrap);
+  show(progWrap);
+  // Show fault panel loading
+  hide($('#faultEmpty')); hide($('#faultResult'));
+  show($('#faultLoading'));
+
+  // Simulate upload progress
+  let p = 0;
+  const tick = setInterval(() => {
+    p = Math.min(p + Math.random() * 8, 90);
+    progFill.style.width = p + '%';
+    progPct.textContent = Math.round(p) + '%';
+  }, 120);
+
+  // Simulate AI processing delay (1.5–2.5s)
+  await new Promise(r => setTimeout(r, 1500 + Math.random() * 1000));
+  clearInterval(tick);
+  progFill.style.width = '100%';
+  progPct.textContent = '100%';
+
+  // Pick a random mock fault
+  // ── PRODUCTION: Replace this block with a real API call ──
+  // const formData = new FormData();
+  // formData.append('image', fileInput.files[0]);
+  // const res = await fetch('/api/analyze', { method:'POST', body: formData });
+  // const data = await res.json();
+  // renderFaultResult(data.analysis, currentPreviewSrc, data.timestamp);
+  const fault = MOCK_FAULTS[Math.floor(Math.random() * MOCK_FAULTS.length)];
+  renderFaultResult(fault, currentPreviewSrc, new Date().toISOString());
+
+  setTimeout(() => { hide(progWrap); show(prevWrap); }, 800);
+});
+
+function renderFaultResult(f, imgSrc, ts) {
+  const s = SEV[f.severity] || SEV.medium;
+  hide($('#faultLoading'));
+
+  // Header band
+  const head = $('#faultResultHead');
+  head.style.background = s.bg;
+  head.style.borderBottom = `1px solid ${s.border}`;
+
+  $('#faultIcon').textContent = s.icon;
+  const lbl = $('#faultDetectedLbl');
+  lbl.style.color = s.color;
+  $('#faultTypeName').textContent = f.fault_type;
+
+  const badge = $('#sevBadge');
+  badge.textContent = f.severity.toUpperCase();
+  badge.className = 'sev-badge ' + s.cls;
+
+  // Confidence
+  $('#confPct').textContent = f.confidence + '%';
+  $('#confPct').style.color = s.color;
+  const fill = $('#confFill');
+  fill.style.width = f.confidence + '%';
+  fill.style.background = `linear-gradient(90deg, ${s.barGrad})`;
+  fill.style.boxShadow = `0 0 8px ${s.color}44`;
+
+  $('#faultDesc').textContent = f.description;
+
+  // Safety box
+  const sb = $('#safetyBox');
+  sb.style.background = s.bg;
+  sb.style.border = `1px solid ${s.border}`;
+  sb.querySelector('.safety-box-header').style.color = s.color;
+  const st = $('#safetyText');
+  st.textContent = f.safety_warning;
+  st.style.color = '#d8e2ed';
+
+  // Recommendations
+  const recList = $('#recList');
+  recList.innerHTML = '';
+  (f.recommendations || []).forEach((r, i) => {
+    const li = document.createElement('li');
+    li.className = 'rec-item';
+    li.innerHTML = `<span class="rec-num">${i+1}</span><span>${r}</span>`;
+    recList.appendChild(li);
+  });
+  recList.classList.remove('hidden'); // Show by default
+
+  // Meta
+  if (imgSrc) { $('#faultThumb').src = imgSrc; }
+  $('#faultTime').textContent = ts ? new Date(ts).toLocaleString() : '';
+
+  show($('#faultResult'));
+  $( '#faultResult').classList.add('anim-fade-up');
+  setTimeout(() => $('#faultResult').classList.remove('anim-fade-up'), 400);
+}
+
+// Clear result
+$('#clearResultBtn').addEventListener('click', () => {
+  hide($('#faultResult'));
+  show($('#faultEmpty'));
+});
+
+// Recommendations toggle
+let recOpen = true;
+$('#recToggle').addEventListener('click', () => {
+  recOpen = !recOpen;
+  toggle($('#recList'), recOpen);
+  $('#recToggle').querySelector('.rec-arrow').classList.toggle('open', recOpen);
+});
+
+/* ══════════════════════════════════════════════════════════════
+   VOICE ASSISTANT — Web Speech API + Mock AI
+══════════════════════════════════════════════════════════════ */
+const VOICE_KB = [
+  { kw:['circuit breaker','breaker','trip','tripping'], ans:'Circuit breakers trip when they detect an overload or short circuit. First, identify which breaker has tripped — it will be in the middle position. Before resetting, switch off or unplug devices on that circuit, then firmly push the breaker fully to OFF then to ON. If it trips again immediately, you likely have a fault and should contact a licensed electrician.' },
+  { kw:['short circuit','short'], ans:'A short circuit occurs when live and neutral conductors make direct contact, creating a path of zero resistance. This causes extreme current flow, which trips the circuit breaker or blows a fuse. Signs include burnt smells, visible burn marks, or a breaker that trips immediately after reset. Always isolate the circuit before investigating.' },
+  { kw:['earth leakage','rccb','rcd','leakage','earth fault'], ans:'Earth leakage is detected by RCCB or RCD devices, which monitor the balance between live and neutral currents. An imbalance as small as 30 milliamps triggers the device, cutting power to prevent electrocution. Common causes include damaged insulation, moisture in sockets, or faulty appliances. Test your RCCB monthly using the built-in TEST button.' },
+  { kw:['loose wire','loose connection','loose wiring','loose terminal','loose'], ans:'Loose connections are a major cause of electrical fires. They create high-resistance joints that generate heat, cause arcing, and degrade insulation over time. Symptoms include flickering lights, warm outlets, or a burning smell. Always de-energise the circuit and use correctly-rated cable lugs with proper torque when re-terminating conductors.' },
+  { kw:['dol','direct on line','motor starter','starter'], ans:'A DOL or Direct On Line starter applies full supply voltage to a motor at startup. It consists of a main contactor, a thermal overload relay, and a control circuit with start and stop buttons. The overload relay trips if the motor draws excessive current. DOL starters are suitable for small motors up to approximately 7.5 kilowatts.' },
+  { kw:['two way switch','two-way','staircase wiring','hotel wiring'], ans:'Two-way switch wiring uses two SPDT switches to control one light from two locations — typically used on staircases. The circuit has three wires between the switches called commons and travellers. When either switch is toggled, it changes the current path through the traveller wires, turning the light on or off regardless of the other switch position.' },
+  { kw:['overload','overloaded'], ans:'An overloaded circuit carries more current than its rated capacity. This causes cables to overheat, degrade insulation, and can start fires. Signs include warm cables, persistent tripping, or a burning smell. Reduce the load by redistributing appliances to other circuits, and check that the cable rating matches the breaker rating.' },
+  { kw:['fuse','blown fuse'], ans:'A blown fuse indicates a fault or overload condition. Before replacing a fuse, always identify and rectify the root cause. Use a fuse with the same ampere and voltage rating as specified for the circuit. Never replace with a higher-rated fuse as this removes the protection for your cables.' },
+  { kw:['safety','precaution','electrician','safe'], ans:'Electrical safety is critical. Always follow lockout-tagout procedures: switch off the circuit, lock the isolator, and verify with a voltage tester before touching any conductors. Use insulated tools rated for the working voltage. For any work inside distribution boards or on live circuits, engage a qualified and licensed electrician.' }
+];
+
+function mockAIAnswer(query) {
+  const lower = query.toLowerCase();
+  for (const entry of VOICE_KB) {
+    if (entry.kw.some(k => lower.includes(k))) return entry.ans;
+  }
+  return `I received your query about "${query.slice(0,60)}${query.length>60?'…':''}". In demo mode I can answer questions about: circuit breakers, short circuits, earth leakage, loose wiring, DOL starters, two-way switches, overloaded circuits, fuses, and electrical safety. Please ask about one of those topics.`;
+}
+
+let recognition = null;
+let isSpeaking  = false;
+let voiceHistory = [];
+
+const micBtn       = $('#micBtn');
+const micStatus    = $('#micStatus');
+const waveform     = $('#waveform');
+const micRings     = $$('.mic-ring-pulse');
+const transcriptBox= $('#transcriptBox');
+const transcriptTxt= $('#transcriptText');
+const analyseVBtn  = $('#analyseVoiceBtn');
+const clearVBtn    = $('#clearVoiceBtn');
+const voiceTypeIn  = $('#voiceTypeInput');
+const voiceSubmit  = $('#voiceTypeSubmit');
+const vProcessing  = $('#voiceProcessing');
+const aiRespBox    = $('#aiRespBox');
+const aiRespTxt    = $('#aiRespText');
+const speakBtn     = $('#speakBtn');
+const speakLabel   = $('#speakLabel');
+const voiceErrBox  = $('#voiceError');
+const voiceErrTxt  = $('#voiceErrorText');
+const histEmpty    = $('#histEmpty');
+const histItems    = $('#histItems');
+const clearHistBtn = $('#clearHistBtn');
+
+const SRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+function showVoiceError(msg) { voiceErrTxt.textContent = msg; show(voiceErrBox); }
+function clearVoiceError() { hide(voiceErrBox); }
+
+function setListening(on) {
+  micBtn.classList.toggle('listening', on);
+  $('#micIconSvg').classList.toggle('hidden', on);
+  $('#stopIconSvg').classList.toggle('hidden', !on);
+  micStatus.textContent = on ? 'Listening…' : 'Tap to Speak';
+  toggle(waveform, on);
+  micRings.forEach(r => toggle(r, on));
+}
+
+micBtn.addEventListener('click', () => {
+  if (!SRec) { showVoiceError('Web Speech API is not supported in your browser. Please use Chrome, Edge, or Safari.'); return; }
+  if (recognition && recognition._active) { recognition.stop(); return; }
+  clearVoiceError();
+  transcriptTxt.textContent = '';
+  hide(transcriptBox);
+  const rec = new SRec();
+  rec.lang = 'en-US'; rec.continuous = false; rec.interimResults = true;
+  rec._active = true;
+  rec.onstart = () => setListening(true);
+  rec.onresult = e => {
+    let interim = '', final = '';
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      const t = e.results[i][0].transcript;
+      e.results[i].isFinal ? (final += t + ' ') : (interim += t);
+    }
+    const combined = (transcriptTxt.textContent + final || interim).trim();
+    transcriptTxt.textContent = combined;
+    if (combined) show(transcriptBox);
+  };
+  rec.onerror = ev => {
+    rec._active = false; setListening(false);
+    const msgs = { 'no-speech':'No speech detected. Please try again.', 'audio-capture':'Microphone not accessible.', 'not-allowed':'Microphone permission denied. Please allow access in your browser settings.', 'network':'Network error during recognition.' };
+    if (ev.error !== 'aborted') showVoiceError(msgs[ev.error] || `Error: ${ev.error}`);
+  };
+  rec.onend = () => { rec._active = false; setListening(false); };
+  recognition = rec;
+  rec.start();
+});
+
+async function runVoiceQuery(query) {
+  if (!query.trim()) { showVoiceError('Please speak or type a question first.'); return; }
+  clearVoiceError();
+  hide(aiRespBox);
+  show(vProcessing);
+  await new Promise(r => setTimeout(r, 800 + Math.random() * 700));
+  // ── PRODUCTION: Replace getMockAnswer with real API call ──
+  // const res = await fetch('/api/voice-query', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ query }) });
+  // const data = await res.json(); const answer = data.response;
+  const answer = mockAIAnswer(query);
+  hide(vProcessing);
+  aiRespTxt.textContent = answer;
+  show(aiRespBox);
+  aiRespBox.classList.add('anim-fade-in');
+  setTimeout(() => aiRespBox.classList.remove('anim-fade-in'), 300);
+  // Add to history
+  const entry = { id: Date.now(), q: query.trim(), a: answer, time: new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) };
+  voiceHistory.unshift(entry);
+  if (voiceHistory.length > 10) voiceHistory.pop();
+  renderVoiceHistory();
+}
+
+analyseVBtn.addEventListener('click', () => runVoiceQuery(transcriptTxt.textContent));
+clearVBtn.addEventListener('click', () => { transcriptTxt.textContent = ''; hide(transcriptBox); hide(aiRespBox); });
+voiceSubmit.addEventListener('click', () => { const q = voiceTypeIn.value.trim(); if(q){ transcriptTxt.textContent=q; show(transcriptBox); runVoiceQuery(q); voiceTypeIn.value=''; } });
+voiceTypeIn.addEventListener('keydown', e => { if(e.key==='Enter'){ const q=voiceTypeIn.value.trim(); if(q){ transcriptTxt.textContent=q; show(transcriptBox); runVoiceQuery(q); voiceTypeIn.value=''; } } });
+
+// Topic chips
+$$('.topic-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    const q = chip.dataset.q;
+    voiceTypeIn.value = q;
+    transcriptTxt.textContent = q;
+    show(transcriptBox);
+    runVoiceQuery(q);
+    voiceTypeIn.value = '';
+  });
+});
+
+// Speak response
+speakBtn.addEventListener('click', () => {
+  if (!window.speechSynthesis) return;
+  if (isSpeaking) { window.speechSynthesis.cancel(); isSpeaking = false; speakLabel.textContent = 'Speak'; speakBtn.classList.remove('active'); return; }
+  const u = new SpeechSynthesisUtterance(aiRespTxt.textContent);
+  u.lang = 'en-US'; u.rate = 0.95;
+  u.onstart = () => { isSpeaking=true; speakLabel.textContent='Stop'; speakBtn.classList.add('active'); };
+  u.onend = u.onerror = () => { isSpeaking=false; speakLabel.textContent='Speak'; speakBtn.classList.remove('active'); };
+  window.speechSynthesis.speak(u);
+});
+
+function renderVoiceHistory() {
+  toggle(histEmpty, voiceHistory.length === 0);
+  toggle(clearHistBtn, voiceHistory.length > 0);
+  histItems.innerHTML = '';
+  voiceHistory.forEach(item => {
+    const el = document.createElement('div');
+    el.className = 'history-item';
+    el.innerHTML = `<span class="history-time">${item.time}</span><div class="history-q">${item.q.slice(0,60)}${item.q.length>60?'…':''}</div><div class="history-a">${item.a.slice(0,100)}…</div>`;
+    el.addEventListener('click', () => { transcriptTxt.textContent=item.q; aiRespTxt.textContent=item.a; show(transcriptBox); show(aiRespBox); });
+    histItems.appendChild(el);
+  });
+}
+clearHistBtn.addEventListener('click', () => { voiceHistory=[]; renderVoiceHistory(); });
+renderVoiceHistory();
+
+/* ══════════════════════════════════════════════════════════════
+   LIVE CHAT — Simulated Socket.io-style Expert Replies
+   NOTE: This uses a self-contained message bus to simulate
+   real-time Socket.io behaviour without needing a server.
+   ── PRODUCTION REPLACEMENT ─────────────────────────────────
+   Replace the fakeSocket object below with real Socket.io:
+     const socket = io('http://localhost:5000');
+     socket.emit('join_room', { room: 'general' });
+     socket.on('expert_message', msg => appendMessage(msg));
+     socket.on('expert_typing', ({ typing }) => toggleTyping(typing));
+     // In handleSend(): socket.emit('user_message', { message, room:'general' });
+══════════════════════════════════════════════════════════════ */
+const EXPERT_REPLIES = [
+  "Based on your description, this sounds like a loose connection or high-resistance joint. Switch off the breaker and re-terminate the conductors with rated lugs torqued to the manufacturer's specification.",
+  "That's a classic sign of an overloaded circuit. Try redistributing appliances across different circuits and check if the breaker has lost its calibration over time.",
+  "Earth leakage faults typically point to insulation breakdown. You'll need a megger test — anything below 1 MΩ on an LV circuit is a concern that requires immediate attention.",
+  "For intermittent tripping, I'd suspect a failing RCCB. Test it monthly using the TEST button. If it doesn't trip cleanly or resets on its own, replace it immediately.",
+  "A burning smell from a panel is a serious indicator. Cut power at the main isolator and call a licensed electrician before investigating further — do not attempt to diagnose live.",
+  "Voltage fluctuations can be caused by a loose neutral at the supply point. This is typically your utility provider's responsibility — report it to them immediately.",
+  "Two-way switch wiring faults are usually in the traveller wires. Check continuity between the two COM terminals first with a multimeter set to resistance.",
+  "A DOL starter that won't start often has a faulty overload relay. Reset it and check the thermal trip setting matches the motor FLC on the nameplate.",
+  "Discoloured terminals — brown or black — indicate arcing and should be replaced immediately. They are a confirmed fire risk and the circuit should not be re-energised.",
+  "For MCB nuisance tripping, verify the trip curve (B, C, or D type) matches your load's inrush current characteristics. Motors need a C or D curve, not B."
+];
+
+const chatMsgs    = $('#chatMsgs');
+const chatTyping  = $('#chatTyping');
+const chatInput   = $('#chatInput');
+const chatSendBtn = $('#chatSendBtn');
+const chatSuggs   = $('#chatSuggs');
+let msgCount = 0;
+
+function appendMessage(sender, text, isSystem = false) {
+  const ts = fmt(new Date());
+  if (isSystem) {
+    const div = document.createElement('div');
+    div.className = 'msg-system anim-fade-in';
+    div.textContent = text;
+    chatMsgs.appendChild(div);
+  } else {
+    const isUser = sender === 'user';
+    const row = document.createElement('div');
+    row.className = `msg-row ${isUser ? 'user' : ''} anim-fade-in`;
+    row.innerHTML = `
+      ${!isUser ? `<div class="msg-avi-sm"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>` : ''}
+      <div class="msg-bubble-wrap">
+        ${!isUser ? `<span class="msg-name">Expert</span>` : ''}
+        <div class="bubble ${isUser ? 'user' : 'expert'}">${escHtml(text)}</div>
+        <span class="msg-time">${ts}${isUser ? ' ✓' : ''}</span>
+      </div>
+      ${isUser ? `<div class="msg-avi-sm user-avi"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>` : ''}
+    `;
+    chatMsgs.appendChild(row);
+    setTimeout(() => row.classList.remove('anim-fade-in'), 350);
+  }
+  chatMsgs.scrollTop = chatMsgs.scrollHeight;
+  msgCount++;
+  // Hide suggestions after first user message
+  if (sender === 'user' && msgCount === 1) {
+    chatSuggs.style.transition = 'opacity .3s';
+    chatSuggs.style.opacity = '0';
+    setTimeout(() => hide(chatSuggs), 300);
+  }
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function toggleTyping(on) { toggle(chatTyping, on); chatMsgs.scrollTop = chatMsgs.scrollHeight; }
+
+function handleSend() {
+  const text = chatInput.value.trim();
+  if (!text) return;
+  appendMessage('user', text);
+  chatInput.value = '';
+  chatInput.style.height = 'auto';
+  updateSendBtn();
+  // Typing indicator after 400ms
+  setTimeout(() => toggleTyping(true), 400);
+  // Expert reply after 2 seconds
+  setTimeout(() => {
+    toggleTyping(false);
+    const reply = EXPERT_REPLIES[Math.floor(Math.random() * EXPERT_REPLIES.length)];
+    appendMessage('expert', reply);
+  }, 2000);
+}
+
+function updateSendBtn() {
+  chatSendBtn.classList.toggle('active', chatInput.value.trim().length > 0);
+}
+
+chatSendBtn.addEventListener('click', handleSend);
+chatInput.addEventListener('keydown', e => { if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); handleSend(); } });
+chatInput.addEventListener('input', () => {
+  chatInput.style.height = 'auto';
+  chatInput.style.height = Math.min(chatInput.scrollHeight, 120) + 'px';
+  updateSendBtn();
+});
+
+// Suggestion pills
+$$('.sugg-pill').forEach(pill => {
+  pill.addEventListener('click', () => {
+    chatInput.value = pill.dataset.msg;
+    chatInput.dispatchEvent(new Event('input'));
+    chatInput.focus();
+  });
+});
+
+// Welcome message
+appendMessage(null, 'You are connected to the General Support channel. An expert is available now.', true);
+setTimeout(() => appendMessage('expert', 'Hello! I\'m your electrical expert assistant. Please describe your electrical issue — I\'m here to help with fault diagnosis, safety guidance, and technical questions.'), 800);
+
+/* ══════════════════════════════════════════════════════════════
+   LEARN — Expand / Collapse Cards
+══════════════════════════════════════════════════════════════ */
+$$('.expand-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const target = $('#' + btn.dataset.target);
+    if (!target) return;
+    const isOpen = !target.classList.contains('hidden');
+    if (isOpen) {
+      hide(target); btn.classList.remove('open');
+    } else {
+      show(target); btn.classList.add('open');
+      target.classList.add('anim-fade-in');
+      setTimeout(() => target.classList.remove('anim-fade-in'), 300);
+    }
+  });
+});
+</script>
+</body>
+</html>
