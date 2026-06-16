@@ -1,1 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <title>MEGA ITI KUBERNAGAR • e‑Visiting Card</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #0a3b6e;
+      --secondary: #1f4e7a;
+      --accent: #e67e22;
+      --bg-gradient: linear-gradient(135deg, #eef2f3 0%, #8e9eab 100%);
+      --card-bg: rgba(255, 255, 255, 0.95);
+      --text-dark: #0f233c;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--bg-gradient);
+      font-family: 'Segoe UI', Roboto, -apple-system, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    /* Premium Glassmorphism Card Container */
+    .card {
+      width: 420px; /* PC aur bade screens ke liye solid base width */
+      max-width: 100%; /* Mobile screens par cut hone se bachane ke liye */
+      background: var(--card-bg);
+      border-radius: 24px;
+      box-shadow: 0 25px 50px rgba(10, 59, 110, 0.2);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      padding: 2.2rem 1.8rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Elegant Top Border Line */
+    .card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 6px;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+    }
+
+    /* Header Section */
+    .header-logos {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      margin-bottom: 1.8rem;
+      border-bottom: 2px dashed rgba(10, 59, 110, 0.1);
+      padding-bottom: 1.2rem;
+    }
+
+    .logo-group {
+      display: flex;
+      gap: 0.6rem;
+    }
+
+    .logo-img {
+      width: 45px;
+      height: 45px;
+      object-fit: contain;
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 4px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      border: 1px solid rgba(10, 59, 110, 0.1);
+      transition: transform 0.3s ease;
+    }
+
+    .logo-img:hover {
+      transform: scale(1.1);
+    }
+
+    .govt-text {
+      text-align: right;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .govt-line {
+      font-size: 0.7rem;
+      font-weight: 800;
+      color: var(--secondary);
+      letter-spacing: 0.8px;
+    }
+
+    .mega-title {
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: var(--accent);
+      background: #fff3e6;
+      padding: 3px 10px;
+      border-radius: 6px;
+      display: inline-block;
+      box-shadow: 0 2px 5px rgba(230, 126, 34, 0.1);
+    }
+
+    .e-visit-badge {
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: #fff;
+      background: var(--primary);
+      padding: 2px 8px;
+      border-radius: 4px;
+      align-self: flex-end;
+      letter-spacing: 1px;
+    }
+
+    /* Profile Avatar */
+    .profile-frame {
+      margin-bottom: 1.2rem;
+      position: relative;
+    }
+
+    .profile-frame::before {
+      content: '';
+      position: absolute;
+      top: -6px; left: -6px; right: -6px; bottom: -6px;
+      border-radius: 50%;
+      background: linear-gradient(45deg, var(--primary), var(--accent));
+      z-index: -1;
+      opacity: 0.7;
+    }
+
+    .profile-pic {
+      width: 130px;
+      height: 130px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid #fff;
+      box-shadow: 0 10px 25px rgba(10, 59, 110, 0.25);
+      transition: transform 0.3s ease;
+    }
+
+    .profile-pic:hover {
+      transform: scale(1.05);
+    }
+
+    /* Info */
+    .name {
+      font-size: 1.7rem;
+      font-weight: 800;
+      color: var(--text-dark);
+      letter-spacing: 0.5px;
+      text-align: center;
+    }
+
+    .designation {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #fff;
+      background: var(--primary);
+      padding: 0.4rem 1.5rem;
+      border-radius: 50px;
+      margin: 0.6rem 0 1.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      box-shadow: 0 4px 10px rgba(10, 59, 110, 0.2);
+    }
+
+    /* Grid layout for major actions */
+    .button-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.8rem;
+      width: 100%;
+      margin-bottom: 0.8rem;
+    }
+
+    .action-btn {
+      background: #ffffff;
+      border: 1px solid rgba(10, 59, 110, 0.12);
+      border-radius: 16px;
+      padding: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--text-dark);
+      text-decoration: none;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.02);
+    }
+
+    .action-btn i {
+      font-size: 1.25rem;
+      color: var(--primary);
+      width: 24px;
+      text-align: center;
+    }
+
+    /* Brand specific colors on hover */
+    .action-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      border-color: transparent;
+      color: #fff;
+    }
+    .btn-phone:hover { background: #2ecc71; }
+    .btn-wa:hover { background: #25d366; }
+    .btn-mail:hover { background: #e74c3c; }
+    .btn-insta:hover { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); }
+
+    .action-btn:hover i {
+      color: #fff;
+    }
+
+    /* Full width features */
+    .full-width-actions {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+    }
+
+    .full-btn {
+      width: 100%;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      color: #fff;
+      border: none;
+      border-radius: 16px;
+      padding: 1rem;
+      font-weight: 700;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      text-decoration: none;
+      transition: all 0.25s ease;
+      box-shadow: 0 5px 15px rgba(10, 59, 110, 0.25);
+    }
+
+    .full-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 22px rgba(10, 59, 110, 0.35);
+    }
+
+    .full-btn-outline {
+      background: transparent;
+      color: #3b5998;
+      border: 2px solid #3b5998;
+      box-shadow: none;
+    }
+    .full-btn-outline:hover {
+      background: #3b5998;
+      color: white;
+      box-shadow: 0 5px 15px rgba(59, 89, 152, 0.3);
+    }
+
+    /* Share Section */
+    .share-section {
+      margin-top: 1.5rem;
+      width: 100%;
+      text-align: center;
+    }
+
+    .share-btn {
+      background: rgba(10, 59, 110, 0.05);
+      border: 1px solid rgba(10, 59, 110, 0.1);
+      color: var(--secondary);
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1.2rem;
+      border-radius: 50px;
+      transition: all 0.2s;
+    }
+
+    .share-btn:hover {
+      background: var(--primary);
+      color: white;
+    }
+
+    .copied-message {
+      font-size: 0.75rem;
+      color: #27ae60;
+      margin-top: 0.4rem;
+      font-weight: 600;
+      opacity: 0;
+      transition: opacity 0.25s;
+      height: 15px;
+    }
+
+    /* Footer Packaging */
+    .footer-note {
+      margin-top: 1.2rem;
+      font-size: 0.7rem;
+      color: #555;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* NEW UPDATE: PC aur badi screen ke liye Card Zoom Scaling */
+    @media (min-width: 768px) {
+      .card {
+        transform: scale(1.15); /* PC monitor par card ko 15% bada karke attractive dikhayega */
+        transform-origin: center;
+      }
+    }
+
+    /* NEW UPDATE: Chote Mobile screens ke liye responsive optimization */
+    @media (max-width: 360px) {
+      body {
+        padding: 10px;
+      }
+      .card {
+        padding: 1.5rem 1.2rem;
+      }
+      .name {
+        font-size: 1.4rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    
+    <div class="header-logos">
+      <div class="logo-group">
+        <img src="https://gooo26.github.io/Ai/17353-removebg-preview.png" alt="Satyamev Jayate" class="logo-img">
+        <img src="https://gooo26.github.io/Ai/57-iti-logo3.png" alt="ITI Logo" class="logo-img">
+      </div>
+      <div class="govt-text">
+        <span class="govt-line">GOVERNMENT OF GUJARAT</span>
+        <span class="mega-title">MEGA ITI KUBERNAGAR</span>
+        <span class="e-visit-badge">e‑CARD</span>
+      </div>
+    </div>
+
+    <div class="profile-frame">
+      <img 
+        src="https://gooo26.github.io/P/IMG_20260616_140554.jpg" 
+        alt="Hari Jadav" 
+        class="profile-pic"
+        loading="lazy"
+        onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22120%22 height=%22120%22%3E%3Ccircle cx=%2260%22 cy=%2260%22 r=%2260%22 fill=%22%230a3b6e%22/%3E%3Ctext x=%2260%22 y=%2270%22 font-size=%2235%22 font-family=%22sans-serif%22 font-weight=%22bold%22 text-anchor=%22middle%22 fill=%22%23ffffff%22%3EHJ%3C/text%3E%3C/svg%3E';"
+      >
+    </div>
+
+    <div class="name">HARI JADAV</div>
+    <div class="designation">Placement Officer</div>
+
+    <div class="button-grid">
+      <a href="tel:+919484844459" class="action-btn btn-phone" target="_blank" rel="noopener">
+        <i class="fas fa-phone"></i> <span>Call Now</span>
+      </a>
+      <a href="https://wa.me/919484844459" class="action-btn btn-wa" target="_blank" rel="noopener">
+        <i class="fab fa-whatsapp"></i> <span>WhatsApp</span>
+      </a>
+      <a href="mailto:pabahd@gmail.com" class="action-btn btn-mail" target="_blank" rel="noopener">
+        <i class="fas fa-envelope"></i> <span>Email</span>
+      </a>
+      <a href="https://www.instagram.com/placementitikubernagar?igsh=MTU5Ymt4c2czbTlkag==" class="action-btn btn-insta" target="_blank" rel="noopener">
+        <i class="fab fa-instagram"></i> <span>Instagram</span>
+      </a>
+    </div>
+
+    <div class="full-width-actions">
+      <a href="https://itikubernagar.gujarat.gov.in/" class="full-btn" target="_blank" rel="noopener">
+        <i class="fas fa-globe"></i> Visit Official Website
+      </a>
+      <a href="https://www.facebook.com/share/1D7uPSGK86/" class="full-btn full-btn-outline" target="_blank" rel="noopener">
+        <i class="fab fa-facebook"></i> Facebook Page
+      </a>
+    </div>
+
+    <div class="share-section">
+      <button id="shareCardBtn" class="share-btn">
+        <i class="fas fa-arrow-up-from-bracket"></i> Share This Card
+      </button>
+      <div id="copyMessage" class="copied-message">🔗 Card link copied to clipboard!</div>
+    </div>
+
+    <div class="footer-note">
+      <i class="fas fa-shield-halved"></i> Skill India • Digital Gujarat Initiative
+    </div>
+
+  </div>
+
+  <script>
+    (function() {
+      'use strict';
+      const shareButton = document.getElementById('shareCardBtn');
+      const copyMessage = document.getElementById('copyMessage');
+
+      async function copyPageUrl() {
+        try {
+          const urlToCopy = window.location.href;
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            await navigator.clipboard.writeText(urlToCopy);
+            showFeedback();
+          } else {
+            const textArea = document.createElement('textarea');
+            textArea.value = urlToCopy;
+            textArea.style.position = 'fixed'; top: '-999px';
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            showFeedback();
+          }
+        } catch (err) {
+          alert('Please copy the URL from browser address bar.');
+        }
+      }
+
+      function showFeedback() {
+        copyMessage.style.opacity = '1';
+        const icon = shareButton.querySelector('i');
+        if(icon) icon.className = 'fas fa-check';
+        setTimeout(() => {
+          copyMessage.style.opacity = '0';
+          if(icon) icon.className = 'fas fa-arrow-up-from-bracket';
+        }, 2000);
+      }
+
+      shareButton.addEventListener('click', copyPageUrl);
+    })();
+  </script>
+</body>
+</html>
  
