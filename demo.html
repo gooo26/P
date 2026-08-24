@@ -1,9 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Print Floor — Machine Status</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0d10; --panel:#12171c; --panel-edge:#1e262d;
+    --text-hi:#eef2f4; --text-lo:#7c8a93;
+    --free:#35d9a0; --free-dim:#12352c;
+    --busy:#ff6a4d; --busy-dim:#3a1f18;
+    --amber:#f0b429; --grid-line:#171d22;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{height:100%;background:var(--bg);}
+  body{
+    font-family:'Inter',sans-serif; color:var(--text-hi); overflow:hidden;
+    background-image:linear-gradient(var(--grid-line) 1px, transparent 1px),
+                      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size:40px 40px;
+  }
+  .wrap{height:100vh; display:flex; flex-direction:column; padding:28px 36px;}
+  header{display:flex; justify-content:space-between; align-items:flex-end;
+    padding-bottom:20px; border-bottom:1px solid var(--panel-edge); margin-bottom:26px;}
+  .brand-eyebrow{font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:.18em;
+    color:var(--text-lo); text-transform:uppercase; margin-bottom:6px;}
+  h1{font-size:30px; font-weight:800; letter-spacing:-0.01em;}
+  .clock-block{text-align:right;}
+  #clock{font-family:'IBM Plex Mono',monospace; font-size:34px; font-weight:600; line-height:1;}
+  #date{font-family:'IBM Plex Mono',monospace; font-size:13px; color:var(--text-lo); margin-top:6px;}
+  .summary{display:flex; gap:14px; margin-bottom:26px;}
+  .sum-card{flex:1; background:var(--panel); border:1px solid var(--panel-edge); border-radius:10px;
+    padding:14px 18px;}
+  .sum-card .num{font-family:'IBM Plex Mono',monospace; font-size:28px; font-weight:700;}
+  .sum-card .lbl{font-size:12px; color:var(--text-lo); letter-spacing:.08em; text-transform:uppercase;}
+  .sum-card.free .num{color:var(--free);}
+  .sum-card.busy .num{color:var(--busy);}
+  .grid{flex:1; display:grid; grid-template-columns:repeat(auto-fit, minmax(230px,1fr));
+    gap:16px; overflow-y:auto; align-content:start;}
+  .card{position:relative; background:var(--panel); border:1px solid var(--panel-edge);
+    border-radius:14px; padding:20px; display:flex; flex-direction:column; gap:12px;}
+  .card.free{border-color:var(--free-dim);}
+  .card.busy{border-color:var(--busy-dim);}
+  .card-top{display:flex; justify-content:space-between; align-items:flex-start;}
+  .machine-id{font-family:'IBM Plex Mono',monospace; font-size:22px; font-weight:700;}
+  .machine-tag{font-size:11px; color:var(--text-lo); letter-spacing:.1em; text-transform:uppercase; margin-top:2px;}
+  .led{width:12px; height:12px; border-radius:50%; margin-top:6px; flex-shrink:0;}
+  .led.free{background:var(--free); box-shadow:0 0 10px 2px rgba(53,217,160,.55);}
+  .led.busy{background:var(--busy); box-shadow:0 0 10px 2px rgba(255,106,77,.55); animation:pulse 1.6s ease-in-out infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.35;}}
+  .status-pill{align-self:flex-start; font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:600;
+    letter-spacing:.06em; padding:4px 10px; border-radius:20px; text-transform:uppercase;}
+  .status-pill.free{background:var(--free-dim); color:var(--free);}
+  .status-pill.busy{background:var(--busy-dim); color:var(--busy);}
+  .detail-row{display:flex; justify-content:space-between; font-size:13px;}
+  .detail-row .k{color:var(--text-lo);}
+  .detail-row .v{font-family:'IBM Plex Mono',monospace; font-weight:500;}
+  .countdown{font-family:'IBM Plex Mono',monospace; font-size:20px; font-weight:700; color:var(--busy);}
+  .next-line{margin-top:auto; padding-top:10px; border-top:1px dashed var(--panel-edge);
+    font-size:11.5px; color:var(--amber); font-family:'IBM Plex Mono',monospace;}
+  .empty-state{color:var(--text-lo); font-family:'IBM Plex Mono',monospace; padding:40px; text-align:center; grid-column:1/-1;}
+  footer{margin-top:14px; display:flex; justify-content:space-between; font-family:'IBM Plex Mono',monospace;
+    font-size:11px; color:var(--text-lo);}
+  #err{color:var(--busy);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <div class="brand-eyebrow">Office Floor · Live Status</div>
+      <h1>3D Printer Bay</h1>
+    </div>
+    <div class="clock-block">
+      <div id="clock">--:--:--</div>
+      <div id="date">-- --- ----</div>
+    </div>
+  </header>
 
-abhi ham onliy printer ka ban rahe hai , Isame B1 se B7 tak printers ka name hai aur Booking me Yes likha hai to printers booking hai aur agar no hai ho printer free hai 
-Aur "booking time" se ye malum chalega ki printers kab tak ke liye book hai  aur " user " se ye malum chalega ki kisane printer book Kiya hai
-Aur " after booking " se malum chalega agar 1 hours ke baad kohi printer free hai to usake baad kohi dusar kohi booking hai to kitane time ke liye book hai usaki daitals malum hogi ki kitane der ke liye Bookings hai
+  <div class="summary">
+    <div class="sum-card free"><div class="lbl">Free</div><div class="num" id="freeCount">0</div></div>
+    <div class="sum-card busy"><div class="lbl">In Use</div><div class="num" id="busyCount">0</div></div>
+    <div class="sum-card"><div class="lbl">Total Machines</div><div class="num" id="totalCount">0</div></div>
+  </div>
 
+  <div class="grid" id="grid"><div class="empty-state">Loading printer data…</div></div>
 
-( Aba mujhe ye batao ki me me apane ai agent ko kya bolu taki mujhe isaka pura code banake de sake ) Aur mujhe Sabse best GUI (Ui) chahiye
+  <footer>
+    <span>Auto-refresh every <span id="refreshSecs">15</span>s</span>
+    <span id="err"></span>
+  </footer>
+</div>
 
-Mujhe all code banake do , aur usako kese set karan hai ye bhi batao
+<script>
+/* =========================================================
+   CONFIG — paste your Apps Script Web App URL here
+   (Extensions > Apps Script > Deploy > New deployment > Web app)
+   ========================================================= */
+const DASHBOARD_URL = "PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE";
+const REFRESH_SECONDS = 15;
+
+document.getElementById('refreshSecs').textContent = REFRESH_SECONDS;
+
+let latestData = null;
+
+function updateClock(){
+  const now = new Date();
+  document.getElementById('clock').textContent = now.toLocaleTimeString('en-IN', {hour12:true});
+  document.getElementById('date').textContent = now.toLocaleDateString('en-IN', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+function fmtDuration(ms){
+  if (ms <= 0) return '0m';
+  const totalMin = Math.floor(ms / 60000);
+  const h = Math.floor(totalMin / 60);
+  const m = totalMin % 60;
+  return h > 0 ? `${h}h ${m}m` : `${m}m`;
+}
+
+function fmtClock(iso){
+  return new Date(iso).toLocaleTimeString('en-IN', {hour:'2-digit', minute:'2-digit'});
+}
+
+function render(){
+  if (!latestData || !latestData.printers) return;
+  const grid = document.getElementById('grid');
+  const now = new Date();
+
+  if (!latestData.printers.length){
+    grid.innerHTML = '<div class="empty-state">No printers found. Check the "Printers" tab has rows under the header.</div>';
+    return;
+  }
+
+  let freeCount = 0, busyCount = 0;
+  grid.innerHTML = '';
+
+  latestData.printers.forEach(p => {
+    const isBusy = p.status === 'busy';
+    isBusy ? busyCount++ : freeCount++;
+
+    const card = document.createElement('div');
+    card.className = 'card ' + (isBusy ? 'busy' : 'free');
+
+    let busyBlock = '';
+    if (isBusy){
+      const remainingMs = new Date(p.endTime) - now;
+      busyBlock = `
+        <div class="detail-row"><span class="k">Booked by</span><span class="v">${p.user || '—'}</span></div>
+        <div class="detail-row"><span class="k">Free at</span><span class="v">${fmtClock(p.endTime)}</span></div>
+        <div class="countdown">${fmtDuration(remainingMs)} left</div>
+      `;
+    } else {
+      busyBlock = `<div class="detail-row"><span class="k">Status</span><span class="v">Available now</span></div>`;
+    }
+
+    let nextBlock = '';
+    if (p.next){
+      nextBlock = `<div class="next-line">Next: ${p.next.user} · ${fmtClock(p.next.startTime)}–${fmtClock(p.next.endTime)} (${fmtDuration(p.next.durationMinutes*60000)})</div>`;
+    }
+
+    card.innerHTML = `
+      <div class="card-top">
+        <div>
+          <div class="machine-id">${p.id}</div>
+          <div class="machine-tag">3D Printer</div>
+        </div>
+        <div class="led ${isBusy ? 'busy' : 'free'}"></div>
+      </div>
+      <div class="status-pill ${isBusy ? 'busy' : 'free'}">${isBusy ? 'In Use' : 'Free'}</div>
+      ${busyBlock}
+      ${nextBlock}
+    `;
+    grid.appendChild(card);
+  });
+
+  document.getElementById('freeCount').textContent = freeCount;
+  document.getElementById('busyCount').textContent = busyCount;
+  document.getElementById('totalCount').textContent = latestData.printers.length;
+}
+
+// re-render every second so countdowns tick smoothly between fetches
+setInterval(render, 1000);
+
+async function loadData(){
+  const errEl = document.getElementById('err');
+  if (DASHBOARD_URL.includes('PASTE_YOUR')){
+    errEl.textContent = 'Set DASHBOARD_URL in the script.';
+    document.getElementById('grid').innerHTML = '<div class="empty-state">⚠ DASHBOARD_URL not configured yet.<br>Paste your Apps Script Web App URL into the script.</div>';
+    return;
+  }
+  try{
+    const res = await fetch(DASHBOARD_URL + '?t=' + Date.now());
+    const data = await res.json();
+    if (data.error){
+      errEl.textContent = data.error;
+      return;
+    }
+    errEl.textContent = '';
+    latestData = data;
+    render();
+  } catch(err){
+    errEl.textContent = 'Failed to fetch dashboard data: ' + err;
+  }
+}
+
+loadData();
+setInterval(loadData, REFRESH_SECONDS * 1000);
+</script>
+</body>
+</html>
